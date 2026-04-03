@@ -1,0 +1,5 @@
+export type { FaceMove, MoveToken, BaseFace } from './tokens'
+export { FACE_MOVES, isFaceMove } from './tokens'
+export type { PermutationTable } from './tables'
+export { MOVE_TABLES } from './tables'
+export { applyMove } from './apply'

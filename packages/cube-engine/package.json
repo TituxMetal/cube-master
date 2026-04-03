@@ -1,0 +1,29 @@
+{
+  "name": "@packages/cube-engine",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Pure TypeScript Rubik's Cube 3x3 engine — domain model, moves, solver foundation",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc -b tsconfig.build.json",
+    "test": "bun test",
+    "test:coverage": "bun test --coverage",
+    "test:watch": "bun test --watch",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . --fix",
+    "lint:check": "eslint .",
+    "clean": "rm -rf node_modules coverage dist .turbo"
+  },
+  "devDependencies": {
+    "@packages/eslint-config": "workspace:*",
+    "@packages/ts-config": "workspace:*",
+    "@types/bun": "^1.3.11",
+    "typescript": "^6.0.2"
+  }
+}
