@@ -1,0 +1,14 @@
+services:
+  cube-master-web:
+    image: ghcr.io/tituxmetal/cube-master-web:prod
+    container_name: cube-master-web
+    networks:
+      - reverse-proxy-nw
+      - default-nw
+    restart: unless-stopped
+
+networks:
+  default-nw:
+    external: true
+  reverse-proxy-nw:
+    external: true

@@ -1,0 +1,23 @@
+# dependencies
+node_modules/
+
+# environment variables
+.env*
+!.env.example
+
+# turbo
+.turbo
+
+# build
+dist
+.astro
+
+# TypeScript incremental compilation
+*.tsbuildinfo
+
+# coverage
+coverage
+.husky/_
+
+# reference project
+reference
