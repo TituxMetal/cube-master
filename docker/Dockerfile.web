@@ -30,13 +30,14 @@ COPY --from=build /app/packages ./packages/
 # Install only production dependencies
 RUN bun install --filter @app/web --frozen-lockfile --production
 
-# Copy built app
+# Copy built client assets and server source
 COPY --from=build /app/apps/web/dist ./apps/web/dist
+COPY --from=build /app/apps/web/src/server.ts ./apps/web/src/server.ts
 
 # Set environment variables for production runtime
 ENV NODE_ENV=production
 ENV HOST=0.0.0.0
-ENV PORT=4321
+ENV PORT=3000
 
 # Change ownership of the app directory
 RUN chown -R appuser:appgroup /app
@@ -45,5 +46,5 @@ EXPOSE ${PORT}
 
 USER appuser
 
-# Start the application using Bun
-CMD ["bun", "run", "apps/web/dist/server/entry.mjs"]
+# Start the Hono server
+CMD ["bun", "run", "--cwd", "apps/web", "start"]
