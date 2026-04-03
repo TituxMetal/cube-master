@@ -2,13 +2,13 @@
   "extends": "@packages/ts-config/web",
   "compilerOptions": {
     "outDir": "./dist",
-    "types": ["bun"],
+    "types": ["bun", "vite/client"],
     "paths": {
       "~/*": ["./src/*"],
       "~ui/*": ["./src/components/ui/*"],
       "~features/*": ["./src/features/*"]
     }
   },
-  "include": ["src/**/*", "*.ts", "*.tsx", "**/*.astro", "**/*.d.ts", "**/*.spec.tsx"],
-  "exclude": ["node_modules", "dist", "coverage", ".turbo", ".astro"]
+  "include": ["src/**/*", "*.ts", "*.tsx", "**/*.d.ts", "**/*.spec.tsx"],
+  "exclude": ["node_modules", "dist", "coverage", ".turbo"]
 }

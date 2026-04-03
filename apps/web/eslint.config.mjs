@@ -8,7 +8,7 @@ const __dirname = dirname(__filename)
 
 export default [
   {
-    ignores: ['eslint.config.mjs', 'astro.config.mjs', 'dist/**', 'coverage/**', '.astro/**']
+    ignores: ['eslint.config.mjs', 'vite.config.ts', 'dist/**', 'coverage/**']
   },
   ...webConfig,
   {
