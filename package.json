@@ -52,7 +52,6 @@
     "husky": "^9.1.7",
     "lint-staged": "^16.4.0",
     "prettier": "^3.8.1",
-    "prettier-plugin-astro": "^0.14.1",
     "prettier-plugin-tailwindcss": "^0.7.2",
     "turbo": "^2.9.3",
     "typescript": "^6.0.2"
@@ -61,7 +60,7 @@
     "bun": ">=1.2.0"
   },
   "lint-staged": {
-    "apps/web/**/*.{ts,tsx,astro}": [
+    "apps/web/**/*.{ts,tsx}": [
       "bash -c 'cd apps/web && eslint --fix \"$@\"' --",
       "prettier --write"
     ],
