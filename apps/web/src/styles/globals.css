@@ -41,12 +41,19 @@
 }
 
 @theme {
+  /* Cube face colors — accurate to real Rubik's Cube */
   --color-cube-white: oklch(93% 0.01 90);
   --color-cube-yellow: oklch(88% 0.19 95);
   --color-cube-red: oklch(55% 0.27 27);
   --color-cube-orange: oklch(72% 0.19 55);
   --color-cube-blue: oklch(52% 0.24 260);
   --color-cube-green: oklch(60% 0.21 150);
+
+  /* Text-safe variants — WCAG AA contrast on dark backgrounds */
+  --color-cube-blue-text: oklch(76% 0.16 260);
+  --color-cube-green-text: oklch(78% 0.15 150);
+  --color-cube-red-text: oklch(76% 0.18 27);
+  --color-cube-orange-text: oklch(80% 0.14 55);
 }
 
 @layer base {
