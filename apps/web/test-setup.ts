@@ -10,3 +10,6 @@ GlobalRegistrator.register()
 if (typeof document === 'undefined' || !document.body) {
   throw new Error('happy-dom failed to register global DOM')
 }
+
+// Set a real URL so history.pushState works correctly
+window.location.href = 'http://localhost:3000/'
