@@ -14,42 +14,42 @@
 
 ### Phase 1: Remove Astro from Shared Configs
 
-- [ ] Clean packages/eslint-config (remove Astro parser and plugin)
-- [ ] Clean root package.json (remove prettier-plugin-astro)
-- [ ] Verify shared config still works
+- [x] Clean packages/eslint-config (remove Astro parser and plugin)
+- [x] Clean root package.json (remove prettier-plugin-astro)
+- [x] Verify shared config still works
 
 ### Phase 2: Replace Astro with Hono + Vite
 
-- [ ] Remove Astro dependencies, add Hono + lucide-react
-- [ ] Update scripts (dev, build, start)
-- [ ] Delete Astro files (config, layouts, pages)
-- [ ] Create Vite config
-- [ ] Create HTML entry point + React entry point
-- [ ] Create Hono production server
-- [ ] Update TypeScript and ESLint configs
-- [ ] Verify all checks pass
+- [x] Remove Astro dependencies, add Hono + lucide-react
+- [x] Update scripts (dev, build, start)
+- [x] Delete Astro files (config, layouts, pages)
+- [x] Create Vite config
+- [x] Create HTML entry point + React entry point
+- [x] Create Hono production server
+- [x] Update TypeScript and ESLint configs
+- [x] Verify all checks pass
 
 ### Phase 3: Client-Side Router
 
-- [ ] Create router component
-- [ ] Create route definitions
-- [ ] Tests for router
+- [x] Create router component
+- [x] Create route definitions
+- [x] Tests for router
 
 ### Phase 4: Layout with Navbar and Footer
 
-- [ ] Create Layout component (navbar with mode tabs + signature footer)
-- [ ] Wire Layout into App
-- [ ] Tests for Layout
+- [x] Create Layout component (navbar with mode tabs + signature footer)
+- [x] Wire Layout into App
+- [x] Tests for Layout
 
 ### Phase 5: Pages
 
-- [ ] Home page with mode cards
-- [ ] Placeholder pages (Solver, Coach, Timer)
-- [ ] CubeDemo on home page
-- [ ] Tests for pages
+- [x] Home page with mode cards
+- [x] Placeholder pages (Solver, Coach, Timer)
+- [x] CubeDemo on home page
+- [x] Tests for pages
 
 ### Phase 6: Docker and Cleanup
 
-- [ ] Update Dockerfile.web CMD
-- [ ] Final cleanup (no .astro references remain)
-- [ ] Full verification (format, lint, typecheck, test, build)
+- [x] Update Dockerfile.web CMD
+- [x] Final cleanup (no .astro references remain)
+- [x] Full verification (format, lint, typecheck, test, build)
