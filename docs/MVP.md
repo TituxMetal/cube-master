@@ -165,13 +165,13 @@ typography, icons, animations, component strategy, layouts per mode).
 
 ### MVP Features
 
-- [ ] **Project bootstrap** — Hono + React setup in apps/web, cube-engine extracted to packages/
-- [ ] **Design system** — DaisyUI rubiks theme, Radix primitives, Sora + Fira Code fonts
-- [ ] **Cube visualization** — CubeNet bound to real state, interactive controls, scramble/reset
-- [ ] **Timer mode** — Scramble generator, timer, session history, statistics (Ao5/Ao12)
-- [ ] **Solver mode** — Cube input UI, layer-by-layer solver, step-by-step navigation
-- [ ] **Coach mode** — Lesson browser, beginner content, algorithm demos, practice mode
-- [ ] **Polish** — Responsive pass, keyboard shortcuts, animations, error handling
+- **Project bootstrap** — Hono + React setup in apps/web, cube-engine extracted to packages/
+- **Design system** — DaisyUI rubiks theme, Radix primitives, Sora + Fira Code fonts
+- **Cube visualization** — CubeNet bound to real state, interactive controls, scramble/reset
+- **Timer mode** — Scramble generator, timer, session history, statistics (Ao5/Ao12)
+- **Solver mode** — Cube input UI, layer-by-layer solver, step-by-step navigation
+- **Coach mode** — Lesson browser, beginner content, algorithm demos, practice mode
+- **Polish** — Responsive pass, keyboard shortcuts, animations, error handling
 
 ## Tech Stack
 

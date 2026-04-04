@@ -1,36 +1,49 @@
 # CubeMaster — Progress
 
-## Current Feature: 02 — Cube Visualization
+## Current Feature: 03 — Timer Mode
 
-### Phase 1: Interactive Cube
+### Phase 1: Timer Store + Display + Page
 
-- [x] Create cube state store (atoms, computed, applyMoveAction, resetAction, hooks)
-- [x] Tests for cube-store
-- [x] Create MoveControls component (18 buttons, 6 face groups)
-- [x] Tests for MoveControls
-- [x] Create CubePlayground assembly (CubeNet + MoveControls wired to store)
-- [x] Tests for CubePlayground
-- [x] Replace CubeDemo on Home page, delete CubeDemo, update Home tests
-- [x] Fix corner orientation rendering (chirality-aware formula in toStickers)
-- [x] Fix B face stickerMapping (BL/BR edges swapped)
-- [x] After-move sticker tests for R, F, L, B faces
+- [ ] Create timer store (state, elapsed, scramble, actions, hooks)
+- [ ] Tests for timer store
+- [ ] Create useTimerLoop hook (rAF loop tied to component lifecycle)
+- [ ] Create formatTime utility (ms → M:SS.cc)
+- [ ] Tests for formatTime
+- [ ] Create ScrambleDisplay component
+- [ ] Tests for ScrambleDisplay
+- [ ] Create TimerDisplay component (large digits, state-aware styling, flash)
+- [ ] Tests for TimerDisplay
+- [ ] Replace Timer page placeholder with timer assembly
+- [ ] Update Timer page tests
 
-### Phase 2: Action Bar and Move History
+### Phase 2: Timer Interaction
 
-- [x] Create ActionBar (Reset + optional Scramble + move counter)
-- [x] Create MoveHistory (badge tokens display)
-- [x] Tests for both components
-- [x] Wire into CubePlayground, update integration tests
+- [ ] Create session store (solves list, recordSolve, toggleDnf, deleteSolve)
+- [ ] Tests for session store
+- [ ] Wire keyboard interaction (spacebar start/stop + solve recording)
+- [ ] Wire touch interaction (tap on timer zone)
+- [ ] Update Timer page integration tests
 
-### Phase 3: Scramble Generator (cube-engine)
+### Phase 3: Session History + DNF/Delete
 
-- [x] Create generateScramble use-case with injectable random source
-- [x] Tests for scramble generation
-- [x] Export from cube-engine barrel
+- [ ] Create SolveHistory component (ordered list, DNF toggle, delete)
+- [ ] Tests for SolveHistory
+- [ ] Wire SolveHistory into Timer page
+- [ ] Update Timer page integration tests
 
-### Phase 4: Wire Scramble and Final Verification
+### Phase 4: Statistics Computation
 
-- [x] Add scrambleAction to store + tests
-- [x] Wire Scramble button into CubePlayground
-- [x] Update integration tests
-- [x] Full verification (test, typecheck, lint, format)
+- [ ] Create statistics utility (computeBest, computeWorst, computeAverage)
+- [ ] Tests for statistics (edge cases, DNF handling, Ao5/Ao12)
+
+### Phase 5: Statistics Display + Integration
+
+- [ ] Create StatsPanel component (4 stat cards: Best, Worst, Ao5, Ao12)
+- [ ] Tests for StatsPanel
+- [ ] Wire StatsPanel into Timer page layout
+
+### Phase 6: Persistence + Final Verification
+
+- [ ] Add localStorage persistence to session store
+- [ ] Tests for persistence (save, restore, error handling)
+- [ ] Full verification (test, typecheck, lint, format)
