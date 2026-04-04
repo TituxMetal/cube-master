@@ -37,10 +37,10 @@ export const FaceGrid = ({ stickers, label, className = '' }: FaceGridProps) => 
         {stickers.slice(0, 9).map((color, index) => (
           <li
             key={index}
-            role='img'
-            aria-label={colorNameByCode[color]}
             className={`ring-base-content/10 hover:shadow-primary/20 aspect-square rounded-xs ring-1 transition-shadow hover:shadow-md ${stickerClassByColor[color]}`}
-          />
+          >
+            <span role='img' aria-label={colorNameByCode[color]} className='block size-full' />
+          </li>
         ))}
       </ul>
     </figure>

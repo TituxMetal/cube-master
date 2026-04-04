@@ -4,10 +4,11 @@ import { FaceGrid } from '~/features/cube/components/FaceGrid'
 
 interface CubeNetProps {
   stickersByFace: StickersByFace
+  className?: string
 }
 
-export const CubeNet = ({ stickersByFace }: CubeNetProps) => (
-  <section className='card bg-base-200 shadow-lg' aria-label='Cube state'>
+export const CubeNet = ({ stickersByFace, className = '' }: CubeNetProps) => (
+  <section className={`card bg-base-200 shadow-lg ${className}`} aria-label='Cube state'>
     <div className='card-body grid grid-cols-4 grid-rows-3 place-items-center gap-4 p-4 md:gap-6 md:p-6 lg:gap-8 lg:p-8'>
       <FaceGrid stickers={stickersByFace.U} label='U' className='col-start-2 row-start-1' />
       <FaceGrid stickers={stickersByFace.D} label='D' className='col-start-2 row-start-3' />

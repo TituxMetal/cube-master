@@ -21,7 +21,10 @@ export const CubePlayground = () => {
     >
       <CubeNet stickersByFace={stickersByFace} />
       <aside className='card bg-base-200 flex-1 shadow-lg'>
-        <section className='card-body gap-5 p-4 md:p-6'>
+        <section className='card-body gap-5 p-4 md:p-6' aria-label='Cube controls'>
+          <h3 className='text-base-content/60 text-xs font-semibold tracking-widest uppercase'>
+            Controls
+          </h3>
           <MoveControls onMove={applyMoveAction} />
           <ActionBar
             moveCount={moveHistory.length}
