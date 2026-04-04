@@ -42,6 +42,8 @@ export {
 // Application
 export { createSolvedState } from './application/use-cases/createSolvedState'
 export { applyMoves } from './application/use-cases/applyMoves'
+export { generateScramble } from './application/use-cases/generateScramble'
+export type { RandomSource } from './application/use-cases/generateScramble'
 
 // Infrastructure
 export { toStickers } from './infrastructure/render/toStickers'
