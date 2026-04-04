@@ -1,13 +1,7 @@
 import type { MoveToken } from '@packages/cube-engine'
 import { beforeEach, describe, expect, it } from 'bun:test'
 
-import {
-  $solves,
-  clearSession,
-  deleteSolve,
-  recordSolve,
-  toggleDnf
-} from '~/features/timer/stores/sessionStore'
+import { $solves, clearSession, deleteSolve, recordSolve, toggleDnf } from '~/features/timer/stores'
 
 const STORAGE_KEY = 'cubeMaster:solves'
 const testScramble: MoveToken[] = ['R', 'U', "F'", 'L2', 'B', "D'"]

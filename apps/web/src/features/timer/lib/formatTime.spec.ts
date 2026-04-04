@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 
-import { formatTime } from '~/features/timer/lib/formatTime'
+import { formatTime } from '~/features/timer/lib'
 
 describe('formatTime', () => {
   it('should format zero as 0:00.00', () => {

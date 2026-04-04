@@ -2,8 +2,8 @@ import { cleanup, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, mock } from 'bun:test'
 
-import { SolveHistory } from '~/features/timer/components/SolveHistory'
-import type { Solve } from '~/features/timer/stores/sessionStore'
+import { SolveHistory } from '~/features/timer/components'
+import type { Solve } from '~/features/timer/stores'
 
 afterEach(() => {
   cleanup()

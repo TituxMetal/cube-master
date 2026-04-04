@@ -1,22 +1,28 @@
-import type { Solve } from '~/features/timer/stores/sessionStore'
+import type { Solve } from '~/features/timer/stores'
 
-export const computeBest = (solves: Solve[]): number | null => {
-  const validTimes = solves.filter(s => !s.dnf).map(s => s.time)
+export const computeBest = (solves: readonly Solve[]): number | null => {
+  let best: number | null = null
 
-  if (validTimes.length === 0) return null
+  for (const solve of solves) {
+    if (solve.dnf) continue
+    if (best === null || solve.time < best) best = solve.time
+  }
 
-  return Math.min(...validTimes)
+  return best
 }
 
-export const computeWorst = (solves: Solve[]): number | null => {
-  const validTimes = solves.filter(s => !s.dnf).map(s => s.time)
+export const computeWorst = (solves: readonly Solve[]): number | null => {
+  let worst: number | null = null
 
-  if (validTimes.length === 0) return null
+  for (const solve of solves) {
+    if (solve.dnf) continue
+    if (worst === null || solve.time > worst) worst = solve.time
+  }
 
-  return Math.max(...validTimes)
+  return worst
 }
 
-export const computeAverage = (solves: Solve[], count: 5 | 12): number | null => {
+export const computeAverage = (solves: readonly Solve[], count: 5 | 12): number | null => {
   if (solves.length < count) return null
 
   const recent = solves.slice(0, count)

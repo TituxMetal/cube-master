@@ -18,7 +18,14 @@ const loadSolves = (): Solve[] => {
 
     if (!raw) return []
 
-    return JSON.parse(raw) as Solve[]
+    const parsed: unknown = JSON.parse(raw)
+
+    if (!Array.isArray(parsed)) {
+      localStorage.removeItem(STORAGE_KEY)
+      return []
+    }
+
+    return parsed as Solve[]
   } catch {
     return []
   }

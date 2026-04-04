@@ -7,7 +7,7 @@ import {
   resetTimer,
   startTimer,
   stopTimer
-} from '~/features/timer/stores/timerStore'
+} from '~/features/timer/stores'
 
 beforeEach(() => {
   resetTimer()

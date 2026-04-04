@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
-import { formatTime } from '~/features/timer/lib/formatTime'
-import type { Solve } from '~/features/timer/stores/sessionStore'
+import { formatTime } from '~/features/timer/lib'
+import type { Solve } from '~/features/timer/stores'
 
 interface SolveHistoryProps {
   solves: readonly Solve[]
