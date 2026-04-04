@@ -11,8 +11,8 @@ describe('Cube Domain - stickerMapping', () => {
     const leftEdgeSticker = layoutB[3]
     const rightEdgeSticker = layoutB[5]
 
-    expect(leftEdgeSticker).toEqual({ type: 'edge', edgeId: 'BL', face: 'B' })
-    expect(rightEdgeSticker).toEqual({ type: 'edge', edgeId: 'BR', face: 'B' })
+    expect(leftEdgeSticker).toEqual({ type: 'edge', edgeId: 'BR', face: 'B' })
+    expect(rightEdgeSticker).toEqual({ type: 'edge', edgeId: 'BL', face: 'B' })
   })
 
   it('should have 4 corners, 4 edges and 1 center on each face', () => {
