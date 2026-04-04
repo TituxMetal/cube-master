@@ -68,7 +68,7 @@ describe('CubePlayground', () => {
     await user.click(screen.getByRole('button', { name: 'R' }))
 
     expect(screen.getByLabelText('Move history').querySelector('.badge')).toBeDefined()
-    expect(screen.getByText('1 moves')).toBeDefined()
+    expect(screen.getByText('1 move')).toBeDefined()
   })
 
   it('should clear everything on Reset', async () => {

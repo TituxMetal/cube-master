@@ -6,13 +6,13 @@ import type { CornerPositionId, EdgePositionId, FaceCode } from './pieces'
 describe('Cube Domain - stickerMapping', () => {
   const faces = ['U', 'D', 'F', 'B', 'L', 'R'] as const
 
-  it('should have correct left and right edges on back face', () => {
+  it('should have correct edges on back face (viewed from behind)', () => {
     const layoutB = stickerMapping.B
-    const leftEdgeSticker = layoutB[3]
-    const rightEdgeSticker = layoutB[5]
+    const rAdjacentEdge = layoutB[3]
+    const lAdjacentEdge = layoutB[5]
 
-    expect(leftEdgeSticker).toEqual({ type: 'edge', edgeId: 'BR', face: 'B' })
-    expect(rightEdgeSticker).toEqual({ type: 'edge', edgeId: 'BL', face: 'B' })
+    expect(rAdjacentEdge).toEqual({ type: 'edge', edgeId: 'BR', face: 'B' })
+    expect(lAdjacentEdge).toEqual({ type: 'edge', edgeId: 'BL', face: 'B' })
   })
 
   it('should have 4 corners, 4 edges and 1 center on each face', () => {

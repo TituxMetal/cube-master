@@ -32,6 +32,7 @@ export const MoveControls = ({ onMove }: MoveControlsProps) => (
           {group.moves.map(move => (
             <button
               key={move}
+              type='button'
               className='btn btn-sm bg-base-100 hover:bg-base-200 md:btn-md flex-1 cursor-pointer font-mono transition-all active:scale-95'
               onClick={() => onMove(move)}
             >

@@ -7,11 +7,16 @@ interface ActionBarProps {
 export const ActionBar = ({ moveCount, onReset, onScramble }: ActionBarProps) => (
   <nav className='flex items-center gap-3' aria-label='Cube actions'>
     {onScramble ? (
-      <button className='btn btn-primary btn-sm md:btn-md cursor-pointer' onClick={onScramble}>
+      <button
+        type='button'
+        className='btn btn-primary btn-sm md:btn-md cursor-pointer'
+        onClick={onScramble}
+      >
         Scramble
       </button>
     ) : null}
     <button
+      type='button'
       className='btn btn-ghost btn-sm md:btn-md cursor-pointer'
       onClick={onReset}
       disabled={moveCount === 0}
@@ -20,7 +25,7 @@ export const ActionBar = ({ moveCount, onReset, onScramble }: ActionBarProps) =>
     </button>
     {moveCount > 0 ? (
       <output className='badge badge-neutral badge-sm md:badge-md' aria-live='polite'>
-        {moveCount} moves
+        {moveCount} {moveCount === 1 ? 'move' : 'moves'}
       </output>
     ) : null}
   </nav>
