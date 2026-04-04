@@ -1,55 +1,33 @@
 # CubeMaster — Progress
 
-## Build Order
+## Current Feature: 02 — Cube Visualization
 
-- [x] **Project bootstrap** — Monorepo scaffolding, cube-engine package, demo page
-- [ ] **Design system** — DaisyUI rubiks theme, Radix primitives, Sora + Fira Code fonts
-- [ ] **Cube visualization** — CubeNet bound to real state, interactive controls, scramble/reset
-- [ ] **Timer mode** — Scramble generator, timer, session history, statistics (Ao5/Ao12)
-- [ ] **Solver mode** — Cube input UI, layer-by-layer solver, step-by-step navigation
-- [ ] **Coach mode** — Lesson browser, beginner content, algorithm demos, practice mode
-- [ ] **Polish** — Responsive pass, keyboard shortcuts, animations, error handling
+### Phase 1: Interactive Cube
 
-## Current Feature: 01 — Hono Migration
+- [ ] Create cube state store (atoms, computed, applyMoveAction, resetAction, hooks)
+- [ ] Tests for cube-store
+- [ ] Create MoveControls component (18 buttons, 6 face groups)
+- [ ] Tests for MoveControls
+- [ ] Create CubePlayground assembly (CubeNet + MoveControls wired to store)
+- [ ] Tests for CubePlayground
+- [ ] Replace CubeDemo on Home page, delete CubeDemo, update Home tests
 
-### Phase 1: Remove Astro from Shared Configs
+### Phase 2: Action Bar and Move History
 
-- [x] Clean packages/eslint-config (remove Astro parser and plugin)
-- [x] Clean root package.json (remove prettier-plugin-astro)
-- [x] Verify shared config still works
+- [ ] Create ActionBar (Reset + optional Scramble + move counter)
+- [ ] Create MoveHistory (kbd tokens display)
+- [ ] Tests for both components
+- [ ] Wire into CubePlayground, update integration tests
 
-### Phase 2: Replace Astro with Hono + Vite
+### Phase 3: Scramble Generator (cube-engine)
 
-- [x] Remove Astro dependencies, add Hono + lucide-react
-- [x] Update scripts (dev, build, start)
-- [x] Delete Astro files (config, layouts, pages)
-- [x] Create Vite config
-- [x] Create HTML entry point + React entry point
-- [x] Create Hono production server
-- [x] Update TypeScript and ESLint configs
-- [x] Verify all checks pass
+- [ ] Create generateScramble use-case with injectable random source
+- [ ] Tests for scramble generation
+- [ ] Export from cube-engine barrel
 
-### Phase 3: Client-Side Router
+### Phase 4: Wire Scramble and Final Verification
 
-- [x] Create router component
-- [x] Create route definitions
-- [x] Tests for router
-
-### Phase 4: Layout with Navbar and Footer
-
-- [x] Create Layout component (navbar with mode tabs + signature footer)
-- [x] Wire Layout into App
-- [x] Tests for Layout
-
-### Phase 5: Pages
-
-- [x] Home page with mode cards
-- [x] Placeholder pages (Solver, Coach, Timer)
-- [x] CubeDemo on home page
-- [x] Tests for pages
-
-### Phase 6: Docker and Cleanup
-
-- [x] Update Dockerfile.web CMD
-- [x] Final cleanup (no .astro references remain)
-- [x] Full verification (format, lint, typecheck, test, build)
+- [ ] Add scrambleAction to store + tests
+- [ ] Wire Scramble button into CubePlayground
+- [ ] Update integration tests
+- [ ] Full verification (test, typecheck, lint, format)
