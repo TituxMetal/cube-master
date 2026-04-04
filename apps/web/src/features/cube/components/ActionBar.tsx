@@ -24,7 +24,10 @@ export const ActionBar = ({ moveCount, onReset, onScramble }: ActionBarProps) =>
       Reset
     </button>
     {moveCount > 0 ? (
-      <output className='badge badge-neutral badge-sm md:badge-md' aria-live='polite'>
+      <output
+        className='badge badge-neutral badge-sm md:badge-md whitespace-nowrap'
+        aria-live='polite'
+      >
         {moveCount} {moveCount === 1 ? 'move' : 'moves'}
       </output>
     ) : null}
