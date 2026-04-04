@@ -4,20 +4,23 @@
 
 ### Phase 1: Interactive Cube
 
-- [ ] Create cube state store (atoms, computed, applyMoveAction, resetAction, hooks)
-- [ ] Tests for cube-store
-- [ ] Create MoveControls component (18 buttons, 6 face groups)
-- [ ] Tests for MoveControls
-- [ ] Create CubePlayground assembly (CubeNet + MoveControls wired to store)
-- [ ] Tests for CubePlayground
-- [ ] Replace CubeDemo on Home page, delete CubeDemo, update Home tests
+- [x] Create cube state store (atoms, computed, applyMoveAction, resetAction, hooks)
+- [x] Tests for cube-store
+- [x] Create MoveControls component (18 buttons, 6 face groups)
+- [x] Tests for MoveControls
+- [x] Create CubePlayground assembly (CubeNet + MoveControls wired to store)
+- [x] Tests for CubePlayground
+- [x] Replace CubeDemo on Home page, delete CubeDemo, update Home tests
+- [x] Fix corner orientation rendering (chirality-aware formula in toStickers)
+- [x] Fix B face stickerMapping (BL/BR edges swapped)
+- [x] After-move sticker tests for R, F, L, B faces
 
 ### Phase 2: Action Bar and Move History
 
-- [ ] Create ActionBar (Reset + optional Scramble + move counter)
-- [ ] Create MoveHistory (kbd tokens display)
-- [ ] Tests for both components
-- [ ] Wire into CubePlayground, update integration tests
+- [x] Create ActionBar (Reset + optional Scramble + move counter)
+- [x] Create MoveHistory (badge tokens display)
+- [x] Tests for both components
+- [x] Wire into CubePlayground, update integration tests
 
 ### Phase 3: Scramble Generator (cube-engine)
 
