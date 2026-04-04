@@ -33,16 +33,16 @@ export const FaceGrid = ({ stickers, label, className = '' }: FaceGridProps) => 
         </figcaption>
       ) : null}
 
-      <div className='bg-base-300 ring-base-content/20 grid size-20 grid-cols-3 gap-1 rounded-sm p-1 ring-1 md:size-28 lg:size-36'>
+      <ul className='bg-base-300 ring-base-content/20 grid size-20 grid-cols-3 gap-1 rounded-sm p-1 ring-1 md:size-28 lg:size-36'>
         {stickers.slice(0, 9).map((color, index) => (
-          <span
+          <li
             key={index}
             role='img'
             aria-label={colorNameByCode[color]}
             className={`ring-base-content/10 hover:shadow-primary/20 aspect-square rounded-xs ring-1 transition-shadow hover:shadow-md ${stickerClassByColor[color]}`}
           />
         ))}
-      </div>
+      </ul>
     </figure>
   )
 }
