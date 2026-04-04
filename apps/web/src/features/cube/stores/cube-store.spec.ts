@@ -6,7 +6,8 @@ import {
   $moveHistory,
   $stickersByFace,
   applyMoveAction,
-  resetAction
+  resetAction,
+  scrambleAction
 } from '~/features/cube/stores/cube-store'
 
 beforeEach(() => {
@@ -68,5 +69,24 @@ describe('cube-store', () => {
     resetAction()
 
     expect($moveHistory.get()).toEqual([])
+  })
+
+  it('should produce non-solved state on scramble', () => {
+    scrambleAction()
+
+    expect($cubeState.get()).not.toEqual(createSolvedState())
+  })
+
+  it('should set 20-move history on scramble', () => {
+    scrambleAction()
+
+    expect($moveHistory.get()).toHaveLength(20)
+  })
+
+  it('should replace existing history on scramble', () => {
+    applyMoveAction('R')
+    scrambleAction()
+
+    expect($moveHistory.get()).toHaveLength(20)
   })
 })

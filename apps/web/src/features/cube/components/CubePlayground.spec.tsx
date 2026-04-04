@@ -47,11 +47,11 @@ describe('CubePlayground', () => {
     expect(stickersAfter).not.toEqual(stickersBefore)
   })
 
-  it('should render Reset but not Scramble', () => {
+  it('should render Reset and Scramble buttons', () => {
     render(<CubePlayground />)
 
     expect(screen.getByRole('button', { name: 'Reset' })).toBeDefined()
-    expect(screen.queryByRole('button', { name: 'Scramble' })).toBeNull()
+    expect(screen.getByRole('button', { name: 'Scramble' })).toBeDefined()
   })
 
   it('should render empty move history', () => {
@@ -81,5 +81,29 @@ describe('CubePlayground', () => {
 
     expect(screen.getByText('No moves yet')).toBeDefined()
     expect(screen.queryByText(/moves$/)).toBeNull()
+  })
+
+  it('should show 20 history tokens after Scramble', async () => {
+    const user = userEvent.setup()
+
+    render(<CubePlayground />)
+
+    await user.click(screen.getByRole('button', { name: 'Scramble' }))
+
+    const history = screen.getByLabelText('Move history')
+
+    expect(history.querySelectorAll('.badge')).toHaveLength(20)
+    expect(screen.getByText('20 moves')).toBeDefined()
+  })
+
+  it('should return to solved after Scramble then Reset', async () => {
+    const user = userEvent.setup()
+
+    render(<CubePlayground />)
+
+    await user.click(screen.getByRole('button', { name: 'Scramble' }))
+    await user.click(screen.getByRole('button', { name: 'Reset' }))
+
+    expect(screen.getByText('No moves yet')).toBeDefined()
   })
 })
