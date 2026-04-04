@@ -24,13 +24,13 @@
 
 ### Phase 3: Scramble Generator (cube-engine)
 
-- [ ] Create generateScramble use-case with injectable random source
-- [ ] Tests for scramble generation
-- [ ] Export from cube-engine barrel
+- [x] Create generateScramble use-case with injectable random source
+- [x] Tests for scramble generation
+- [x] Export from cube-engine barrel
 
 ### Phase 4: Wire Scramble and Final Verification
 
-- [ ] Add scrambleAction to store + tests
-- [ ] Wire Scramble button into CubePlayground
-- [ ] Update integration tests
-- [ ] Full verification (test, typecheck, lint, format)
+- [x] Add scrambleAction to store + tests
+- [x] Wire Scramble button into CubePlayground
+- [x] Update integration tests
+- [x] Full verification (test, typecheck, lint, format)
