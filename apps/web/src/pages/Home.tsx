@@ -30,7 +30,6 @@ export const Home = () => (
           <li key={card.path}>
             <Link
               to={card.path}
-              aria-label={card.label}
               className={`card bg-base-200 focus-visible:ring-info border-l-4 no-underline shadow-sm transition-shadow hover:shadow-md focus-visible:ring-2 focus-visible:outline-none ${card.color}`}
             >
               <article className='card-body'>
