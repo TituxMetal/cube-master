@@ -1,4 +1,4 @@
-import { CubeDemo } from '~/features/cube/components/CubeDemo'
+import { CubePlayground } from '~/features/cube/components/CubePlayground'
 import { Link } from '~/lib/router'
 
 const MODE_CARDS = [
@@ -39,6 +39,6 @@ export const Home = () => (
         </li>
       ))}
     </ul>
-    <CubeDemo />
+    <CubePlayground />
   </div>
 )

@@ -1,10 +1,12 @@
 import { cleanup, render, screen } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it } from 'bun:test'
 
+import { resetAction } from '~/features/cube/stores/cube-store'
 import { Home } from '~/pages/Home'
 
 beforeEach(() => {
   window.history.pushState(null, '', '/')
+  resetAction()
 })
 
 afterEach(() => {
@@ -37,8 +39,8 @@ describe('Home', () => {
     expect(timerLink?.getAttribute('href')).toBe('/timer')
   })
 
-  it('should render the CubeDemo', () => {
+  it('should render the interactive cube', () => {
     render(<Home />)
-    expect(screen.getByText('CubeMaster — Engine Demo')).toBeDefined()
+    expect(screen.getByLabelText('Interactive cube')).toBeDefined()
   })
 })
