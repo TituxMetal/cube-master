@@ -2,8 +2,13 @@ import { cleanup, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it } from 'bun:test'
 
-import { $solves, clearSession } from '~/features/timer/stores/sessionStore'
-import { $currentScramble, $timerState, resetTimer } from '~/features/timer/stores/timerStore'
+import {
+  $currentScramble,
+  $solves,
+  $timerState,
+  clearSession,
+  resetTimer
+} from '~/features/timer/stores'
 import { Timer } from '~/pages/Timer'
 
 beforeEach(() => {

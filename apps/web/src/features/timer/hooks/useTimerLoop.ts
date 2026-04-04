@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 
-import { $timerState, tick } from '~/features/timer/stores/timerStore'
+import { $timerState, tick } from '~/features/timer/stores'
 
 export const useTimerLoop = () => {
   const rafRef = useRef<number>(0)

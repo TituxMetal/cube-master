@@ -1,8 +1,8 @@
 import { cleanup, render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it } from 'bun:test'
 
-import { StatsPanel } from '~/features/timer/components/StatsPanel'
-import type { Solve } from '~/features/timer/stores/sessionStore'
+import { StatsPanel } from '~/features/timer/components'
+import type { Solve } from '~/features/timer/stores'
 
 afterEach(() => {
   cleanup()

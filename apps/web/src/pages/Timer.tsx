@@ -1,28 +1,28 @@
 import { useCallback, useEffect } from 'react'
 
-import { ScrambleDisplay } from '~/features/timer/components/ScrambleDisplay'
-import { SolveHistory } from '~/features/timer/components/SolveHistory'
-import { StatsPanel } from '~/features/timer/components/StatsPanel'
-import { TimerDisplay } from '~/features/timer/components/TimerDisplay'
-import { useTimerLoop } from '~/features/timer/hooks/useTimerLoop'
 import {
-  deleteSolve,
-  recordSolve,
-  toggleDnf,
-  useSolves
-} from '~/features/timer/stores/sessionStore'
+  ScrambleDisplay,
+  SolveHistory,
+  StatsPanel,
+  TimerDisplay
+} from '~/features/timer/components'
+import { useTimerLoop } from '~/features/timer/hooks'
 import {
   $currentScramble,
   $elapsedMs,
   $timerState,
+  deleteSolve,
   newScramble,
+  recordSolve,
   resetTimer,
   startTimer,
   stopTimer,
+  toggleDnf,
   useCurrentScramble,
   useElapsedMs,
+  useSolves,
   useTimerState
-} from '~/features/timer/stores/timerStore'
+} from '~/features/timer/stores'
 
 const handleTimerToggle = () => {
   const state = $timerState.get()
@@ -48,10 +48,15 @@ export const Timer = () => {
   useTimerLoop()
 
   const handleKeyDown = useCallback((event: KeyboardEvent) => {
-    if (event.code !== 'Space') return
+    if (event.code !== 'Space' || event.repeat) return
 
-    const target = event.target as HTMLElement
-    if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') return
+    const target = event.target
+    if (
+      target instanceof Element &&
+      target.closest('button, a, input, textarea, select, [role="button"]')
+    ) {
+      return
+    }
 
     event.preventDefault()
     handleTimerToggle()
@@ -64,7 +69,10 @@ export const Timer = () => {
 
   return (
     <section className='flex flex-col gap-6' aria-label='Timer mode'>
-      <ScrambleDisplay scramble={scramble} onNewScramble={newScramble} />
+      <ScrambleDisplay
+        scramble={scramble}
+        onNewScramble={timerState === 'idle' ? newScramble : undefined}
+      />
       <button
         type='button'
         className='w-full cursor-pointer border-none bg-transparent p-0'

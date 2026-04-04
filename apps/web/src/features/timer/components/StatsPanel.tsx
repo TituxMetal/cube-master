@@ -1,6 +1,5 @@
-import { formatTime } from '~/features/timer/lib/formatTime'
-import { computeAverage, computeBest, computeWorst } from '~/features/timer/lib/statistics'
-import type { Solve } from '~/features/timer/stores/sessionStore'
+import { computeAverage, computeBest, computeWorst, formatTime } from '~/features/timer/lib'
+import type { Solve } from '~/features/timer/stores'
 
 interface StatsPanelProps {
   solves: readonly Solve[]
@@ -13,11 +12,10 @@ const formatStat = (value: number | null): string => {
 }
 
 export const StatsPanel = ({ solves }: StatsPanelProps) => {
-  const mutableSolves = solves as Solve[]
-  const best = computeBest(mutableSolves)
-  const worst = computeWorst(mutableSolves)
-  const ao5 = computeAverage(mutableSolves, 5)
-  const ao12 = computeAverage(mutableSolves, 12)
+  const best = computeBest(solves)
+  const worst = computeWorst(solves)
+  const ao5 = computeAverage(solves, 5)
+  const ao12 = computeAverage(solves, 12)
 
   const stats = [
     { label: 'Best', value: formatStat(best) },

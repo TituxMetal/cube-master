@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 
-import { computeAverage, computeBest, computeWorst } from '~/features/timer/lib/statistics'
-import type { Solve } from '~/features/timer/stores/sessionStore'
+import { computeAverage, computeBest, computeWorst } from '~/features/timer/lib'
+import type { Solve } from '~/features/timer/stores'
 
 const makeSolve = (time: number, dnf = false): Solve => ({
   id: crypto.randomUUID(),

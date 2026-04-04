@@ -2,7 +2,7 @@ import type { MoveToken } from '@packages/cube-engine'
 import { cleanup, render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it } from 'bun:test'
 
-import { ScrambleDisplay } from '~/features/timer/components/ScrambleDisplay'
+import { ScrambleDisplay } from '~/features/timer/components'
 
 afterEach(() => {
   cleanup()
