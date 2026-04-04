@@ -33,7 +33,13 @@ describe('ActionBar', () => {
     expect(screen.queryByText(/moves/)).toBeNull()
   })
 
-  it('should show move counter with correct count', () => {
+  it('should show singular "move" for count of 1', () => {
+    render(<ActionBar moveCount={1} onReset={() => {}} />)
+
+    expect(screen.getByText('1 move')).toBeDefined()
+  })
+
+  it('should show plural "moves" for count greater than 1', () => {
     render(<ActionBar moveCount={7} onReset={() => {}} />)
 
     expect(screen.getByText('7 moves')).toBeDefined()
