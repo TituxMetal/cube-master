@@ -76,9 +76,9 @@ export const stickerMapping: StickerMapping = {
     0: { type: 'corner', cornerId: 'URB', face: 'B' },
     1: { type: 'edge', edgeId: 'UB', face: 'B' },
     2: { type: 'corner', cornerId: 'UBL', face: 'B' },
-    3: { type: 'edge', edgeId: 'BL', face: 'B' },
+    3: { type: 'edge', edgeId: 'BR', face: 'B' },
     4: { type: 'center', face: 'B' },
-    5: { type: 'edge', edgeId: 'BR', face: 'B' },
+    5: { type: 'edge', edgeId: 'BL', face: 'B' },
     6: { type: 'corner', cornerId: 'DRB', face: 'B' },
     7: { type: 'edge', edgeId: 'DB', face: 'B' },
     8: { type: 'corner', cornerId: 'DBL', face: 'B' }

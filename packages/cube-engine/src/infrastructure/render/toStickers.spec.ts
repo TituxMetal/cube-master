@@ -2,6 +2,7 @@ import { describe, it, expect } from 'bun:test'
 
 import { createSolvedState } from '~/application/use-cases/createSolvedState'
 import { Color } from '~/domain/constants'
+import { applyMove } from '~/domain/moves/apply'
 
 import { toStickers } from './toStickers'
 
@@ -141,6 +142,110 @@ describe('Cube Infrastructure - toStickers', () => {
       expect(stickers.B[6]).toBe(state.corners.DBL.colors[1])
       expect(stickers.B[7]).toBe(state.edges.DB.colors[1])
       expect(stickers.B[8]).toBe(state.corners.DRB.colors[2])
+    })
+  })
+
+  describe('toStickers - after moves (orientation handling)', () => {
+    it('should show correct stickers after R move', () => {
+      const state = applyMove(createSolvedState(), 'R')
+      const stickers = toStickers(state)
+
+      // R face stays all red (face rotates but stickers stay on R)
+      expect(stickers.R[4]).toBe(Color.Red)
+
+      // After R: F right column (green) → U right column
+      expect(stickers.U[2]).toBe(Color.Green)
+      expect(stickers.U[5]).toBe(Color.Green)
+      expect(stickers.U[8]).toBe(Color.Green)
+
+      // After R: U right column (white) → B left column (reversed in net)
+      expect(stickers.B[0]).toBe(Color.White)
+      expect(stickers.B[3]).toBe(Color.White)
+      expect(stickers.B[6]).toBe(Color.White)
+
+      // After R: B left column (blue) → D right column (reversed)
+      expect(stickers.D[2]).toBe(Color.Blue)
+      expect(stickers.D[5]).toBe(Color.Blue)
+      expect(stickers.D[8]).toBe(Color.Blue)
+
+      // After R: D right column (yellow) → F right column
+      expect(stickers.F[2]).toBe(Color.Yellow)
+      expect(stickers.F[5]).toBe(Color.Yellow)
+      expect(stickers.F[8]).toBe(Color.Yellow)
+    })
+
+    it('should show correct stickers after F move', () => {
+      const state = applyMove(createSolvedState(), 'F')
+      const stickers = toStickers(state)
+
+      // F face stays all green
+      expect(stickers.F[4]).toBe(Color.Green)
+
+      // After F: U bottom row (white) → R left column
+      expect(stickers.R[0]).toBe(Color.White)
+      expect(stickers.R[3]).toBe(Color.White)
+      expect(stickers.R[6]).toBe(Color.White)
+
+      // After F: L right column (orange) → U bottom row
+      expect(stickers.U[6]).toBe(Color.Orange)
+      expect(stickers.U[7]).toBe(Color.Orange)
+      expect(stickers.U[8]).toBe(Color.Orange)
+    })
+
+    it('should show correct stickers after L move', () => {
+      const state = applyMove(createSolvedState(), 'L')
+      const stickers = toStickers(state)
+
+      // L face stays all orange
+      expect(stickers.L[4]).toBe(Color.Orange)
+
+      // After L: B right column (blue) → U left column
+      expect(stickers.U[0]).toBe(Color.Blue)
+      expect(stickers.U[3]).toBe(Color.Blue)
+      expect(stickers.U[6]).toBe(Color.Blue)
+
+      // After L: U left column (white) → F left column
+      expect(stickers.F[0]).toBe(Color.White)
+      expect(stickers.F[3]).toBe(Color.White)
+      expect(stickers.F[6]).toBe(Color.White)
+
+      // After L: F left column (green) → D left column
+      expect(stickers.D[0]).toBe(Color.Green)
+      expect(stickers.D[3]).toBe(Color.Green)
+      expect(stickers.D[6]).toBe(Color.Green)
+
+      // After L: D left column (yellow) → B right column
+      expect(stickers.B[2]).toBe(Color.Yellow)
+      expect(stickers.B[5]).toBe(Color.Yellow)
+      expect(stickers.B[8]).toBe(Color.Yellow)
+    })
+
+    it('should show correct stickers after B move', () => {
+      const state = applyMove(createSolvedState(), 'B')
+      const stickers = toStickers(state)
+
+      // B face stays all blue
+      expect(stickers.B[4]).toBe(Color.Blue)
+
+      // After B: R right column (red) → U top row
+      expect(stickers.U[0]).toBe(Color.Red)
+      expect(stickers.U[1]).toBe(Color.Red)
+      expect(stickers.U[2]).toBe(Color.Red)
+
+      // After B: U top row (white) → L left column
+      expect(stickers.L[0]).toBe(Color.White)
+      expect(stickers.L[3]).toBe(Color.White)
+      expect(stickers.L[6]).toBe(Color.White)
+
+      // After B: L left column (orange) → D back row
+      expect(stickers.D[0]).toBe(Color.Orange)
+      expect(stickers.D[1]).toBe(Color.Orange)
+      expect(stickers.D[2]).toBe(Color.Orange)
+
+      // After B: D back row (yellow) → R right column
+      expect(stickers.R[2]).toBe(Color.Yellow)
+      expect(stickers.R[5]).toBe(Color.Yellow)
+      expect(stickers.R[8]).toBe(Color.Yellow)
     })
   })
 })
