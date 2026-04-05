@@ -50,23 +50,24 @@ const encodeState = (state: CubeState): string => {
 // BFS to find the shortest sequence of algorithms that solves the D layer
 const bfsSolve = (state: CubeState, maxDepth: number): MoveToken[] | null => {
   // Generate all actions: D-rotation + algorithm
-  const actions: { moves: MoveToken[]; label: string }[] = []
+  const actions: MoveToken[][] = []
   const dMoves: MoveToken[][] = [[], ['D'], ['D2'], ["D'"]]
 
   for (const dRot of dMoves) {
     for (const alg of ALGORITHMS) {
-      actions.push({ moves: [...dRot, ...alg], label: `${dRot}+alg` })
+      actions.push([...dRot, ...alg])
     }
   }
 
-  // BFS
+  // BFS with index-based queue (avoids O(n) shift)
   type QueueItem = { state: CubeState; moves: MoveToken[]; depth: number }
   const queue: QueueItem[] = [{ state, moves: [], depth: 0 }]
+  let head = 0
   const visited = new Set<string>()
   visited.add(encodeState(state))
 
-  while (queue.length > 0) {
-    const item = queue.shift()!
+  while (head < queue.length) {
+    const item = queue[head++]
 
     // Try D alignment first (might already be solved with just a D rotation)
     for (const dAlign of dMoves) {
@@ -78,13 +79,13 @@ const bfsSolve = (state: CubeState, maxDepth: number): MoveToken[] | null => {
     if (item.depth >= maxDepth) continue
 
     for (const action of actions) {
-      const newState = applySeq(item.state, action.moves)
+      const newState = applySeq(item.state, action)
       const key = encodeState(newState)
       if (visited.has(key)) continue
       visited.add(key)
       queue.push({
         state: newState,
-        moves: [...item.moves, ...action.moves],
+        moves: [...item.moves, ...action],
         depth: item.depth + 1
       })
     }

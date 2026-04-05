@@ -7,10 +7,10 @@ import { findEdge } from './helpers'
 type SecondLayerTarget = {
   id: EdgePositionId
   colors: [ColorCode, ColorCode]
-  // D-layer position to align before right insert (orientation 0: first color faces D)
+  // D-layer position to align before right insert (orientation 1: first color faces side)
   rightAlignDPos: EdgePositionId
   insertRight: MoveToken[]
-  // D-layer position to align before left insert (orientation 1: first color faces side)
+  // D-layer position to align before left insert (orientation 0: first color faces D)
   leftAlignDPos: EdgePositionId
   insertLeft: MoveToken[]
 }
