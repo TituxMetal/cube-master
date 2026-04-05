@@ -33,7 +33,6 @@ export const Solver = () => {
 
       <InteractiveCubeNet
         stickers={stickers}
-        selectedColor={selectedColor}
         onPaintSticker={(face, index) => paintSticker(face, index, selectedColor)}
       />
 
