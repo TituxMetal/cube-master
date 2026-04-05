@@ -4,17 +4,17 @@
 
 ### Phase 1: Interactive CubeNet Input + Engine Validation
 
-- [ ] Create state reconstruction use case (stickers → CubeState + validation)
-- [ ] Tests for reconstruction + validation
-- [ ] Create move inverse utility (invertMove, invertMoves)
-- [ ] Tests for move inverse
-- [ ] Create solver store (input part: stickers, selected color, validation)
-- [ ] Create ColorPalette component
-- [ ] Create InteractiveFaceGrid component (clickable stickers)
-- [ ] Create InteractiveCubeNet component
-- [ ] Tests for input components
-- [ ] Replace Solver page placeholder with input assembly
-- [ ] Update Solver page tests
+- [x] Create state reconstruction use case (stickers → CubeState + validation)
+- [x] Tests for reconstruction + validation
+- [x] Create move inverse utility (invertMove, invertMoves)
+- [x] Tests for move inverse
+- [x] Create solver store (input part: stickers, selected color, validation)
+- [x] Create ColorPalette component
+- [x] Create InteractiveFaceGrid component (clickable stickers)
+- [x] Create InteractiveCubeNet component
+- [x] Tests for input components
+- [x] Replace Solver page placeholder with input assembly
+- [x] Update Solver page tests
 
 ### Phase 2: White Cross Solver
 
