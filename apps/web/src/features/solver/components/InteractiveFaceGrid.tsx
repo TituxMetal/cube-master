@@ -5,7 +5,6 @@ import { colorNameByCode, faceNameByCode, stickerClassByColor } from '~/features
 interface InteractiveFaceGridProps {
   stickers: readonly ColorCode[]
   face: FaceCode
-  selectedColor: ColorCode
   onPaintSticker: (face: FaceCode, index: number) => void
   className?: string
 }
@@ -13,7 +12,6 @@ interface InteractiveFaceGridProps {
 export const InteractiveFaceGrid = ({
   stickers,
   face,
-  selectedColor,
   onPaintSticker,
   className = ''
 }: InteractiveFaceGridProps) => {

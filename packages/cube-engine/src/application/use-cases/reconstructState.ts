@@ -132,9 +132,17 @@ const computeParity = <T extends string>(
 
 export const reconstructState = (stickers: StickersByFace): ReconstructResult => {
   const errors: string[] = []
+  const faces = ['U', 'D', 'F', 'B', 'L', 'R'] as const
+
+  // 0. Validate input shape (all 6 faces present with 9 stickers each)
+  for (const face of faces) {
+    if (!Array.isArray(stickers[face]) || stickers[face].length !== 9) {
+      return { ok: false, errors: [`Missing or invalid sticker array for face ${face}`] }
+    }
+  }
 
   // 1. Validate color counts (exactly 9 of each)
-  const allStickers = (['U', 'D', 'F', 'B', 'L', 'R'] as const).flatMap(f => stickers[f])
+  const allStickers = faces.flatMap(f => stickers[f])
   const colorCounts = new Map<ColorCode, number>()
   for (const color of allStickers) {
     colorCounts.set(color, (colorCounts.get(color) ?? 0) + 1)
@@ -149,7 +157,6 @@ export const reconstructState = (stickers: StickersByFace): ReconstructResult =>
   if (errors.length > 0) return { ok: false, errors }
 
   // 2. Validate centers (each color exactly once)
-  const faces = ['U', 'D', 'F', 'B', 'L', 'R'] as const
   const centers = {} as Record<FaceCode, ColorCode>
   const centerColors = new Set<ColorCode>()
   for (const face of faces) {

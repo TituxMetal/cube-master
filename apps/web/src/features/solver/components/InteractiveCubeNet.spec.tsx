@@ -13,9 +13,7 @@ afterEach(() => {
 
 describe('InteractiveCubeNet', () => {
   it('should render all 6 faces', () => {
-    render(
-      <InteractiveCubeNet stickers={solvedStickers} selectedColor='Rd' onPaintSticker={() => {}} />
-    )
+    render(<InteractiveCubeNet stickers={solvedStickers} onPaintSticker={() => {}} />)
 
     expect(screen.getByLabelText('Up face')).toBeDefined()
     expect(screen.getByLabelText('Down face')).toBeDefined()
@@ -26,9 +24,7 @@ describe('InteractiveCubeNet', () => {
   })
 
   it('should render 54 sticker buttons total', () => {
-    render(
-      <InteractiveCubeNet stickers={solvedStickers} selectedColor='Rd' onPaintSticker={() => {}} />
-    )
+    render(<InteractiveCubeNet stickers={solvedStickers} onPaintSticker={() => {}} />)
 
     expect(screen.getAllByRole('button')).toHaveLength(54)
   })
@@ -37,9 +33,7 @@ describe('InteractiveCubeNet', () => {
     const user = userEvent.setup()
     const onPaint = mock(() => {})
 
-    render(
-      <InteractiveCubeNet stickers={solvedStickers} selectedColor='Rd' onPaintSticker={onPaint} />
-    )
+    render(<InteractiveCubeNet stickers={solvedStickers} onPaintSticker={onPaint} />)
 
     const upFace = screen.getByLabelText('Up face')
     const buttons = upFace.querySelectorAll('button')

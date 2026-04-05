@@ -13,27 +13,13 @@ afterEach(() => {
 
 describe('InteractiveFaceGrid', () => {
   it('should render 9 sticker buttons', () => {
-    render(
-      <InteractiveFaceGrid
-        stickers={whiteFace}
-        face='U'
-        selectedColor='Rd'
-        onPaintSticker={() => {}}
-      />
-    )
+    render(<InteractiveFaceGrid stickers={whiteFace} face='U' onPaintSticker={() => {}} />)
 
     expect(screen.getAllByRole('button')).toHaveLength(9)
   })
 
   it('should render face label', () => {
-    render(
-      <InteractiveFaceGrid
-        stickers={whiteFace}
-        face='U'
-        selectedColor='Rd'
-        onPaintSticker={() => {}}
-      />
-    )
+    render(<InteractiveFaceGrid stickers={whiteFace} face='U' onPaintSticker={() => {}} />)
 
     expect(screen.getByLabelText('Up face')).toBeDefined()
   })
@@ -42,14 +28,7 @@ describe('InteractiveFaceGrid', () => {
     const user = userEvent.setup()
     const onPaint = mock(() => {})
 
-    render(
-      <InteractiveFaceGrid
-        stickers={whiteFace}
-        face='F'
-        selectedColor='Rd'
-        onPaintSticker={onPaint}
-      />
-    )
+    render(<InteractiveFaceGrid stickers={whiteFace} face='F' onPaintSticker={onPaint} />)
 
     const buttons = screen.getAllByRole('button')
     await user.click(buttons[0])
@@ -62,14 +41,7 @@ describe('InteractiveFaceGrid', () => {
     const user = userEvent.setup()
     const onPaint = mock(() => {})
 
-    render(
-      <InteractiveFaceGrid
-        stickers={whiteFace}
-        face='U'
-        selectedColor='Rd'
-        onPaintSticker={onPaint}
-      />
-    )
+    render(<InteractiveFaceGrid stickers={whiteFace} face='U' onPaintSticker={onPaint} />)
 
     const buttons = screen.getAllByRole('button')
     await user.click(buttons[4])
@@ -78,28 +50,14 @@ describe('InteractiveFaceGrid', () => {
   })
 
   it('should disable center sticker button', () => {
-    render(
-      <InteractiveFaceGrid
-        stickers={whiteFace}
-        face='U'
-        selectedColor='Rd'
-        onPaintSticker={() => {}}
-      />
-    )
+    render(<InteractiveFaceGrid stickers={whiteFace} face='U' onPaintSticker={() => {}} />)
 
     const buttons = screen.getAllByRole('button')
     expect((buttons[4] as HTMLButtonElement).disabled).toBe(true)
   })
 
   it('should have aria-labels with color names', () => {
-    render(
-      <InteractiveFaceGrid
-        stickers={whiteFace}
-        face='U'
-        selectedColor='Rd'
-        onPaintSticker={() => {}}
-      />
-    )
+    render(<InteractiveFaceGrid stickers={whiteFace} face='U' onPaintSticker={() => {}} />)
 
     expect(screen.getByLabelText('Up sticker 0: white')).toBeDefined()
     expect(screen.getByLabelText('Up sticker 4: white')).toBeDefined()
