@@ -15,6 +15,7 @@
     "test": "bun test",
     "test:coverage": "bun test --coverage",
     "test:watch": "bun test --watch",
+    "demo": "bun run src/demo.ts",
     "typecheck": "tsc --noEmit",
     "lint": "eslint . --fix",
     "lint:check": "eslint .",
