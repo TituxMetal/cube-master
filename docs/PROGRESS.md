@@ -18,30 +18,30 @@
 
 ### Phase 2: White Cross Solver
 
-- [ ] Create solver infrastructure (types, helpers)
-- [ ] Implement White Cross solver
-- [ ] Tests for White Cross solver
+- [x] Create solver infrastructure (types, helpers)
+- [x] Implement White Cross solver
+- [x] Tests for White Cross solver
 
 ### Phase 3: White Corners + Second Layer
 
-- [ ] Implement White Corners solver
-- [ ] Tests for White Corners solver
-- [ ] Implement Second Layer Edges solver
-- [ ] Tests for Second Layer solver
+- [x] Implement White Corners solver
+- [x] Tests for White Corners solver
+- [x] Implement Second Layer Edges solver
+- [x] Tests for Second Layer solver
 
 ### Phase 4: Yellow Layer Solver
 
-- [ ] Implement Yellow Cross solver
-- [ ] Implement Yellow Edges solver
-- [ ] Implement Yellow Corners Position solver
-- [ ] Implement Yellow Corners Orientation solver
-- [ ] Tests for all Yellow Layer solvers
+- [x] Implement Yellow Cross solver
+- [x] Implement Yellow Edges solver
+- [x] Implement Yellow Corners Position solver
+- [x] Implement Yellow Corners Orientation solver
+- [x] Tests for all Yellow Layer solvers
 
 ### Phase 5: Full Solver Integration
 
-- [ ] Create solveCube use case (chains all 7 phases)
-- [ ] Integration tests (multiple scrambles → verify solved)
-- [ ] Export new types and functions from cube-engine
+- [x] Create solveCube use case (chains all 7 phases)
+- [x] Integration tests (multiple scrambles → verify solved)
+- [x] Export new types and functions from cube-engine
 
 ### Phase 6: Solver Store (Solution Part)
 
