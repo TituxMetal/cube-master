@@ -1,15 +1,6 @@
 import type { ColorCode, FaceCode } from '@packages/cube-engine'
 
-import { colorNameByCode, stickerClassByColor } from '~/features/cube/lib/colors'
-
-const faceNameByCode: Record<FaceCode, string> = {
-  U: 'Up',
-  D: 'Down',
-  F: 'Front',
-  B: 'Back',
-  L: 'Left',
-  R: 'Right'
-}
+import { colorNameByCode, faceNameByCode, stickerClassByColor } from '~/features/cube/lib/colors'
 
 interface FaceGridProps {
   stickers: readonly ColorCode[]

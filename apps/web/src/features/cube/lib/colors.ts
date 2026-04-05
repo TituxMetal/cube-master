@@ -1,4 +1,13 @@
-import type { ColorCode } from '@packages/cube-engine'
+import type { ColorCode, FaceCode } from '@packages/cube-engine'
+
+export const faceNameByCode: Record<FaceCode, string> = {
+  U: 'Up',
+  D: 'Down',
+  F: 'Front',
+  B: 'Back',
+  L: 'Left',
+  R: 'Right'
+} as const
 
 export const stickerClassByColor: Record<ColorCode, string> = {
   Wt: 'bg-cube-white',
