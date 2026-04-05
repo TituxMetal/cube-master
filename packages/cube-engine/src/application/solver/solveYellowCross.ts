@@ -59,7 +59,7 @@ export const solveYellowCross = (state: CubeState): { state: CubeState; moves: M
     }
   }
 
-  // Max 2 algorithm applications (dot → L → cross)
+  // Usually 2 applications (dot → L → cross). 3rd iteration as safety bound.
   for (let i = 0; i < 3; i++) {
     const orient = getOrientations(current)
     const pattern = classifyPattern(orient)

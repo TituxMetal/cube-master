@@ -39,7 +39,7 @@
 
 ### Phase 5: Full Solver Integration
 
-- [x] Create solveCube use case (chains all 7 phases)
+- [x] Create solveCube use case (chains all 5 phases)
 - [x] Integration tests (multiple scrambles → verify solved)
 - [x] Export new types and functions from cube-engine
 
