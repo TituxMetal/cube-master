@@ -1,6 +1,6 @@
 export { Color, Face, CornerPosition, EdgePosition } from './constants'
 export type { StickerIndex, StickerMapping } from './geometry'
-export { stickerMapping, faceIndexInId } from './geometry'
+export { stickerMapping, cornerColorIndex, faceIndexInId } from './geometry'
 export { isColor, isFace, isCornerPosition, isEdgePosition } from './guards'
 export type {
   ColorCode,

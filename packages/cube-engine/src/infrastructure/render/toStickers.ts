@@ -1,38 +1,5 @@
-import type {
-  ColorCode,
-  CornerPositionId,
-  CubeState,
-  FaceCode,
-  StickerIndex,
-  StickerMapping
-} from '~/domain'
-import { stickerMapping, faceIndexInId } from '~/domain/geometry'
-
-/**
- * Compute the color index for a corner sticker, accounting for the chirality
- * difference between U-layer and D-layer corner naming conventions.
- *
- * U-layer names (UFR, ULF, URB, UBL) and D-layer names (DFR, DLF, DRB, DBL)
- * list faces in opposite cyclic orders. Same-layer moves produce cyclic
- * sticker permutations, but cross-layer moves produce transpositions that
- * require separate handling.
- */
-const cornerColorIndex = (
-  pieceId: CornerPositionId,
-  positionId: CornerPositionId,
-  baseIndex: number,
-  orientation: number
-): number => {
-  const sameLayer = pieceId[0] === positionId[0]
-
-  if (sameLayer) {
-    return positionId[0] === 'U' ? (baseIndex + orientation) % 3 : (baseIndex - orientation + 3) % 3
-  }
-
-  const fixed = pieceId[0] === 'U' ? (3 - orientation) % 3 : orientation
-
-  return baseIndex === fixed ? baseIndex : 3 - baseIndex - fixed
-}
+import type { ColorCode, CubeState, FaceCode, StickerIndex, StickerMapping } from '~/domain'
+import { stickerMapping, cornerColorIndex, faceIndexInId } from '~/domain/geometry'
 
 export type StickersByFace = Record<FaceCode, ColorCode[]>
 
