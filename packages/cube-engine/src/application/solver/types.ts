@@ -1,8 +1,12 @@
 import type { MoveToken } from '~/domain'
 
+export type MoveGroup = {
+  moves: MoveToken[]
+}
+
 export type SolvePhase = {
   name: string
-  moves: MoveToken[]
+  groups: MoveGroup[]
 }
 
 export type Solution = {

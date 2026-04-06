@@ -44,8 +44,8 @@ const printSolve = (
   )
   console.log(dim(`    Scramble: ${scramble.join(' ')}`))
   const phases = solution.phases
-    .filter(p => p.moves.length > 0)
-    .map(p => `${p.name}(${p.moves.length})`)
+    .filter(p => p.groups.flatMap(g => g.moves).length > 0)
+    .map(p => `${p.name}(${p.groups.flatMap(g => g.moves).length})`)
     .join(' → ')
   if (phases) console.log(dim(`    Phases:   ${phases}`))
 }
@@ -69,7 +69,7 @@ const runRandomBenchmark = (count: number) => {
 
     const result = applyMoves(
       scrambled,
-      solution.phases.flatMap(p => p.moves)
+      solution.phases.flatMap(p => p.groups.flatMap(g => g.moves))
     )
     const ok = isSolved(result)
 
@@ -141,7 +141,7 @@ const runFixedScrambles = () => {
     const elapsed = performance.now() - t0
     const result = applyMoves(
       scrambled,
-      solution.phases.flatMap(p => p.moves)
+      solution.phases.flatMap(p => p.groups.flatMap(g => g.moves))
     )
     printSolve(name, scramble, solution, elapsed, isSolved(result))
   }
@@ -190,7 +190,7 @@ const runAlgorithmScenarios = () => {
     const elapsed = performance.now() - t0
     const result = applyMoves(
       scrambled,
-      solution.phases.flatMap(p => p.moves)
+      solution.phases.flatMap(p => p.groups.flatMap(g => g.moves))
     )
     printSolve(name, setup, solution, elapsed, isSolved(result))
   }
@@ -227,7 +227,9 @@ const runPhaseBreakdown = () => {
   const solution = solveCube(scrambled)
 
   for (const phase of solution.phases) {
-    console.log(`  ${pad(phase.name, 20)} ${rpad(String(phase.moves.length), 4)} moves`)
+    console.log(
+      `  ${pad(phase.name, 20)} ${rpad(String(phase.groups.flatMap(g => g.moves).length), 4)} moves`
+    )
   }
   console.log('  ─'.repeat(20))
   console.log(`  ${pad('Total', 20)} ${rpad(String(solution.totalMoves), 4)} moves`)

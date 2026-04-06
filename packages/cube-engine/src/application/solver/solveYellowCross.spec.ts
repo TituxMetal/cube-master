@@ -39,7 +39,7 @@ describe('solveYellowCross', () => {
     const state = createSolvedState()
     const result = solveYellowCross(state)
 
-    expect(result.moves).toHaveLength(0)
+    expect(result.groups.flatMap(g => g.moves)).toHaveLength(0)
   })
 
   it('should solve yellow cross after F2L', () => {

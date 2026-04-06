@@ -40,7 +40,7 @@ describe('solveWhiteCorners', () => {
     const state = createSolvedState()
     const result = solveWhiteCorners(state)
 
-    expect(result.moves).toHaveLength(0)
+    expect(result.groups.flatMap(g => g.moves)).toHaveLength(0)
   })
 
   it('should solve corners after white cross on a simple scramble', () => {

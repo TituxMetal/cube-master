@@ -12,7 +12,7 @@ const verifySolution = (scramble: MoveToken[]) => {
   const solution = solveCube(scrambled)
 
   // Apply all solution moves to the scrambled state
-  const allMoves = solution.phases.flatMap(p => p.moves)
+  const allMoves = solution.phases.flatMap(p => p.groups.flatMap(g => g.moves))
   const result = applyMoves(scrambled, allMoves)
 
   // Should match solved state
@@ -35,7 +35,7 @@ describe('solveCube', () => {
     expect(solution.totalMoves).toBe(0)
     expect(solution.phases).toHaveLength(5)
     for (const phase of solution.phases) {
-      expect(phase.moves).toHaveLength(0)
+      expect(phase.groups.flatMap(g => g.moves)).toHaveLength(0)
     }
   })
 

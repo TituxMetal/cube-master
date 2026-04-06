@@ -37,7 +37,7 @@ describe('solveYellowCorners', () => {
     const state = createSolvedState()
     const result = solveYellowCorners(state)
 
-    expect(result.moves).toHaveLength(0)
+    expect(result.groups.flatMap(g => g.moves)).toHaveLength(0)
   })
 
   it('should solve a simple scramble fully', () => {
