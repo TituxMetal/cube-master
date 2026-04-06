@@ -65,15 +65,15 @@ describe('Cube Infrastructure - toStickers', () => {
       const state = createSolvedState()
       const stickers = toStickers(state)
 
-      expect(stickers.D[0]).toBe(state.corners.DBL.colors[0])
-      expect(stickers.D[1]).toBe(state.edges.DB.colors[0])
-      expect(stickers.D[2]).toBe(state.corners.DRB.colors[0])
+      expect(stickers.D[0]).toBe(state.corners.DLF.colors[0])
+      expect(stickers.D[1]).toBe(state.edges.DF.colors[0])
+      expect(stickers.D[2]).toBe(state.corners.DFR.colors[0])
       expect(stickers.D[3]).toBe(state.edges.DL.colors[0])
       expect(stickers.D[4]).toBe(state.centers.D)
       expect(stickers.D[5]).toBe(state.edges.DR.colors[0])
-      expect(stickers.D[6]).toBe(state.corners.DLF.colors[0])
-      expect(stickers.D[7]).toBe(state.edges.DF.colors[0])
-      expect(stickers.D[8]).toBe(state.corners.DFR.colors[0])
+      expect(stickers.D[6]).toBe(state.corners.DBL.colors[0])
+      expect(stickers.D[7]).toBe(state.edges.DB.colors[0])
+      expect(stickers.D[8]).toBe(state.corners.DRB.colors[0])
     })
   })
 
@@ -238,9 +238,9 @@ describe('Cube Infrastructure - toStickers', () => {
       expect(stickers.L[6]).toBe(Color.White)
 
       // After B: L left column (orange) → D back row
-      expect(stickers.D[0]).toBe(Color.Orange)
-      expect(stickers.D[1]).toBe(Color.Orange)
-      expect(stickers.D[2]).toBe(Color.Orange)
+      expect(stickers.D[6]).toBe(Color.Orange)
+      expect(stickers.D[7]).toBe(Color.Orange)
+      expect(stickers.D[8]).toBe(Color.Orange)
 
       // After B: D back row (yellow) → R right column
       expect(stickers.R[2]).toBe(Color.Yellow)
