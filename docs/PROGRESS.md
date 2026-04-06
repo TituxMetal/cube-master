@@ -45,17 +45,17 @@
 
 ### Phase 6: Solver Store (Solution Part)
 
-- [ ] Extend store with solution state (steps, navigation, computed cube-at-step)
-- [ ] Tests for solver store (solution flow)
+- [x] Extend store with solution state (steps, navigation, computed cube-at-step)
+- [x] Tests for solver store (solution flow)
 
 ### Phase 7: Solution View Components
 
-- [ ] Create PhaseList component (phase progress with navigation)
-- [ ] Create StepControls component (previous/next + move display)
-- [ ] Tests for solution components
+- [x] Create PhaseList component (phase progress with navigation)
+- [x] Create StepControls component (previous/next + move display)
+- [x] Tests for solution components
 
 ### Phase 8: Solution View Page Assembly
 
-- [ ] Wire solution view into Solver page
-- [ ] Update Solver page integration tests
-- [ ] Full verification (test, typecheck, lint, format)
+- [x] Wire solution view into Solver page
+- [x] Update Solver page integration tests
+- [x] Full verification (test, typecheck, lint, format)
