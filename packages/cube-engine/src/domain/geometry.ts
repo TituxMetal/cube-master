@@ -29,15 +29,15 @@ export const stickerMapping: StickerMapping = {
     8: { type: 'corner', cornerId: 'UFR', face: 'U' }
   },
   D: {
-    0: { type: 'corner', cornerId: 'DBL', face: 'D' },
-    1: { type: 'edge', edgeId: 'DB', face: 'D' },
-    2: { type: 'corner', cornerId: 'DRB', face: 'D' },
+    0: { type: 'corner', cornerId: 'DLF', face: 'D' },
+    1: { type: 'edge', edgeId: 'DF', face: 'D' },
+    2: { type: 'corner', cornerId: 'DFR', face: 'D' },
     3: { type: 'edge', edgeId: 'DL', face: 'D' },
     4: { type: 'center', face: 'D' },
     5: { type: 'edge', edgeId: 'DR', face: 'D' },
-    6: { type: 'corner', cornerId: 'DLF', face: 'D' },
-    7: { type: 'edge', edgeId: 'DF', face: 'D' },
-    8: { type: 'corner', cornerId: 'DFR', face: 'D' }
+    6: { type: 'corner', cornerId: 'DBL', face: 'D' },
+    7: { type: 'edge', edgeId: 'DB', face: 'D' },
+    8: { type: 'corner', cornerId: 'DRB', face: 'D' }
   },
   F: {
     0: { type: 'corner', cornerId: 'ULF', face: 'F' },
