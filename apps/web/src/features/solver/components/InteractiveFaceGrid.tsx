@@ -28,7 +28,7 @@ export const InteractiveFaceGrid = ({
         {face}
       </figcaption>
 
-      <ul className='bg-base-300 ring-base-content/20 grid size-20 grid-cols-3 gap-1 rounded-sm p-1 ring-1 md:size-28 lg:size-36'>
+      <ul className='bg-base-300 border-base-content/40 inline-grid auto-rows-[20px] grid-cols-[repeat(3,20px)] gap-[3px] rounded-sm border p-[3px] md:auto-rows-[32px] md:grid-cols-[repeat(3,32px)] lg:auto-rows-[40px] lg:grid-cols-[repeat(3,40px)]'>
         {stickers.slice(0, 9).map((color, index) => {
           const isCenter = index === 4
 
@@ -36,10 +36,8 @@ export const InteractiveFaceGrid = ({
             <li key={index}>
               <button
                 type='button'
-                className={`aspect-square w-full rounded-xs ring-1 transition-shadow ${stickerClassByColor[color]} ${
-                  isCenter
-                    ? 'ring-base-content/10 cursor-default'
-                    : 'ring-base-content/10 hover:shadow-primary/20 cursor-pointer hover:shadow-md'
+                className={`size-full rounded-xs ${stickerClassByColor[color]} ${
+                  isCenter ? 'cursor-default' : 'cursor-pointer hover:brightness-110'
                 }`}
                 aria-label={`${faceNameByCode[face]} sticker ${index}: ${colorNameByCode[color]}`}
                 disabled={isCenter}
