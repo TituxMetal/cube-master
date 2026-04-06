@@ -9,7 +9,7 @@ interface InteractiveCubeNetProps {
 
 export const InteractiveCubeNet = ({ stickers, onPaintSticker }: InteractiveCubeNetProps) => (
   <section className='card bg-base-200 shadow-lg' aria-label='Interactive cube state'>
-    <div className='card-body grid grid-cols-4 grid-rows-3 place-items-center gap-4 p-4 md:gap-6 md:p-6 lg:gap-8 lg:p-8'>
+    <div className='card-body grid grid-cols-4 grid-rows-3 justify-items-center gap-1 p-4 md:gap-2 md:p-6 lg:gap-3 lg:p-8'>
       <InteractiveFaceGrid
         stickers={stickers.U}
         face='U'
