@@ -1,6 +1,8 @@
 import type { CubeState, MoveToken } from '~/domain'
 import { applyMove } from '~/domain/moves/apply'
 
+import type { MoveGroup } from './types'
+
 // Algorithm 1: solves "line" pattern (DF=1, DB=1 wrong, opposite edges)
 // Commutator [F', R' D' R D] preserving U and middle layers
 const LINE_ALG: MoveToken[] = ["F'", "R'", "D'", 'R', 'D', 'F']
@@ -48,41 +50,44 @@ const findDRotation = (
   return []
 }
 
-export const solveYellowCross = (state: CubeState): { state: CubeState; moves: MoveToken[] } => {
+export const solveYellowCross = (state: CubeState): { state: CubeState; groups: MoveGroup[] } => {
   let current = state
-  const allMoves: MoveToken[] = []
+  const groups: MoveGroup[] = []
+  let iterationMoves: MoveToken[] = []
 
   const apply = (moves: MoveToken[]) => {
     for (const m of moves) {
       current = applyMove(current, m)
-      allMoves.push(m)
+      iterationMoves.push(m)
     }
   }
 
   // Usually 2 applications (dot → L → cross). 3rd iteration as safety bound.
   for (let i = 0; i < 3; i++) {
+    iterationMoves = []
     const orient = getOrientations(current)
     const pattern = classifyPattern(orient)
 
     if (pattern === 'cross') break
 
     if (pattern === 'dot') {
-      // Apply line algorithm to convert dot → L
       apply(LINE_ALG)
+      if (iterationMoves.length > 0) groups.push({ moves: iterationMoves })
       continue
     }
 
     if (pattern === 'line') {
-      // Rotate D so wrong edges are at DF(0) and DB(2)
       apply(findDRotation(orient, [0, 2]))
       apply(LINE_ALG)
+      if (iterationMoves.length > 0) groups.push({ moves: iterationMoves })
       continue
     }
 
-    // L pattern: rotate D so wrong edges are at DF(0) and DR(1)
+    // L pattern
     apply(findDRotation(orient, [0, 1]))
     apply(L_ALG)
+    if (iterationMoves.length > 0) groups.push({ moves: iterationMoves })
   }
 
-  return { state: current, moves: allMoves }
+  return { state: current, groups }
 }

@@ -31,7 +31,7 @@ describe('solveWhiteCross', () => {
     const state = createSolvedState()
     const result = solveWhiteCross(state)
 
-    expect(result.moves).toHaveLength(0)
+    expect(result.groups.flatMap(g => g.moves)).toHaveLength(0)
     verifyWhiteCross(result.state)
   })
 
@@ -40,7 +40,7 @@ describe('solveWhiteCross', () => {
     const state = applyMove(createSolvedState(), 'F2')
     const result = solveWhiteCross(state)
 
-    expect(result.moves.length).toBeGreaterThan(0)
+    expect(result.groups.flatMap(g => g.moves).length).toBeGreaterThan(0)
     verifyWhiteCross(result.state)
   })
 
@@ -128,7 +128,7 @@ describe('solveWhiteCross', () => {
     const result = solveWhiteCross(state)
 
     // White cross should never need more than ~40 moves
-    expect(result.moves.length).toBeLessThan(40)
+    expect(result.groups.flatMap(g => g.moves).length).toBeLessThan(40)
     verifyWhiteCross(result.state)
   })
 })

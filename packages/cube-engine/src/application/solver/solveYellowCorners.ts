@@ -1,6 +1,8 @@
 import type { CornerPositionId, CubeState, EdgePositionId, MoveToken } from '~/domain'
 import { applyMove } from '~/domain/moves/apply'
 
+import type { MoveGroup } from './types'
+
 const D_CORNERS: readonly CornerPositionId[] = ['DFR', 'DRB', 'DBL', 'DLF']
 const D_EDGES: readonly EdgePositionId[] = ['DF', 'DR', 'DB', 'DL']
 
@@ -94,13 +96,13 @@ const bfsSolve = (state: CubeState, maxDepth: number): MoveToken[] | null => {
   return null
 }
 
-export const solveYellowCorners = (state: CubeState): { state: CubeState; moves: MoveToken[] } => {
+export const solveYellowCorners = (state: CubeState): { state: CubeState; groups: MoveGroup[] } => {
   // Check if already solved with D rotation
   const dMoves: MoveToken[][] = [[], ['D'], ['D2'], ["D'"]]
   for (const dRot of dMoves) {
     if (isDLayerSolved(applySeq(state, dRot))) {
       const result = applySeq(state, dRot)
-      return { state: result, moves: dRot }
+      return { state: result, groups: dRot.length > 0 ? [{ moves: dRot }] : [] }
     }
   }
 
@@ -108,7 +110,7 @@ export const solveYellowCorners = (state: CubeState): { state: CubeState; moves:
   for (let depth = 1; depth <= 5; depth++) {
     const solution = bfsSolve(state, depth)
     if (solution) {
-      return { state: applySeq(state, solution), moves: solution }
+      return { state: applySeq(state, solution), groups: [{ moves: solution }] }
     }
   }
 

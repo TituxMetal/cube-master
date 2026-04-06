@@ -42,7 +42,7 @@ describe('solveSecondLayer', () => {
     const state = createSolvedState()
     const result = solveSecondLayer(state)
 
-    expect(result.moves).toHaveLength(0)
+    expect(result.groups.flatMap(g => g.moves)).toHaveLength(0)
   })
 
   it('should solve second layer after first layer on a simple scramble', () => {

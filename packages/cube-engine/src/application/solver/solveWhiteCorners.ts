@@ -3,6 +3,7 @@ import { Color } from '~/domain/constants'
 import { applyMove } from '~/domain/moves/apply'
 
 import { findCorner } from './helpers'
+import type { MoveGroup } from './types'
 
 type CornerTarget = {
   id: CornerPositionId
@@ -113,15 +114,15 @@ const solveOneWhiteCorner = (
   return { state: current, moves: allMoves }
 }
 
-export const solveWhiteCorners = (state: CubeState): { state: CubeState; moves: MoveToken[] } => {
+export const solveWhiteCorners = (state: CubeState): { state: CubeState; groups: MoveGroup[] } => {
   let current = state
-  const allMoves: MoveToken[] = []
+  const groups: MoveGroup[] = []
 
   for (const target of TARGETS) {
     const result = solveOneWhiteCorner(current, target)
     current = result.state
-    allMoves.push(...result.moves)
+    if (result.moves.length > 0) groups.push({ moves: result.moves })
   }
 
-  return { state: current, moves: allMoves }
+  return { state: current, groups }
 }

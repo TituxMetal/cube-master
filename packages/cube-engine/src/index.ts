@@ -48,7 +48,7 @@ export { reconstructState } from './application/use-cases/reconstructState'
 export type { ReconstructResult } from './application/use-cases/reconstructState'
 export { invertMove, invertMoves } from './application/use-cases/invertMoves'
 export { solveCube } from './application/use-cases/solveCube'
-export type { Solution, SolvePhase } from './application/solver/types'
+export type { MoveGroup, Solution, SolvePhase } from './application/solver/types'
 
 // Infrastructure
 export { toStickers } from './infrastructure/render/toStickers'
