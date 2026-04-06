@@ -30,6 +30,7 @@ export {
   useInputStickers,
   useScrambleMoves,
   useSolution,
+  useSolveError,
   useSolverView,
   useTotalSteps,
   useValidationResult
