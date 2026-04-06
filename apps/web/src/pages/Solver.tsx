@@ -21,6 +21,7 @@ import {
   useInputStickers,
   useScrambleMoves,
   useSolution,
+  useSolveError,
   useSolverView,
   useTotalSteps,
   useValidationResult
@@ -30,6 +31,7 @@ const InputView = () => {
   const stickers = useInputStickers()
   const scrambleMoves = useScrambleMoves()
   const validation = useValidationResult()
+  const solveError = useSolveError()
 
   const isSolved =
     validation.ok && Object.values(stickers).every(face => face.every(c => c === face[4]))
@@ -49,7 +51,9 @@ const InputView = () => {
       <InteractiveCubeNet stickers={stickers} onPaintSticker={cycleStickerColor} />
 
       <div className='min-h-8' aria-live='polite'>
-        {validation.ok ? (
+        {solveError ? (
+          <p className='text-error text-sm'>{solveError}</p>
+        ) : validation.ok ? (
           isSolved ? (
             <p className='text-base-content/60 text-sm'>Cube is already solved</p>
           ) : (
@@ -135,7 +139,7 @@ const SolutionView = () => {
       </div>
 
       <div className='grid grid-cols-1 gap-6 md:grid-cols-[1fr_16rem] lg:grid-cols-[1fr_18rem]'>
-        <div className='pointer-events-none'>
+        <div className='pointer-events-none' inert>
           <InteractiveCubeNet stickers={cubeAtStep} onPaintSticker={() => {}} />
         </div>
 

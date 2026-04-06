@@ -50,7 +50,7 @@ export const $totalSteps = computed($allMoves, (moves): number => moves.length)
 export const $currentPhaseIndex = computed(
   [$solution, $currentStepIndex],
   (solution, stepIndex): number => {
-    if (!solution || stepIndex === 0) return 0
+    if (!solution) return 0
     let cumulative = 0
     for (let i = 0; i < solution.phases.length; i++) {
       cumulative += solution.phases[i].groups.reduce((s, g) => s + g.moves.length, 0)
@@ -158,15 +158,22 @@ export const scrambleInput = () => {
 
 // --- Solution actions ---
 
+export const $solveError = atom<string | null>(null)
+
 export const solveAction = () => {
   const validation = $validationResult.get()
   if (!validation.ok) return
 
-  const solution = solveCube(validation.state)
-  $inputCubeState.set(validation.state)
-  $solution.set(solution)
-  $currentStepIndex.set(0)
-  $solverView.set('solution')
+  $solveError.set(null)
+  try {
+    const solution = solveCube(validation.state)
+    $inputCubeState.set(validation.state)
+    $solution.set(solution)
+    $currentStepIndex.set(0)
+    $solverView.set('solution')
+  } catch {
+    $solveError.set('Solver failed — the cube state may not be solvable')
+  }
 }
 
 export const nextStep = () => {
@@ -194,6 +201,7 @@ export const newSolve = () => {
   $solution.set(null)
   $inputCubeState.set(null)
   $currentStepIndex.set(0)
+  $solveError.set(null)
   resetInput()
   $solverView.set('input')
 }
@@ -203,6 +211,7 @@ export const newSolve = () => {
 export const useInputStickers = (): StickersByFace => useStore($inputStickers)
 export const useScrambleMoves = (): MoveToken[] => useStore($scrambleMoves)
 export const useValidationResult = (): ReconstructResult => useStore($validationResult)
+export const useSolveError = (): string | null => useStore($solveError)
 export const useSolverView = (): SolverView => useStore($solverView)
 export const useSolution = (): Solution | null => useStore($solution)
 export const useCurrentStepIndex = (): number => useStore($currentStepIndex)
