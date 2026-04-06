@@ -1,28 +1,21 @@
 import type { ColorCode } from '@packages/cube-engine'
-import { Color } from '@packages/cube-engine'
 
 import { colorNameByCode, stickerClassByColor } from '~/features/cube/lib/colors'
 
-const COLORS = Object.values(Color) as ColorCode[]
+const COLOR_CYCLE: readonly ColorCode[] = ['Wt', 'Yl', 'Rd', 'Og', 'Bl', 'Gn']
 
-interface ColorPaletteProps {
-  selectedColor: ColorCode
-  onSelectColor: (color: ColorCode) => void
-}
-
-export const ColorPalette = ({ selectedColor, onSelectColor }: ColorPaletteProps) => (
-  <nav className='flex gap-3' aria-label='Color palette'>
-    {COLORS.map(color => (
-      <button
-        key={color}
-        type='button'
-        className={`size-8 cursor-pointer rounded-full md:size-10 ${stickerClassByColor[color]} ${
-          color === selectedColor ? 'ring-base-content ring-2 ring-offset-2' : ''
-        }`}
-        aria-label={`Select ${colorNameByCode[color]}`}
-        aria-pressed={color === selectedColor}
-        onClick={() => onSelectColor(color)}
-      />
+export const ColorPalette = () => (
+  <figure className='flex items-center gap-1.5' aria-label='Color cycle order'>
+    {COLOR_CYCLE.map((color, i) => (
+      <span key={color} className='flex items-center gap-1.5'>
+        <span
+          className={`size-5 rounded-full md:size-6 ${stickerClassByColor[color]}`}
+          aria-label={colorNameByCode[color]}
+        />
+        <span className='text-base-content/40 text-xs' aria-hidden='true'>
+          {i < COLOR_CYCLE.length - 1 ? '→' : '↩'}
+        </span>
+      </span>
     ))}
-  </nav>
+  </figure>
 )

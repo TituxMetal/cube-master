@@ -1,12 +1,31 @@
-export { ColorPalette, InteractiveCubeNet, InteractiveFaceGrid } from './components'
 export {
-  paintSticker,
+  ColorPalette,
+  InteractiveCubeNet,
+  InteractiveFaceGrid,
+  PhaseList,
+  StepControls
+} from './components'
+export {
+  cycleStickerColor,
+  jumpToPhase,
+  newSolve,
+  nextStep,
+  previousStep,
   resetInput,
   scrambleInput,
-  selectColor,
+  solveAction,
+  useCubeAtStep,
+  useCurrentGroup,
+  useCurrentMove,
+  useCurrentPhaseIndex,
+  useCurrentStepIndex,
+  useCurrentStepInGroup,
+  useCurrentStepInPhase,
   useInputStickers,
-  useSelectedColor,
+  useScrambleMoves,
+  useSolution,
   useSolverView,
+  useTotalSteps,
   useValidationResult
 } from './stores'
 export type { SolverView } from './stores'
