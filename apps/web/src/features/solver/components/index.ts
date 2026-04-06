@@ -1,3 +1,5 @@
 export { ColorPalette } from './ColorPalette'
 export { InteractiveCubeNet } from './InteractiveCubeNet'
 export { InteractiveFaceGrid } from './InteractiveFaceGrid'
+export { PhaseList } from './PhaseList'
+export { StepControls } from './StepControls'
