@@ -143,9 +143,17 @@ a regression guard against accidentally moving the route below the catch-all.
 ### Phase 2 — Native Fly auto-deploy
 
 1. Fly dashboard → app `cube-master` → Settings → connect GitHub repo.
-2. Configure watched branch = **`develop`** initially (validation phase).
-3. Push a small commit to `develop` → confirm Fly triggers a build and redeploys.
-4. Once confident, switch the watched branch to **`main`** in the Fly UI.
+2. **Set "Config path" to `fly-web.toml`.** This is critical: without it, Fly's integration runs its
+   scanner on every push, generates a generic `Dockerfile` + `fly.toml` at repo root, ignores
+   `[build].dockerfile`, and the build fails on monorepo workspace resolution. The non-default name
+   is what makes Fly treat the file as user-owned instead of auto-regenerating it.
+3. Configure watched branch = **`develop`** initially (validation phase).
+4. On the first push after connecting, Fly creates a one-time branch `flyio-new-files` with its
+   auto-generated `Dockerfile` and `fly.toml`. Delete it — it is a bootstrap artifact and subsequent
+   deploys correctly use `docker/Dockerfile.web` via `fly-web.toml`'s `[build]` block.
+5. Push a small commit to `develop` → confirm Fly triggers a build that logs
+   `WARN ignoring /usr/src/app/Dockerfile, and using /usr/src/app/docker/Dockerfile.web (from ./fly-web.toml)`.
+6. Once confident, switch the watched branch to **`main`** in the Fly UI.
 
 ### Phase 3 — Future (out of scope)
 
