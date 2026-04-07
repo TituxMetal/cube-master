@@ -64,7 +64,7 @@ CI (`.github/workflows/ci.yml`) and Fly deployment run **in parallel and indepen
 
 ### Created
 
-- **`fly.toml`** (repo root) Full Fly app configuration. Content:
+- **`fly-web.toml`** (repo root) Full Fly app configuration. Content:
 
   ```toml
   app = "cube-master"
@@ -134,8 +134,8 @@ a regression guard against accidentally moving the route below the catch-all.
 
 1. `fly auth login` (if not already authenticated locally).
 2. `fly launch --no-deploy --copy-config` from repo root.
-   - Fly reads the existing `fly.toml` instead of generating a new one.
-   - If the name `cube-master` is taken: rename to `cube-master-app` in `fly.toml` and re-run.
+   - Fly reads the existing `fly-web.toml` instead of generating a new one.
+   - If the name `cube-master` is taken: rename to `cube-master-app` in `fly-web.toml` and re-run.
 3. `fly deploy` — first deployment from local CLI.
 4. `fly open` — verify the site loads at `https://cube-master.fly.dev/`.
 5. Smoke-test routes manually: `/`, `/solver`, `/timer`, `/health`.
@@ -157,7 +157,7 @@ a regression guard against accidentally moving the route below the catch-all.
 
 | Risk                                             | Likelihood | Mitigation                                                                                   |
 | ------------------------------------------------ | ---------- | -------------------------------------------------------------------------------------------- |
-| App name `cube-master` already taken             | Medium     | Fallback to `cube-master-app` (or any free name); single edit in `fly.toml`.                 |
+| App name `cube-master` already taken             | Medium     | Fallback to `cube-master-app` (or any free name); single edit in `fly-web.toml`.             |
 | OOM at 256 MB                                    | Low        | App is static SPA + Hono — minimal runtime footprint. If it happens: `fly scale memory 512`. |
 | Fly remote build differs from local Docker build | Low        | Pre-validate locally with `bun run docker:build` (existing script) before `fly deploy`.      |
 | `/health` shadowed by SPA catch-all              | Low        | Spec test enforces correct route ordering; catches regression on every CI run.               |
@@ -169,7 +169,7 @@ a regression guard against accidentally moving the route below the catch-all.
 After implementation, the deployment is considered successful when **all** of the following are
 true:
 
-- [ ] `fly.toml` exists at repo root with the configuration above.
+- [ ] `fly-web.toml` exists at repo root with the configuration above.
 - [ ] `apps/web/src/server.ts` exports `app` and registers `/health` before the catch-all.
 - [ ] `apps/web/src/server.spec.ts` exists and passes (`bun run test`).
 - [ ] All four checks pass locally: `bun run test`, `bun run typecheck`, `bun run lint:check`,

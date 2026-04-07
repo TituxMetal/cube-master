@@ -4,12 +4,12 @@
 > (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use
 > checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Deploy `apps/web` to Fly.io with a `/health` endpoint, `fly.toml` config, and validation
-through manual `fly deploy` followed by native Fly GitHub auto-deploy.
+**Goal:** Deploy `apps/web` to Fly.io with a `/health` endpoint, `fly-web.toml` config, and
+validation through manual `fly deploy` followed by native Fly GitHub auto-deploy.
 
 **Architecture:** The Hono server in `apps/web/src/server.ts` exposes a new `/health` route before
-its SPA catch-all. A new `fly.toml` at repo root points Fly to the existing `docker/Dockerfile.web`.
-Fly builds and deploys from source; CI stays untouched.
+its SPA catch-all. A new `fly-web.toml` at repo root points Fly to the existing
+`docker/Dockerfile.web`. Fly builds and deploys from source; CI stays untouched.
 
 **Tech Stack:** Bun 1.3.10, Hono, Fly.io, Docker, TypeScript.
 
@@ -23,7 +23,7 @@ Fly builds and deploys from source; CI stays untouched.
 
 **Created:**
 
-- `fly.toml` (repo root) — Fly app configuration.
+- `fly-web.toml` (repo root) — Fly app configuration.
 
 **Modified:**
 
@@ -225,15 +225,15 @@ Note: if `apps/web/test-setup.ts` was modified in Step 1.4, add it to the same c
 
 ---
 
-## Task 2: Add `fly.toml` configuration
+## Task 2: Add `fly-web.toml` configuration
 
 **Files:**
 
-- Create: `fly.toml` (repo root)
+- Create: `fly-web.toml` (repo root)
 
-**Context for the engineer:** `fly.toml` is Fly's declarative app config. It tells Fly which Docker
-build to use, which region to deploy to, how big the VM should be, and how to run health checks. Our
-config:
+**Context for the engineer:** `fly-web.toml` is Fly's declarative app config. It tells Fly which
+Docker build to use, which region to deploy to, how big the VM should be, and how to run health
+checks. Our config:
 
 - Builds from `docker/Dockerfile.web` (multi-stage, already production-ready).
 - Runs in `cdg` (Paris).
@@ -243,9 +243,9 @@ config:
 - `min_machines_running = 0` — zero cost when idle.
 - Health check hits `GET /health` every 30s.
 
-- [ ] **Step 2.1: Create `fly.toml` at repo root**
+- [ ] **Step 2.1: Create `fly-web.toml` at repo root**
 
-Create `fly.toml` with this exact content:
+Create `fly-web.toml` with this exact content:
 
 ```toml
 app = "cube-master"
@@ -298,17 +298,17 @@ bun run typecheck
 bun run test
 ```
 
-Expected: all four green. `fly.toml` is not in scope for prettier (TOML is not formatted by the
+Expected: all four green. `fly-web.toml` is not in scope for prettier (TOML is not formatted by the
 repo's prettier config), but format:check must still pass overall.
 
 - [ ] **Step 2.4: Commit**
 
 ```bash
-git add fly.toml
+git add fly-web.toml
 git commit -m "$(cat <<'EOF'
-feat: add fly.toml for fly.io deployment
+feat: add fly-web.toml for fly.io deployment
 
-- fly.toml
+- fly-web.toml
 EOF
 )"
 ```
@@ -337,10 +337,10 @@ User runs from repo root: `fly launch --no-deploy --copy-config`
 
 Expected:
 
-- Fly reads the existing `fly.toml` and asks to confirm settings.
+- Fly reads the existing `fly-web.toml` and asks to confirm settings.
 - Answer: keep the existing config (`Do you want to tweak these settings? No`).
-- If Fly says "name already taken", abort, edit `fly.toml` → change `app = "cube-master-app"` (or
-  another free name), amend Task 2's commit (or add a fixup commit), and re-run.
+- If Fly says "name already taken", abort, edit `fly-web.toml` → change `app = "cube-master-app"`
+  (or another free name), amend Task 2's commit (or add a fixup commit), and re-run.
 
 - [ ] **Step 3.3: Deploy**
 
@@ -395,7 +395,7 @@ NOT done as part of this plan's execution.
 
 **Files:** None. This task is a conscience check before declaring the feature done.
 
-- [ ] `fly.toml` exists at repo root with the configuration from Task 2.
+- [ ] `fly-web.toml` exists at repo root with the configuration from Task 2.
 - [ ] `apps/web/src/server.ts` exports `app` and registers `/health` before the catch-all.
 - [ ] `apps/web/src/server.spec.ts` exists and passes.
 - [ ] `bun run format:check` passes.
