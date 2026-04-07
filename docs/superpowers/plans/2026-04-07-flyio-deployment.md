@@ -372,18 +372,34 @@ User action (manual, in the Fly web dashboard):
 
 1. Go to <https://fly.io/dashboard> → app `cube-master` → Settings → GitHub.
 2. Connect the cube-master GitHub repo.
-3. Set the watched branch to **`develop`** (validation phase — NOT `main` yet).
-4. Save.
+3. **Set "Config path" to `fly-web.toml`.** This is critical: without it, Fly's integration treats
+   every push as a bootstrap, runs its scanner, and writes a generic `Dockerfile` + `fly.toml` at
+   repo root — ignoring `[build].dockerfile` and breaking the monorepo build. The non-default name +
+   explicit Config path is what makes Fly respect the custom config.
+4. Set the watched branch to **`develop`** (validation phase — NOT `main` yet).
+5. Check "Auto-Deploy on push".
+6. Save.
 
-- [ ] **Step 3.6: Validate auto-deploy on `develop`**
+- [ ] **Step 3.6: First-push bootstrap artifact**
 
-Once Task 3 is otherwise complete, the user merges the `flyio-deployment` branch into `develop`
-(either locally or via a PR — respecting the project's git-workflow). After the merge, Fly should
-automatically trigger a new build and deploy.
+On the first push after connecting the integration, Fly runs `fly launch` once and opens a branch
+named `flyio-new-files` authored by `Fly.io <noreply@fly.io>` containing a generic `Dockerfile` +
+`fly.toml` it would normally want you to merge. **You do not want to merge it.** Delete the branch
+(`git push origin --delete flyio-new-files` or via the GitHub UI). It is a one-time artifact.
 
-User verifies in the Fly dashboard that the build is triggered and succeeds.
+- [ ] **Step 3.7: Validate auto-deploy on `develop`**
 
-- [ ] **Step 3.7: (later, when confident) switch watched branch to `main`**
+Merge the `flyio-deployment` branch into `develop` via PR (rebase merge, per git-workflow). After
+the merge, Fly triggers a new build and deploy. Verify in the Fly dashboard that the build log
+contains:
+
+```text
+WARN ignoring /usr/src/app/Dockerfile, and using /usr/src/app/docker/Dockerfile.web (from ./fly-web.toml)
+```
+
+That WARN is the confirmation that Fly is respecting `fly-web.toml`'s `[build].dockerfile`.
+
+- [ ] **Step 3.8: (later, when confident) switch watched branch to `main`**
 
 This is explicitly **deferred**. When the user is satisfied with several successful `develop`
 deploys, they change the watched branch in the Fly dashboard from `develop` to `main`. This step is
