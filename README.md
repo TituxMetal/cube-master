@@ -19,7 +19,7 @@ timer with scrambles and stats).
 | Testing          | Bun test            |
 | Language         | TypeScript (strict) |
 
-See [docs/tech-stack.md](docs/tech-stack.md) for detailed rationale.
+See [docs/architecture.md](docs/architecture.md) for detailed rationale.
 
 ## Prerequisites
 

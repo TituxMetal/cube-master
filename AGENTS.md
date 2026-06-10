@@ -59,15 +59,16 @@ Each entry is symptom → root cause → fix → prevention.
 ```
 cube-master/
   apps/web/src/
-    server.ts               Hono app — serves SPA, /health, catch-all
-    client.tsx              React 19 entry point
-    components/ui/          Shared UI primitives (Radix + daisyUI)
+    main.tsx                React 19 entry point
+    App.tsx                 Root component + client-router mount
+    server.ts               Hono app — serves built SPA, /health, catch-all
+    lib/                    Client router, stores, shared utilities
     layouts/                Navbar + footer shell
-    lib/  config/  types/  utils/   Shared router, stores, config, helpers
     pages/                  Home, Solver, Coach, Timer
+    types/  styles/         Shared types; global styles + theme
     features/
       cube/                 Reactive cube state, CubeNet, FaceGrid — shared base
-      solver/ coach/ timer/ Per-mode components / utils / lib
+      solver/ timer/        Per-mode UI (coach/ lands when Coach is built)
   packages/
     cube-engine/src/        domain/ application/ infrastructure/ — pure TS engine
     eslint-config/          Shared ESLint config (all workspaces)
