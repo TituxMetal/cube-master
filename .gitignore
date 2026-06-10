@@ -21,3 +21,6 @@ coverage
 
 # reference project
 reference
+
+# Claude Code
+.claude/settings.local.json

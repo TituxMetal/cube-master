@@ -43,9 +43,11 @@ packages/
   eslint-config/          Shared ESLint configuration
   ts-config/              Shared TypeScript configuration
 docs/
-  MVP.md                  MVP scope and features
-  tech-stack.md           Technology choices and rationale
-  frontend-design.md      Design system and UI conventions
+  product.md              The three modes (Solver, Coach, Timer)
+  architecture.md         Stack, monorepo layout, dependency boundaries
+  frontend.md             Design system and UI conventions
+  git-workflow.md         Branching, commits, PRs
+  adr/                    Architecture decision records
 ```
 
 ## Scripts
@@ -61,11 +63,16 @@ bun run clean            # Clean build artifacts
 bun run reset            # Clean and reinstall dependencies
 ```
 
+Start with [`AGENTS.md`](AGENTS.md) — the operating map for the repo.
+
 ## Documentation
 
-- [MVP Definition](docs/MVP.md)
-- [Tech Stack](docs/tech-stack.md)
-- [Frontend Design](docs/frontend-design.md)
+- [Agent Map](AGENTS.md)
+- [Product — the three modes](docs/product.md)
+- [Architecture](docs/architecture.md)
+- [Frontend Design](docs/frontend.md)
+- [Git Workflow](docs/git-workflow.md)
+- [Architecture Decision Records](docs/adr/)
 
 ## License
 
