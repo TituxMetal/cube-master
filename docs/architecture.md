@@ -53,17 +53,16 @@ its scramble generator.
 
 ```text
 apps/web/src/
+  main.tsx            React entry point
+  App.tsx             Root component + client-router mount
   server.ts           Hono app — serves the built SPA, exposes /health, SPA catch-all
-  client.tsx          React entry point
-  components/ui/       Shared UI primitives (Radix wrappers styled with daisyUI)
+  lib/                Client router, stores, shared utilities
   layouts/            Page layouts (navbar + footer shell)
-  lib/                Shared utilities (router, stores, …)
-  config/             App configuration
-  types/  utils/      Shared types and helpers
   pages/              Page-level components (Home, Solver, Coach, Timer)
+  types/  styles/     Shared types; global styles and theme
   features/
     cube/             Reactive cube UI (CubeNet, FaceGrid, controls) — shared base
-    solver/  coach/  timer/   Per-mode components / utils / lib
+    solver/  timer/   Per-mode components (coach/ added when Coach is built)
 ```
 
 ### Routing — no client-side router library
@@ -80,7 +79,9 @@ is registered **before** the SPA catch-all (a `.spec.ts` guards the ordering). S
 
 ## Dependency boundaries
 
-Enforced by `eslint-plugin-boundaries`:
+Enforced by `eslint-plugin-boundaries` (`apps/web/eslint.config.mjs`). The `shared` layer is defined
+by pattern, so `components/ui/`, `utils/`, and `config/` are valid shared paths even before those
+folders exist on disk — create them under the right layer when the need arises.
 
 - **shared** (`src/lib`, `src/components/ui`, `src/types`, `src/utils`, `src/layouts`, `src/config`)
   → may import only from shared

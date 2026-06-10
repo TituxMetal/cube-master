@@ -49,9 +49,9 @@ A speedcube timer with scrambles and session tracking.
 
 ## Shared foundation
 
-- **Cube visualization** (`features/cube/`) — reactive cube state in a nanostore, derived stickers,
-  move controls, scramble/reset, move history. The reusable base every mode builds on. **Status:**
-  shipped.
+- **Cube visualization** (`apps/web/src/features/cube/`) — reactive cube state in a nanostore,
+  derived stickers, move controls, scramble/reset, move history. The reusable base every mode builds
+  on. **Status:** shipped.
 - **Cube engine** (`packages/cube-engine/`) — pure TypeScript, framework-agnostic. See
   [architecture.md](architecture.md).
 

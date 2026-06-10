@@ -67,5 +67,5 @@ bun run test
 ```
 
 Enforced locally by Husky — `pre-commit`: lint-staged · `commit-msg`: commitlint · `pre-push`:
-`turbo run typecheck test build`. CI (`.github/workflows/ci.yml`) re-runs the full chain on every
-PR/push and pushes Docker images to GHCR on `main`/`develop`.
+`bun turbo run typecheck test build`. CI (`.github/workflows/ci.yml`) re-runs the full chain on
+every PR/push and pushes Docker images to GHCR on `main`/`develop`.
