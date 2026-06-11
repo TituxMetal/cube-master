@@ -16,8 +16,12 @@ Input your cube's current state, receive a step-by-step solution you can follow.
 
 - 2D net input — tap a sticker to paint it with the selected color (centers are fixed)
 - Real-time validation — color counts, piece validity, orientation sums, permutation parity
-- Layer-by-layer solution across 7 phases (White Cross → White Corners → Second Layer → Yellow Cross
-  → Yellow Edges → Yellow Corners Position → Yellow Corners Orientation)
+- Layer-by-layer solution across the solver's **5 phases** (White Cross → White Corners → Second
+  Layer → Yellow Cross → Yellow Layer)
+- Not to be confused with the **7 teaching phases** (White Cross → White Corners → Second Layer →
+  Yellow Cross → Yellow Edges → Yellow Corners Position → Yellow Corners Orientation), which
+  structure Coach's pedagogical journey — two views over one algorithm catalog, see
+  [ADR 0006](adr/0006-algorithm-catalog-in-domain.md)
 - Solution view: phase list, prev/next step navigation, cube net reflecting the current step
 
 **Status:** shipped.
