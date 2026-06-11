@@ -33,3 +33,4 @@ What this makes easy, what it makes hard, what we accept as a trade-off.
 - [0003 — Cube engine as a standalone framework-agnostic package](0003-cube-engine-standalone-package.md)
 - [0004 — Layered dependency boundaries](0004-layered-dependency-boundaries.md)
 - [0005 — Fly.io via native GitHub deploy](0005-flyio-native-github-deploy.md)
+- [0006 — Algorithm catalog in the engine's domain layer](0006-algorithm-catalog-in-domain.md)
