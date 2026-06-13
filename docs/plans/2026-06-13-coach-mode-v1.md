@@ -144,15 +144,15 @@ duplicated here. `[design]` = decision/doc work, `[code]` = implementation.
 
 ### Phase B — Proof slice (Second Layer)
 
-- [ ] **B1** `[code]` Lesson data model under `features/coach/data/` (`Lesson`, `kind`-tagged `Step`
+- [x] **B1** `[code]` Lesson data model under `features/coach/data/` (`Lesson`, `kind`-tagged `Step`
       union) + **Second Layer** content + `lessons.spec.ts` referential-integrity guard (every
       `algorithmId` resolves via `getAlgorithm`). Notation note per Decision D3. (STORY-004 /
       FR-004,5) _Depends: A3._
-- [ ] **B2** `[code]` Coach store under `features/coach/stores/`: current lesson/step, progress
+- [x] **B2** `[code]` Coach store under `features/coach/stores/`: current lesson/step, progress
       checklist persisted at `cubeMaster:coachProgress` v1 via the A6 helper, own
       `$cubeAtStep`-shaped demo-frame computed atom, practice setup via `invertMoves`, clamped step
       actions + spec. Practice detection per Decision D4. (STORY-005 / FR-006) _Depends: A3, A6._
-- [ ] **B3** `[code]` Lesson player under `features/coach/components/`: `LessonPlayer` switching on
+- [x] **B3** `[code]` Lesson player under `features/coach/components/`: `LessonPlayer` switching on
       `step.kind`, reused `StepControls`, **new** `LessonStepList` (not `PhaseList`), green tokens,
       unknown-id not-found state; wire `/coach/second-layer` + spec. (STORY-006 / FR-007) _Depends:
       A7, B1, B2._
