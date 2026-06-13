@@ -2,7 +2,7 @@
 title: 'feat: Coach mode v1 — 7-chapter beginner journey'
 type: plan
 date: 2026-06-13
-status: approved
+status: in_progress
 brainstorm: docs/brainstorms/2026-06-12-coach-mode-brainstorm.md
 stories: docs/stories/coach-mode-v1.md
 architecture: docs/stories/coach-mode-v1.architecture.md
@@ -11,7 +11,7 @@ confidence: high
 
 # feat: Coach mode v1 — 7-chapter beginner journey
 
-**Status:** approved
+**Status:** in_progress
 
 Ship Coach — the last unshipped mode — as the 7-chapter beginner journey, assembled almost entirely
 from parts the repo already has. This plan answers **HOW and IN WHAT ORDER**; the **WHAT** is fixed
@@ -101,20 +101,20 @@ duplicated here. `[design]` = decision/doc work, `[code]` = implementation.
 
 **A-catalog (chain):**
 
-- [ ] **A1** `[design]` Amend **ADR-0006 → Accepted**: canonical form of each named algorithm;
+- [x] **A1** `[design]` Amend **ADR-0006 → Accepted**: canonical form of each named algorithm;
       consumers = five solver phases + Coach; ≥1 consumer per entry. _First task — catalog shape
       gates everything._ (STORY-001 / FR-001)
-- [ ] **A2** `[design]` Finalize the **catalog roster + ids** from the verified source constants
+- [x] **A2** `[design]` Finalize the **catalog roster + ids** from the verified source constants
       (see Decision D1). Pin the promote-vs-local boundary in the ADR or a short note. (STORY-001)
-- [ ] **A3** `[code]` Add `packages/cube-engine/src/domain/catalog.ts`
+- [x] **A3** `[code]` Add `packages/cube-engine/src/domain/catalog.ts`
       (`{ id, name, moves, method, description }` + `getAlgorithm(id) → Entry | undefined`) and
       `catalog.spec.ts` (unique ids, non-empty valid `MoveToken[]`). Export both from the package
       barrel. (STORY-001 / FR-001)
-- [ ] **A4** `[code]` **Solver consumption (hybrid, per Decision D2):** replace the literal
+- [x] **A4** `[code]` **Solver consumption (hybrid, per Decision D2):** replace the literal
       single-constant uses — `SUNE`/`ANTI_SUNE` in `solveYellowCorners`, `LINE_ALG`/`L_ALG` in
       `solveYellowCross` — with catalog references; rely on the existing `solve*.spec.ts` as the
       regression guard. Table-shaped uses stay local (catalog-only for Coach). (STORY-001 / NFR-004)
-- [ ] **A4b** `[code]` **Catalog↔solver parity spec (per Decision D5).** Expose the anchor constants
+- [x] **A4b** `[code]` **Catalog↔solver parity spec (per Decision D5).** Expose the anchor constants
       for the four promoted-but-**not**-consumed entries from their solver modules — `sexy-move` ↔
       `solveWhiteCorners` `TARGETS[0].insert`, `second-layer-insert-{right,left}` ↔
       `solveSecondLayer` `TARGETS[0].insert{Right,Left}` (FR anchor), `corner-3-cycle` ↔ the

@@ -1,3 +1,5 @@
+export type { AlgorithmEntry, AlgorithmMethod } from './catalog'
+export { ALGORITHM_CATALOG, getAlgorithm } from './catalog'
 export { Color, Face, CornerPosition, EdgePosition } from './constants'
 export type { StickerIndex, StickerMapping } from './geometry'
 export { stickerMapping, cornerColorIndex, faceIndexInId } from './geometry'

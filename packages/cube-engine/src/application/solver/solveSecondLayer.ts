@@ -16,6 +16,13 @@ type SecondLayerTarget = {
   insertLeft: MoveToken[]
 }
 
+// Canonical FR-slot inserts, exported so the catalog parity spec pins the
+// promoted `second-layer-insert-{right,left}` entries to these live solver
+// constants. The other targets' inserts are face-adapted positional variants
+// (kept local).
+export const SECOND_LAYER_INSERT_RIGHT: MoveToken[] = ["D'", "R'", 'D', 'R', 'D', 'F', "D'", "F'"]
+export const SECOND_LAYER_INSERT_LEFT: MoveToken[] = ['D', 'F', "D'", "F'", "D'", "R'", 'D', 'R']
+
 // Correct F2L insertion algorithms for white-on-top (preserving U edges AND corners).
 // Each is a commutator [D'/D, face'][D/D', face] that creates a 3-cycle
 // moving one D-layer edge into the middle layer.
@@ -27,9 +34,9 @@ const TARGETS: readonly SecondLayerTarget[] = [
     id: 'FR',
     colors: [Color.Green, Color.Red],
     rightAlignDPos: 'DF',
-    insertRight: ["D'", "R'", 'D', 'R', 'D', 'F', "D'", "F'"],
+    insertRight: SECOND_LAYER_INSERT_RIGHT,
     leftAlignDPos: 'DR',
-    insertLeft: ['D', 'F', "D'", "F'", "D'", "R'", 'D', 'R']
+    insertLeft: SECOND_LAYER_INSERT_LEFT
   },
   {
     id: 'BR',

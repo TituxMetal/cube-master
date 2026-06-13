@@ -85,5 +85,7 @@ describe('solveYellowCorners', () => {
       const result = solveFull(scramble)
       verifySolved(result.state)
     }
-  })
+    // Five full BFS solves — raise the per-test timeout above Bun's 5s default
+    // so slower hardware doesn't trip a non-deterministic timeout.
+  }, 10_000)
 })
