@@ -7,6 +7,7 @@ import {
   nextStep,
   previousStep,
   startLesson,
+  useCurrentStepMoves,
   useDemoFrame,
   useIsPracticeSolved,
   useLessonStepIndex,
@@ -19,6 +20,7 @@ import { StepControls } from '~/features/solver/components/StepControls'
 import { Link } from '~/lib/router'
 
 import { LessonStepList } from './LessonStepList'
+import { MoveSequence } from './MoveSequence'
 
 const LessonNotFound = () => (
   <section className='flex flex-col items-start gap-4' aria-label='Lesson not found'>
@@ -38,6 +40,7 @@ export const LessonPlayer = ({ lessonId }: { lessonId: string }) => {
   const stepIndex = useLessonStepIndex()
   const playbackIndex = usePlaybackIndex()
   const playbackTotal = usePlaybackTotal()
+  const moves = useCurrentStepMoves()
   const frame = useDemoFrame()
   const isPracticeSolved = useIsPracticeSolved()
   const progress = useProgress()
@@ -63,6 +66,8 @@ export const LessonPlayer = ({ lessonId }: { lessonId: string }) => {
       <div className='grid grid-cols-1 gap-6 md:grid-cols-[1fr_16rem] lg:grid-cols-[1fr_18rem]'>
         <div className='flex flex-col gap-4'>
           <p className='text-base-content/80 leading-relaxed'>{step.body}</p>
+
+          {hasCube && <MoveSequence moves={moves} currentIndex={playbackIndex} />}
 
           {hasCube && frame && (
             <div className='pointer-events-none'>

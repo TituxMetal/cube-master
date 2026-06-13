@@ -61,7 +61,13 @@ const stepMoves = (step: LessonStep | null): readonly MoveToken[] => {
   return getAlgorithm(step.algorithmId)?.moves ?? []
 }
 
-export const $playbackTotal = computed($currentStep, (step): number => stepMoves(step).length)
+// The move sequence the current step teaches — shown as notation so the learner
+// reads the algorithm (R, D, R′ …), not just the animated cube.
+export const $currentStepMoves = computed($currentStep, (step): readonly MoveToken[] =>
+  stepMoves(step)
+)
+
+export const $playbackTotal = computed($currentStepMoves, (moves): number => moves.length)
 
 // Coach's own copy of the Solver's `$cubeAtStep` shape — it does not import solver
 // atoms. demo plays forward from solved; practice starts from the inverse-scramble
@@ -146,6 +152,7 @@ export const useCurrentStep = (): LessonStep | null => useStore($currentStep)
 export const useLessonStepIndex = (): number => useStore($lessonStepIndex)
 export const usePlaybackIndex = (): number => useStore($playbackIndex)
 export const usePlaybackTotal = (): number => useStore($playbackTotal)
+export const useCurrentStepMoves = (): readonly MoveToken[] => useStore($currentStepMoves)
 export const useDemoFrame = (): StickersByFace | null => useStore($demoFrame)
 export const useIsPracticeSolved = (): boolean => useStore($isPracticeSolved)
 export const useProgress = (): CoachProgress => useStore($progress)
