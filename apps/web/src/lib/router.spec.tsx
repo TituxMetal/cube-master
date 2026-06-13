@@ -47,6 +47,42 @@ describe('Router', () => {
   })
 })
 
+describe('Router param matching', () => {
+  const CoachBrowser = () => <div>Coach Browser</div>
+  const CoachPlayer = ({ lessonId }: { lessonId: string }) => <div>Lesson {lessonId}</div>
+
+  const paramRoutes = {
+    '/coach': () => <CoachBrowser />,
+    '/coach/:lessonId': (params: Record<string, string>) => (
+      <CoachPlayer lessonId={params.lessonId} />
+    )
+  }
+
+  it('should extract a single-segment param and pass it to the render', () => {
+    window.history.pushState(null, '', '/coach/second-layer')
+    render(<Router routes={paramRoutes} fallback={() => <NotFound />} />)
+    expect(screen.getByText('Lesson second-layer')).toBeDefined()
+  })
+
+  it('should prefer an exact static route over a dynamic pattern', () => {
+    window.history.pushState(null, '', '/coach')
+    render(<Router routes={paramRoutes} fallback={() => <NotFound />} />)
+    expect(screen.getByText('Coach Browser')).toBeDefined()
+  })
+
+  it('should resolve a trailing slash to the static route, not an empty param', () => {
+    window.history.pushState(null, '', '/coach/')
+    render(<Router routes={paramRoutes} fallback={() => <NotFound />} />)
+    expect(screen.getByText('Coach Browser')).toBeDefined()
+  })
+
+  it('should fall back when no static or dynamic route matches', () => {
+    window.history.pushState(null, '', '/coach/a/b')
+    render(<Router routes={paramRoutes} fallback={() => <NotFound />} />)
+    expect(screen.getByText('Not Found')).toBeDefined()
+  })
+})
+
 describe('Link', () => {
   it('should render an anchor element with correct href', () => {
     render(
