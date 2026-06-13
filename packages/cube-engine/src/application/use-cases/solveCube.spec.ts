@@ -91,7 +91,9 @@ describe('solveCube', () => {
     for (const scramble of scrambles) {
       verifySolution(scramble)
     }
-  })
+    // Five full BFS solves — raise the per-test timeout above Bun's 5s default
+    // so slower hardware doesn't trip a non-deterministic timeout.
+  }, 10_000)
 
   it('should have correctly labeled phases', () => {
     const solution = solveCube(applyMoves(createSolvedState(), ['R', 'U', "F'"]))

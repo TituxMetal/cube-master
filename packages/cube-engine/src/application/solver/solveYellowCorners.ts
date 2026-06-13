@@ -1,4 +1,5 @@
 import type { CornerPositionId, CubeState, EdgePositionId, MoveToken } from '~/domain'
+import { getAlgorithm } from '~/domain'
 import { applyMove } from '~/domain/moves/apply'
 
 import type { MoveGroup } from './types'
@@ -6,15 +7,20 @@ import type { MoveGroup } from './types'
 const D_CORNERS: readonly CornerPositionId[] = ['DFR', 'DRB', 'DBL', 'DLF']
 const D_EDGES: readonly EdgePositionId[] = ['DF', 'DR', 'DB', 'DL']
 
-// Algorithms that preserve U+M layers
-const SUNE: MoveToken[] = ['R', 'D', "R'", 'D', 'R', 'D2', "R'"]
-const ANTI_SUNE: MoveToken[] = ['R', 'D2', "R'", "D'", 'R', "D'", "R'"]
+// Algorithms that preserve U+M layers. Canonical source is the domain catalog
+// (ADR-0006) so the solver executes exactly what Coach demos; copied into
+// mutable arrays for the spread-based action table below.
+const SUNE: MoveToken[] = [...getAlgorithm('sune')!.moves]
+const ANTI_SUNE: MoveToken[] = [...getAlgorithm('anti-sune')!.moves]
+
+// Corner 3-cycle: (DFR→DLF→DBL), DRB stays. Exported so the catalog parity spec
+// pins the promoted `corner-3-cycle` entry to this live solver constant.
+export const CORNER_3_CYCLE: MoveToken[] = ['D', 'R', "D'", "L'", 'D', "R'", "D'", 'L']
 
 const ALGORITHMS: MoveToken[][] = [
   SUNE,
   ANTI_SUNE,
-  // Corner 3-cycle: (DFR→DLF→DBL), DRB stays
-  ['D', 'R', "D'", "L'", 'D', "R'", "D'", 'L'],
+  CORNER_3_CYCLE,
   // Ua perm (edge swap)
   [...SUNE, 'D'],
   // Ub perm

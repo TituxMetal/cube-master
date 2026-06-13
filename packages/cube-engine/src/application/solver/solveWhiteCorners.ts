@@ -16,6 +16,11 @@ type CornerTarget = {
   dPos: CornerPositionId
 }
 
+// The canonical sexy move (R′ D′ R D), inserted at UFR. Exported so the catalog
+// parity spec pins the promoted `sexy-move` entry to this live solver constant.
+// The other targets' inserts are face-adapted positional variants (kept local).
+export const SEXY_MOVE: MoveToken[] = ["R'", "D'", 'R', 'D']
+
 // For each U-layer corner, define the insertion algorithm.
 // The insertion assumes the corner is in the D layer directly below the target.
 // Repeated application (1, 3, or 5 times) handles all 3 orientations.
@@ -24,7 +29,7 @@ const TARGETS: readonly CornerTarget[] = [
     id: 'UFR',
     colors: [Color.White, Color.Green, Color.Red],
     setupFace: 'R',
-    insert: ["R'", "D'", 'R', 'D'],
+    insert: SEXY_MOVE,
     dPos: 'DFR'
   },
   {

@@ -17,6 +17,10 @@ export type {
   StickerMapping
 } from './domain'
 
+// Domain — algorithm catalog
+export type { AlgorithmEntry, AlgorithmMethod } from './domain'
+export { ALGORITHM_CATALOG, getAlgorithm } from './domain'
+
 // Domain — values
 export {
   Color,

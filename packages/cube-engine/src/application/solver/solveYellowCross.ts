@@ -1,15 +1,19 @@
 import type { CubeState, MoveToken } from '~/domain'
+import { getAlgorithm } from '~/domain'
 import { applyMove } from '~/domain/moves/apply'
 
 import type { MoveGroup } from './types'
 
+// Canonical source for both cross algorithms is the domain catalog (ADR-0006) so
+// the solver executes exactly what Coach demos; copied into mutable arrays.
+
 // Algorithm 1: solves "line" pattern (DF=1, DB=1 wrong, opposite edges)
 // Commutator [F', R' D' R D] preserving U and middle layers
-const LINE_ALG: MoveToken[] = ["F'", "R'", "D'", 'R', 'D', 'F']
+const LINE_ALG: MoveToken[] = [...getAlgorithm('yellow-cross-line')!.moves]
 
 // Algorithm 2: solves "L" pattern (DF=1, DR=1 wrong, adjacent edges)
 // Commutator [R, D F D' F'] preserving U and middle layers
-const L_ALG: MoveToken[] = ['R', 'D', 'F', "D'", "F'", "R'"]
+const L_ALG: MoveToken[] = [...getAlgorithm('yellow-cross-l')!.moves]
 
 type CrossPattern = 'cross' | 'dot' | 'line' | 'L'
 

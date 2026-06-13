@@ -1,6 +1,6 @@
 # 0006 — Algorithm catalog in the engine's domain layer
 
-**Status:** Proposed **Date:** 2026-06-12
+**Status:** Accepted **Date:** 2026-06-12 (amended 2026-06-13)
 
 ## Context
 
@@ -10,32 +10,49 @@ algorithms as lessons with live demos. Without a single shared catalog, each con
 its own copy of the moves and the two would drift — the solver executing one thing, Coach teaching
 another.
 
+The original (Proposed) decision required every entry to serve "the BFS and Coach at once." A code
+audit while planning Coach v1 disproved that premise: `LINE_ALG`/`L_ALG` are consumed only by
+`solveYellowCross`, the sexy move only by `solveWhiteCorners`, the second-layer inserts only by
+`solveSecondLayer` — none by the BFS. Under the strict "both consumers at once" bar, beginner
+lessons 1–4 would have no entry to point at, defeating the catalog's purpose.
+
 ## Decision
 
 The algorithm catalog lives in **`packages/cube-engine/src/domain/`** — algorithms are first-class
-data, not an implementation detail of any one consumer. Two consumers read it: the solver's BFS
-consumes it, Coach exposes it as lessons.
+data, not an implementation detail of any one consumer. It holds the **canonical form of each named
+algorithm**: `{ id, name, moves, method, description }`, addressable by stable id via
+`getAlgorithm(id)` (returns `undefined` for unknown ids, never throws).
 
-Each catalog entry contains at minimum:
-
-- its name
-- its moves
-- its pedagogical description
-- the case it handles
-- the method used (beginner, intermediate, advanced)
-- the teaching phase it belongs to
+**Amended consumer bar.** Consumers are the **five solver phases (BFS included) and Coach**. Each
+entry must serve **≥1** consumer and stay both machine-executable and teachable. Positional variants
+inside solver phases (per-target inserts, extraction tables, D-rotation derivations) remain **local
+derivations** — they are solver mechanics, not named teachable algorithms, and are not promoted.
 
 Two phase structures coexist over the same catalog: the **5 phases** are the structure of the
-solver; the **7 phases** are the structure of a pedagogical journey — an ordering of lessons that
+solver; the **7 phases** are the structure of the pedagogical journey — an ordering of lessons that
 points into the catalog. Two views, one source of truth.
 
 ## Consequences
 
-- **Easier:** the solver and Coach can never drift — both read the same entries. Lesson content is
-  pure TypeScript data, testable in isolation like the rest of the domain layer, and reordering the
-  pedagogical journey touches only the 7-phase view, never the catalog itself.
+- **Easier:** beginner lessons 1–4 have real catalog targets; promotion is extraction, not
+  authoring. Lesson content is pure TypeScript data, testable in isolation like the rest of the
+  domain layer. Reordering the pedagogical journey touches only the 7-phase view, never the catalog.
+- **No drift — enforced, not trusted.** Where the solver consumes an entry it reads the _same_
+  catalog value (structural identity). Where it keeps a local literal (the table-shaped uses), a
+  parity spec (`application/solver/catalog-parity.spec.ts`) deep-equals the catalog entry against
+  the live solver constant — any divergence reddens CI. See the Coach v1 plan, Decision D5.
 - **Harder / accepted:** pedagogical prose lives inside a framework-agnostic package, so wording
-  changes go through the engine. Every entry must serve both consumers at once — machine-executable
-  for the BFS, teachable for Coach — which sets a higher bar for adding one.
-- **Expires when:** a third consumer appears (e.g. the Hono API serving lessons), or growth toward
-  full OLL/PLL — that many algorithms stacked into a TS array may no longer hold up.
+  changes go through the engine. An entry must still be machine-executable _and_ teachable, a higher
+  bar than a plain constant.
+- **Expires when:** a third consumer appears (e.g. a Hono API serving lessons), or growth toward
+  full OLL/PLL — that many algorithms stacked into a TS array may no longer hold up (see plan
+  Follow-Up F3).
+
+## Alternatives considered
+
+- **Keep the strict "both consumers at once" bar** with inline move sequences in lessons 1–4 —
+  rejected: reintroduces the exact solver/Coach drift the catalog exists to prevent.
+- **Full solver refactor** (every phase consumes the catalog, including positional tables) —
+  rejected for v1: widens a Coach release into solver internals (TARGETS/EXTRACT rewrites) and risks
+  regressing shipped behavior for zero v1 user value. The parity spec gives no-drift teeth without
+  it. Convergence stays an optional post-v1 tidy (plan Follow-Up F2).
