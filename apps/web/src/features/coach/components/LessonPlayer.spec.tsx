@@ -33,6 +33,15 @@ describe('LessonPlayer', () => {
     expect(screen.getByText('Step 1/8')).toBeDefined()
   })
 
+  it('should show the algorithm notation, not only the animated cube', async () => {
+    const user = userEvent.setup()
+    render(<LessonPlayer lessonId='second-layer' />)
+
+    await user.click(screen.getByLabelText(/Go to step 3:/))
+    // second-layer-insert-right = D' R' D R D F D' F'
+    expect(screen.getByLabelText('Algorithm notation').textContent).toBe("D'R'DRDFD'F'")
+  })
+
   it('should mark the lesson complete on finishing the last step', async () => {
     const user = userEvent.setup()
     render(<LessonPlayer lessonId='second-layer' />)
