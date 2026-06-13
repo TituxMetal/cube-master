@@ -1,7 +1,54 @@
 import type { ReactNode } from 'react'
 import { useCallback, useEffect, useState } from 'react'
 
-type RouteMap = Record<string, () => ReactNode>
+export type RouteParams = Record<string, string>
+type RouteRender = (params: RouteParams) => ReactNode
+export type RouteMap = Record<string, RouteRender>
+
+// Strip a trailing slash (except on root) so `/coach/` resolves to `/coach`.
+const normalizePath = (pathname: string): string =>
+  pathname.length > 1 && pathname.endsWith('/') ? pathname.slice(0, -1) : pathname
+
+// Resolve a path against the route map: exact static routes win first, then a
+// single-segment `:param` pattern pass. Returns null when nothing matches.
+const matchRoute = (
+  routes: RouteMap,
+  pathname: string
+): { render: RouteRender; params: RouteParams } | null => {
+  const path = normalizePath(pathname)
+
+  const exact = routes[path]
+  if (exact) return { render: exact, params: {} }
+
+  const segments = path.split('/')
+  for (const [pattern, render] of Object.entries(routes)) {
+    if (!pattern.includes(':')) continue
+
+    const patternSegments = pattern.split('/')
+    if (patternSegments.length !== segments.length) continue
+
+    const params: RouteParams = {}
+    let matched = true
+    for (let i = 0; i < patternSegments.length; i++) {
+      const expected = patternSegments[i]
+      const actual = segments[i]
+      if (expected.startsWith(':')) {
+        if (actual === '') {
+          matched = false
+          break
+        }
+        params[expected.slice(1)] = actual
+      } else if (expected !== actual) {
+        matched = false
+        break
+      }
+    }
+
+    if (matched) return { render, params }
+  }
+
+  return null
+}
 
 const subscribers = new Set<() => void>()
 
@@ -37,8 +84,9 @@ const usePathname = () => {
 
 export const Router = ({ routes, fallback }: { routes: RouteMap; fallback?: () => ReactNode }) => {
   const pathname = usePathname()
-  const render = routes[pathname] ?? fallback ?? (() => null)
-  return <>{render()}</>
+  const match = matchRoute(routes, pathname)
+  if (match) return <>{match.render(match.params)}</>
+  return <>{(fallback ?? (() => null))()}</>
 }
 
 export const Link = ({

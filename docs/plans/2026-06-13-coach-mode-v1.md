@@ -127,19 +127,19 @@ duplicated here. `[design]` = decision/doc work, `[code]` = implementation.
 
 **A-storage (independent track):**
 
-- [ ] **A5** `[design]` Author **ADR-0007** (`docs/adr/0007-versioned-localstorage-envelope.md`,
+- [x] **A5** `[design]` Author **ADR-0007** (`docs/adr/0007-versioned-localstorage-envelope.md`,
       Proposed): shared versioned envelope; Timer migration named as endorsed post-v1 follow-up.
       (FR-002)
-- [ ] **A6** `[code]` Add `apps/web/src/lib/storage.ts` (name TBD) + `storage.spec.ts`: load/save a
+- [x] **A6** `[code]` Add `apps/web/src/lib/storage.ts` (name TBD) + `storage.spec.ts`: load/save a
       `{ version, data }` envelope; fallback-to-default on missing/malformed/version-mismatch;
       best-effort writes (swallow quota); shared-layer import rules. (STORY-002 / FR-002, NFR-003)
 
 **A-router (independent track):**
 
-- [ ] **A7** `[code]` Extend `apps/web/src/lib/router.tsx` with single-segment `:param` matching:
+- [x] **A7** `[code]` Extend `apps/web/src/lib/router.tsx` with single-segment `:param` matching:
       exact match wins first, then a thin pattern pass; preserve fallback. Add `router.spec.tsx`.
       Keep it ~20 tested lines. (STORY-003 / FR-003)
-- [ ] **A8** `[design]` Amend **ADR-0002**: update the "route params aren't built in" consequence
+- [x] **A8** `[design]` Amend **ADR-0002**: update the "route params aren't built in" consequence
       and the size/line claim; reaffirm the core decision (no routing library). (STORY-003)
 
 ### Phase B — Proof slice (Second Layer)
