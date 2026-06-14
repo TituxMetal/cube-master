@@ -14,10 +14,12 @@ confidence: high
 **Status:** in_progress — **descoped 2026-06-14** to the first 3 chapters (White Cross, White
 Corners, Second Layer). Foundations (Phase A) and the Second Layer proof slice (Phase B) are built
 and were **preview-gate-reviewed** (B4 passed, changes applied — see the Amendments note below).
-Remaining build is **C1** (lesson browser) + **C2** (two more chapters). Final design/wording polish
-and the last-layer chapters (4–7) are tracked Follow-Ups **F4/F5** that **gate the PR**. This plan
-is **closed at the 3-chapter milestone**, not run to the original 7 — the rest carries forward to a
-dedicated design+wording plan on this same branch.
+**C1** (lesson browser) and **C2** (White Cross + White Corners) are **built and verified
+2026-06-14** — all three chapters live, full verification (D1) green. The only remaining task is
+**D2** (PR to `develop`), which is **gated by Follow-Up F4** — final design/wording polish and the
+last-layer chapters (4–7, F5) land before merge. This plan is **closed at the 3-chapter milestone**,
+not run to the original 7 — the rest carries forward to a dedicated design+wording plan on this same
+branch.
 
 Ship Coach — the last unshipped mode — as the 7-chapter beginner journey, assembled almost entirely
 from parts the repo already has. This plan answers **HOW and IN WHAT ORDER**; the **WHAT** is fixed
@@ -193,14 +195,14 @@ duplicated here. `[design]` = decision/doc work, `[code]` = implementation.
 
 ### Phase C — Broaden (gated on B4)
 
-- [ ] **C1** `[code]` Replace `pages/Coach.tsx` stub: **functional** `LessonBrowser` at `/coach`
+- [x] **C1** `[code]` Replace `pages/Coach.tsx` stub: **functional** `LessonBrowser` at `/coach`
       (tiered by `method`, checkmarks + resume, empty intermediate/advanced placeholders); player at
       `/coach/:lessonId`. **Note:** both routes are **already registered** in `App.tsx` (`/coach` →
       `<Coach />`, `/coach/:lessonId` → `<Coach lessonId>`); update `Coach.spec.tsx`. Build the
       structure and behaviour — **visual polish is deferred to F4**, so plain green-themed layout
       reusing existing tokens (`text-cube-green-text`, the a11y rules from B5c) is enough.
       (STORY-007 / FR-008)
-- [ ] **C2** `[code]` Author **two** chapters against the realized shape (Second Layer already
+- [x] **C2** `[code]` Author **two** chapters against the realized shape (Second Layer already
       built): **White Cross** (`order: 1`) and **White Corners** (`order: 2`, reuses `sexy-move`).
       Each `Lesson` follows the **B5a/B5b** model — `understand` / `demo` (forward-from-solved +
       inverse reset notation) / `practice` (case → solved) steps, **catalog-id references only** (no
@@ -211,7 +213,7 @@ duplicated here. `[design]` = decision/doc work, `[code]` = implementation.
 
 ### Phase D — Ship
 
-- [ ] **D1** Full verification green (`format:check`, `lint:check`, `typecheck`, `test`, `build`).
+- [x] **D1** Full verification green (`format:check`, `lint:check`, `typecheck`, `test`, `build`).
 - [ ] **D2** PR to `develop` (full word), rebased, rebase-merge per
       [`docs/git-workflow.md`](../git-workflow.md). References this plan + the three ADRs. **Gated
       by Follow-Up F4** — the branch stays open through the design+wording plan; do **not** open the
