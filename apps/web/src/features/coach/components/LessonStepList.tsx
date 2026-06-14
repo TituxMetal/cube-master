@@ -24,7 +24,7 @@ export const LessonStepList = ({ steps, currentIndex, onSelect }: LessonStepList
                   ? 'text-success'
                   : isCurrent
                     ? 'text-cube-green-text font-bold'
-                    : 'text-base-content/60'
+                    : 'text-base-content/70'
               }`}
               onClick={() => onSelect(index)}
               aria-current={isCurrent ? 'step' : undefined}
@@ -34,7 +34,7 @@ export const LessonStepList = ({ steps, currentIndex, onSelect }: LessonStepList
                 {isCompleted ? '✓' : isCurrent ? '▸' : '·'}
               </span>
               <span className='flex-1'>{step.title}</span>
-              <span className='text-base-content/50 text-xs uppercase'>{step.kind}</span>
+              <span className='text-base-content/70 text-xs uppercase'>{step.kind}</span>
             </button>
           </li>
         )

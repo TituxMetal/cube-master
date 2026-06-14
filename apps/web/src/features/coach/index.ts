@@ -3,11 +3,11 @@ export { LESSONS, getLesson } from './data/lessons'
 export type { Lesson, LessonStep } from './data/types'
 export { stepAlgorithmId } from './data/types'
 export {
-  completeLesson,
   goToStep,
   nextStep,
   previousStep,
   startLesson,
+  toggleLessonComplete,
   useCurrentLesson,
   useCurrentStep,
   useDemoFrame,

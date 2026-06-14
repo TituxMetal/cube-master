@@ -16,7 +16,7 @@ export const secondLayer: Lesson = {
     {
       kind: 'understand',
       title: 'Why our moves look different',
-      body: 'One heads-up before we start. Most YouTube tutorials solve with white on top and turn the U (up) face. We keep the solved white face on the bottom and turn D (down) instead. The shapes are identical — only the letter changes — so follow the moves shown here on the cube and you will not get lost.'
+      body: 'One heads-up before we start. Most YouTube tutorials solve with white on top and turn the U (up) face. We keep the solved white face on the top and turn D (down) instead. The shapes are identical — only the letter changes — so follow the moves shown here on the cube and you will not get lost.'
     },
     {
       kind: 'demo',

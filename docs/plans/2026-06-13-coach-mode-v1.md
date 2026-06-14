@@ -1,5 +1,5 @@
 ---
-title: 'feat: Coach mode v1 — 7-chapter beginner journey'
+title: 'feat: Coach mode v1 — first 3 chapters of the beginner journey'
 type: plan
 date: 2026-06-13
 status: in_progress
@@ -9,9 +9,15 @@ architecture: docs/stories/coach-mode-v1.architecture.md
 confidence: high
 ---
 
-# feat: Coach mode v1 — 7-chapter beginner journey
+# feat: Coach mode v1 — first 3 chapters of the beginner journey
 
-**Status:** in_progress
+**Status:** in_progress — **descoped 2026-06-14** to the first 3 chapters (White Cross, White
+Corners, Second Layer). Foundations (Phase A) and the Second Layer proof slice (Phase B) are built
+and were **preview-gate-reviewed** (B4 passed, changes applied — see the Amendments note below).
+Remaining build is **C1** (lesson browser) + **C2** (two more chapters). Final design/wording polish
+and the last-layer chapters (4–7) are tracked Follow-Ups **F4/F5** that **gate the PR**. This plan
+is **closed at the 3-chapter milestone**, not run to the original 7 — the rest carries forward to a
+dedicated design+wording plan on this same branch.
 
 Ship Coach — the last unshipped mode — as the 7-chapter beginner journey, assembled almost entirely
 from parts the repo already has. This plan answers **HOW and IN WHAT ORDER**; the **WHAT** is fixed
@@ -39,8 +45,10 @@ decisions before code.
 When this lands:
 
 - A learner opens `/coach`, sees the beginner journey, opens **Second Layer**, walks understand →
-  demo → practice, earns a checkmark, and can resume after reload — all seven chapters available,
-  entirely inside the app.
+  demo → practice, earns a checkmark, and can resume after reload — the **first three chapters**
+  (White Cross, White Corners, Second Layer) available, entirely inside the app. The journey stops
+  at **two solved layers** in this v1; the full-solve outcome returns with the last-layer chapters
+  (Follow-Up F5).
 - The engine domain layer owns a canonical algorithm catalog. **No promoted algorithm can drift from
   the Solver** — enforced **structurally** where the solver consumes the entry (`sune`, `anti-sune`,
   `yellow-cross-line`, `yellow-cross-l` — same object) and by a **parity spec** for the rest
@@ -52,8 +60,9 @@ When this lands:
 
 ## Scope and Non-Goals
 
-**In scope:** STORY-001..008 as written — catalog, versioned storage, router params, lesson model +
-Second Layer content, Coach store, lesson player, browser, and the remaining six chapters.
+**In scope:** STORY-001..007 plus a rescoped STORY-008 — catalog, versioned storage, router params,
+lesson model + Second Layer content, Coach store, lesson player, lesson browser, and **two** more
+chapters (White Cross, White Corners) for **three total**.
 
 **Non-Goals** (inherited from brainstorm, restated as hard boundaries):
 
@@ -63,6 +72,13 @@ Second Layer content, Coach store, lesson player, browser, and the remaining six
 - **No Timer refactor in v1.** The Timer is _not_ migrated onto the versioned helper now — that is
   an endorsed, explicitly-tracked **post-v1** task (see Follow-Ups), not silent debt.
 - No MDX/markdown pipeline, no i18n, no new runtime dependency (NFR-002).
+- **Chapters 4–7 (last layer: yellow cross, yellow corners orient/permute, finish) are out of v1.**
+  The journey stops at two solved layers; restoring the full-solve outcome is tracked Follow-Up
+  **F5**.
+- **No final design/wording polish in this plan.** Lesson prose, the browser/player visual design,
+  and copy land in a dedicated design+wording brainstorm → plan (**F4**), on this same branch. **F4
+  gates the PR**: nothing merges to `develop` until design + wording are honoured. Content written
+  in C2 is a refinable first draft, not the final copy.
 
 ---
 
@@ -81,8 +97,8 @@ Phase A — Foundations (3 parallel tracks)
 Phase B — Proof slice: Second Layer end-to-end
   lesson model + content → coach store → lesson player → PREVIEW GATE           (STORY-004..006)
         │  (preview reviewed before C)
-Phase C — Broaden (gated on preview review)
-  lesson browser + Coach page → remaining six chapters                          (STORY-007..008)
+Phase C — Broaden (gated on preview review — B4 passed 2026-06-14)
+  lesson browser + Coach page → 2 more chapters (White Cross, White Corners)    (STORY-007..008, rescoped)
 Phase D — Ship: full verification → PR to develop
 ```
 
@@ -156,25 +172,51 @@ duplicated here. `[design]` = decision/doc work, `[code]` = implementation.
       `step.kind`, reused `StepControls`, **new** `LessonStepList` (not `PhaseList`), green tokens,
       unknown-id not-found state; wire `/coach/second-layer` + spec. (STORY-006 / FR-007) _Depends:
       A7, B1, B2._
-- [ ] **B4** `[gate]` **Preview gate** — capture the player on Second Layer (screenshot or live) and
-      review against the Subjective Contract. Failure sends shape back, not forward. (Rollout rule)
+- [x] **B4** `[gate]` **Preview gate — PASSED 2026-06-14** (reviewer: Titux, live on
+      `/coach/second-layer`). Sent shape back once, then forward: changes requested and applied in
+      **B5**. (Rollout rule)
+
+**B5 — proof-slice refinements from the B4 review (all done 2026-06-14):**
+
+- [x] **B5a** `[code]` **Demo plays forward from a solved cube** (sees what the algorithm does), and
+      shows the **inverse algorithm as notation only** (no CubeNet, `aria-label='Reset notation'`,
+      derived via `invertMoves` of the same catalog id) so a beginner can reset their physical cube.
+      Practice stays from the case → solved; demo and practice are **distinct**. (Decision **D6**)
+- [x] **B5b** `[code]` **Finish chapter is a toggle** (`toggleLessonComplete`, reversible). Final
+      "next chapter" CTA role deferred to C1.
+- [x] **B5c** `[code]` **Accessibility — contrast.** Added `--color-cube-green-content` (dark, AA on
+      the 60% green) for solid-green buttons + active keycap; bumped step-list label opacities to
+      `/70`. Re-verified green in the Firefox a11y panel.
+- [x] **B5d** `[code]` **SUG-1 — storage validation.** Coach passes a `validate`
+      (`parseCoachProgress`) to the versioned store so a version-matching but malformed envelope
+      falls back to default, honouring ADR-0007's "never coerce a mismatched shape".
 
 ### Phase C — Broaden (gated on B4)
 
-- [ ] **C1** `[code]` Replace `pages/Coach.tsx` stub: `LessonBrowser` at `/coach` (tiered by
-      `method`, checkmarks + resume, empty intermediate/advanced placeholders), player at
-      `/coach/:lessonId`; register both routes in `App.tsx`; update `Coach.spec.tsx`. (STORY-007 /
-      FR-008)
-- [ ] **C2** `[code]` Author the remaining **six chapters** against the reviewed shape (White Cross,
-      White Corners, Yellow Cross, Yellow Corners orient, Yellow Corners permute / final),
-      catalog-id references only, sexy-move called back across chapters, referential-integrity spec
-      green for all. (STORY-008 / FR-009) _Gated: B4 passed._
+- [ ] **C1** `[code]` Replace `pages/Coach.tsx` stub: **functional** `LessonBrowser` at `/coach`
+      (tiered by `method`, checkmarks + resume, empty intermediate/advanced placeholders); player at
+      `/coach/:lessonId`. **Note:** both routes are **already registered** in `App.tsx` (`/coach` →
+      `<Coach />`, `/coach/:lessonId` → `<Coach lessonId>`); update `Coach.spec.tsx`. Build the
+      structure and behaviour — **visual polish is deferred to F4**, so plain green-themed layout
+      reusing existing tokens (`text-cube-green-text`, the a11y rules from B5c) is enough.
+      (STORY-007 / FR-008)
+- [ ] **C2** `[code]` Author **two** chapters against the realized shape (Second Layer already
+      built): **White Cross** (`order: 1`) and **White Corners** (`order: 2`, reuses `sexy-move`).
+      Each `Lesson` follows the **B5a/B5b** model — `understand` / `demo` (forward-from-solved +
+      inverse reset notation) / `practice` (case → solved) steps, **catalog-id references only** (no
+      inline `MoveToken[]`), green tokens, `LessonStepList`. The `lessons.ts` registry lists all
+      three; `lessons.spec.ts` referential-integrity guard stays green for all. Prose is a
+      **refinable first draft** (final wording → F4). (STORY-008 / FR-009, rescoped) _Gated: B4
+      passed._
 
 ### Phase D — Ship
 
 - [ ] **D1** Full verification green (`format:check`, `lint:check`, `typecheck`, `test`, `build`).
 - [ ] **D2** PR to `develop` (full word), rebased, rebase-merge per
-      [`docs/git-workflow.md`](../git-workflow.md). References this plan + the three ADRs.
+      [`docs/git-workflow.md`](../git-workflow.md). References this plan + the three ADRs. **Gated
+      by Follow-Up F4** — the branch stays open through the design+wording plan; do **not** open the
+      PR until design + wording are honoured (Titux's bar: merge = feature 100% done). Keep the
+      branch rebased on `develop` in the meantime.
 
 ---
 
@@ -263,6 +305,25 @@ legitimately imports the domain catalog and its own solver constants).
 The honest, stronger framing this buys: **no drift on every promoted algorithm — enforced
 structurally where consumed, by a parity spec otherwise.**
 
+### D6 — Demo plays from solved + shows the inverse; practice stays from the case; Finish toggles
+
+_(Decided at the B4 preview gate, 2026-06-14 — supersedes the demo behaviour implied by D3/D4 and by
+STORY-006 where they conflict.)_
+
+A demo **starts from a solved cube and plays the algorithm forward**, so the learner sees what the
+move _does_ (the case forms) — this matches the demo prose ("watch it drop into place") and is how
+algorithms are classically taught. Because that scrambles the learner's physical cube, and a v1
+beginner can't yet invert an algorithm, the demo also **displays the inverse as notation only** (no
+CubeNet — it would only add clutter) so they can reset to solved. The inverse is **derived**
+(`invertMoves` of the same catalog id), so it costs nothing per chapter and **cannot drift**
+(NFR-004 holds). **Practice** is unchanged: it starts from the case
+(`applyMoves(solved, invertMoves(alg))`) and plays forward to solved, with success by full-state
+equality (D4). Demo and practice are thus **distinct** — an interim implementation had collapsed
+them (both from the case); that was reverted. **Finish chapter** is a **toggle**
+(`toggleLessonComplete`) so a mis-click is reversible; whether this button later becomes a "next
+chapter" CTA is a C1 concern. _Rejected:_ demo-from-case (collapses into practice, contradicts the
+demo prose); making the learner invert the algorithm themselves (against the beginner contract).
+
 ---
 
 ## Constraints and Boundaries
@@ -314,11 +375,15 @@ binding for B1/B3/C2.
 
 - **Target outcome:** a never-solved learner finishes the 7 chapters and solves a cube — J Perm-like
   clarity, the sexy move as one foundational sequence reused across chapters, notation introduced
-  gently.
+  gently. **v1 note:** with the 3-chapter descope this outcome is **partial** (two solved layers);
+  the full-solve outcome returns with the last-layer chapters (F5). v1 still holds the clarity, sexy
+  move, and gentle-notation parts of the contract.
 - **Anti-goals:** an algorithm reference dump; a case-grid trainer disguised as lessons; prose that
   assumes YouTube context.
 - **Tone:** signature green; encouraging, concrete, second person; every algorithm shown is demoable
-  on the CubeNet, never prose-only.
+  on the CubeNet, never prose-only. **Amended (D6):** the demo's **inverse reset sequence** is the
+  one deliberate exception — shown as notation only, no CubeNet, because it is a reset aid, not a
+  taught algorithm.
 - **References:** J Perm 7-step beginner page; CubeSkills module→lesson→checkmark; archived Coach
   layout sketch. **Anti-references:** csTimer/bestsiteever case grids; MVP-era mode-competition
   language.
@@ -342,6 +407,16 @@ binding for B1/B3/C2.
   generator).
 - **F3 — Catalog growth toward OLL/PLL** triggers ADR-0006's stated expiry (TS-array scaling);
   revisit storage form then.
+- **F4 — Design + wording brainstorm → dedicated plan (PR-gating).** All lesson prose, the
+  browser/player visual design, copy polish (incl. the inverse-reset label, "Mark as not done", the
+  blue reused `StepControls`), and the OBS-3 first-render flash. Runs on **this same branch**;
+  **nothing merges to `develop` until F4 lands** (Titux's quality bar). _(Endorsed; the descope
+  exists precisely to let F4 be its own focused plan.)_
+- **F5 — Last-layer chapters 4–7** (yellow cross, yellow corners orient/permute, finish) — restores
+  the full-solve target outcome. Author against the same B5a/D6 shape, catalog-id refs only. Can
+  fold into the F4 plan or be its own. _(Tracked, not dropped.)_
+- **F6 — (optional) SUG-2: `requireAlgorithm` helper** to replace the engine's `getAlgorithm('…')!`
+  non-null assertions with a readable throw. Cheap; guarded today by the `solve*.spec.ts`.
 
 ## References
 

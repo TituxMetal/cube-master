@@ -2,13 +2,14 @@ import { useEffect } from 'react'
 
 import { getLesson } from '~/features/coach/data/lessons'
 import {
-  completeLesson,
   goToStep,
   nextStep,
   previousStep,
   startLesson,
+  toggleLessonComplete,
   useCurrentStepMoves,
   useDemoFrame,
+  useInverseMoves,
   useIsPracticeSolved,
   useLessonStepIndex,
   usePlaybackIndex,
@@ -42,6 +43,7 @@ export const LessonPlayer = ({ lessonId }: { lessonId: string }) => {
   const playbackTotal = usePlaybackTotal()
   const moves = useCurrentStepMoves()
   const frame = useDemoFrame()
+  const inverseMoves = useInverseMoves()
   const isPracticeSolved = useIsPracticeSolved()
   const progress = useProgress()
 
@@ -84,6 +86,19 @@ export const LessonPlayer = ({ lessonId }: { lessonId: string }) => {
             />
           )}
 
+          {step.kind === 'demo' && inverseMoves.length > 0 && (
+            <div className='text-base-content/70 flex flex-wrap items-center justify-center gap-2 text-sm'>
+              <span>To set your cube back to solved, play:</span>
+              <span className='flex flex-wrap gap-1' aria-label='Reset notation'>
+                {inverseMoves.map((move, index) => (
+                  <kbd key={index} className='kbd kbd-sm font-mono'>
+                    {move}
+                  </kbd>
+                ))}
+              </span>
+            </div>
+          )}
+
           {step.kind === 'practice' && isPracticeSolved && (
             <p className='text-success text-center font-semibold' aria-live='polite'>
               Solved! Nicely done.
@@ -116,10 +131,14 @@ export const LessonPlayer = ({ lessonId }: { lessonId: string }) => {
             )}
             <button
               type='button'
-              className='btn btn-primary cursor-pointer'
-              onClick={() => completeLesson(lessonId)}
+              className={
+                isCompleted
+                  ? 'btn btn-soft cursor-pointer'
+                  : 'btn bg-cube-green text-cube-green-content cursor-pointer'
+              }
+              onClick={() => toggleLessonComplete(lessonId)}
             >
-              Finish chapter
+              {isCompleted ? 'Mark as not done' : 'Finish chapter'}
             </button>
             <Link to='/coach' className='btn btn-soft cursor-pointer'>
               Back to Coach
@@ -128,7 +147,7 @@ export const LessonPlayer = ({ lessonId }: { lessonId: string }) => {
         ) : (
           <button
             type='button'
-            className='btn btn-primary ml-auto cursor-pointer'
+            className='btn bg-cube-green text-cube-green-content ml-auto cursor-pointer'
             onClick={() => goToStep(stepIndex + 1)}
             aria-label='Next lesson step'
           >
