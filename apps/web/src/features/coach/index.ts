@@ -1,4 +1,4 @@
-export { LessonPlayer, LessonStepList } from './components'
+export { LessonBrowser, LessonPlayer, LessonStepList } from './components'
 export { LESSONS, getLesson } from './data/lessons'
 export type { Lesson, LessonStep } from './data/types'
 export { stepAlgorithmId } from './data/types'
