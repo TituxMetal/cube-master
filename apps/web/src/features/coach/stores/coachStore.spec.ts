@@ -10,16 +10,18 @@ import { beforeEach, describe, expect, it } from 'bun:test'
 import {
   $currentLessonId,
   $demoFrame,
+  $inverseMoves,
   $isPracticeSolved,
   $lessonStepIndex,
   $playbackIndex,
   $playbackTotal,
   $progress,
-  completeLesson,
   goToStep,
   nextStep,
+  parseCoachProgress,
   previousStep,
-  startLesson
+  startLesson,
+  toggleLessonComplete
 } from '~/features/coach/stores/coachStore'
 import type { CoachProgress } from '~/features/coach/stores/coachStore'
 import { createVersionedStorage } from '~/lib/storage'
@@ -43,16 +45,17 @@ describe('coach progress', () => {
     expect($progress.get().current).toEqual({ lesson: 'second-layer', step: 0 })
   })
 
-  it('should mark a lesson complete idempotently', () => {
-    completeLesson('second-layer')
-    completeLesson('second-layer')
+  it('should toggle a lesson between complete and not complete', () => {
+    toggleLessonComplete('second-layer')
     expect($progress.get().completedLessons).toEqual(['second-layer'])
+    toggleLessonComplete('second-layer')
+    expect($progress.get().completedLessons).toEqual([])
   })
 
   it('should round-trip progress through the versioned helper', () => {
     startLesson('second-layer')
     goToStep(4)
-    completeLesson('second-layer')
+    toggleLessonComplete('second-layer')
 
     const reloaded = createVersionedStorage<CoachProgress>({
       key: 'cubeMaster:coachProgress',
@@ -70,6 +73,21 @@ describe('coach progress', () => {
     startLesson('second-layer')
     expect($lessonStepIndex.get()).toBe(4)
   })
+
+  it('should reject a version-matching but malformed stored envelope', () => {
+    localStorage.setItem(
+      'cubeMaster:coachProgress',
+      JSON.stringify({ version: 1, data: { completedLessons: 'nope' } })
+    )
+    const fallback: CoachProgress = { completedLessons: [], current: { lesson: null, step: 0 } }
+    const storage = createVersionedStorage<CoachProgress>({
+      key: 'cubeMaster:coachProgress',
+      version: 1,
+      fallback,
+      validate: parseCoachProgress
+    })
+    expect(storage.load()).toEqual(fallback)
+  })
 })
 
 describe('demo playback', () => {
@@ -79,7 +97,7 @@ describe('demo playback', () => {
     expect($demoFrame.get()).toBeNull()
   })
 
-  it('should show the solved cube at index 0 and the fully applied case at the end', () => {
+  it('should start from solved at index 0 and reveal the case at the end', () => {
     startLesson('second-layer')
     goToStep(DEMO_RIGHT_STEP)
     expect($playbackTotal.get()).toBe(RIGHT_INSERT.length)
@@ -89,6 +107,12 @@ describe('demo playback', () => {
 
     $playbackIndex.set(RIGHT_INSERT.length)
     expect($demoFrame.get()).toEqual(toStickers(applyMoves(createSolvedState(), RIGHT_INSERT)))
+  })
+
+  it('should expose the inverse algorithm so a demo can be reset to solved', () => {
+    startLesson('second-layer')
+    goToStep(DEMO_RIGHT_STEP)
+    expect($inverseMoves.get()).toEqual(invertMoves(RIGHT_INSERT))
   })
 
   it('should clamp next/previous to [0, total]', () => {

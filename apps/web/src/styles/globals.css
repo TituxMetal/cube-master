@@ -54,6 +54,10 @@
   --color-cube-green-text: oklch(78% 0.15 150);
   --color-cube-red-text: oklch(76% 0.18 27);
   --color-cube-orange-text: oklch(80% 0.14 55);
+
+  /* Dark content for text/icons ON a solid cube-green surface (buttons, active
+     keycaps) — mirrors daisyUI's *-content convention; AA on the 60% green. */
+  --color-cube-green-content: oklch(18% 0.04 150);
 }
 
 @layer base {

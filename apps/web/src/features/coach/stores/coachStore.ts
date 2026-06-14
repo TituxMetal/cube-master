@@ -28,10 +28,30 @@ const defaultProgress: CoachProgress = {
   current: { lesson: null, step: 0 }
 }
 
+// Validate a decoded v1 envelope before trusting it as CoachProgress. Without
+// this, a version-matching but malformed `data` would be cast straight to the
+// typed shape — ADR-0007's "never coerce a mismatched shape" only holds when the
+// caller validates. A bad shape (tampered/older bug) then falls back to default.
+export const parseCoachProgress = (data: unknown): CoachProgress | null => {
+  if (typeof data !== 'object' || data === null) return null
+  const { completedLessons, current } = data as Record<string, unknown>
+  if (!Array.isArray(completedLessons) || completedLessons.some(id => typeof id !== 'string')) {
+    return null
+  }
+  if (typeof current !== 'object' || current === null) return null
+  const { lesson, step } = current as Record<string, unknown>
+  if ((lesson !== null && typeof lesson !== 'string') || typeof step !== 'number') return null
+  return {
+    completedLessons: completedLessons as string[],
+    current: { lesson, step }
+  }
+}
+
 const progressStorage = createVersionedStorage<CoachProgress>({
   key: PROGRESS_KEY,
   version: 1,
-  fallback: defaultProgress
+  fallback: defaultProgress,
+  validate: parseCoachProgress
 })
 
 const SOLVED_STICKERS = toStickers(createSolvedState())
@@ -70,8 +90,9 @@ export const $currentStepMoves = computed($currentStep, (step): readonly MoveTok
 export const $playbackTotal = computed($currentStepMoves, (moves): number => moves.length)
 
 // Coach's own copy of the Solver's `$cubeAtStep` shape — it does not import solver
-// atoms. demo plays forward from solved; practice starts from the inverse-scramble
-// of the case and plays the algorithm forward, returning the cube to solved.
+// atoms. A demo plays forward from a solved cube so the learner sees what the
+// algorithm *does* to the cube; practice starts from the inverse-scramble of the
+// case and plays forward, returning the cube to solved.
 export const $demoFrame = computed(
   [$currentStep, $playbackIndex],
   (step, index): StickersByFace | null => {
@@ -83,6 +104,13 @@ export const $demoFrame = computed(
         : createSolvedState()
     return toStickers(applyMoves(base, moves.slice(0, index)))
   }
+)
+
+// The inverse of a demo's algorithm, shown as notation only (no CubeNet). A demo
+// scrambles a solved cube to reveal the case; a beginner can't yet invert an
+// algorithm, so we hand them the exact sequence that resets their cube to solved.
+export const $inverseMoves = computed($currentStepMoves, (moves): readonly MoveToken[] =>
+  invertMoves(moves)
 )
 
 const stickersEqual = (a: StickersByFace, b: StickersByFace): boolean =>
@@ -136,12 +164,16 @@ export const previousStep = () => {
   if (current > 0) $playbackIndex.set(current - 1)
 }
 
-export const completeLesson = (lessonId: string) => {
+// Mark/unmark a lesson as complete — a toggle so a learner can correct a
+// mis-click. The final "next chapter" navigation is a C1 (lesson browser) concern.
+export const toggleLessonComplete = (lessonId: string) => {
   const progress = $progress.get()
-  if (progress.completedLessons.includes(lessonId)) return
+  const isDone = progress.completedLessons.includes(lessonId)
   $progress.set({
     ...progress,
-    completedLessons: [...progress.completedLessons, lessonId]
+    completedLessons: isDone
+      ? progress.completedLessons.filter(id => id !== lessonId)
+      : [...progress.completedLessons, lessonId]
   })
 }
 
@@ -154,5 +186,6 @@ export const usePlaybackIndex = (): number => useStore($playbackIndex)
 export const usePlaybackTotal = (): number => useStore($playbackTotal)
 export const useCurrentStepMoves = (): readonly MoveToken[] => useStore($currentStepMoves)
 export const useDemoFrame = (): StickersByFace | null => useStore($demoFrame)
+export const useInverseMoves = (): readonly MoveToken[] => useStore($inverseMoves)
 export const useIsPracticeSolved = (): boolean => useStore($isPracticeSolved)
 export const useProgress = (): CoachProgress => useStore($progress)

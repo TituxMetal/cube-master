@@ -42,7 +42,16 @@ describe('LessonPlayer', () => {
     expect(screen.getByLabelText('Algorithm notation').textContent).toBe("D'R'DRDFD'F'")
   })
 
-  it('should mark the lesson complete on finishing the last step', async () => {
+  it('should show how to reset the cube to solved on a demo step', async () => {
+    const user = userEvent.setup()
+    render(<LessonPlayer lessonId='second-layer' />)
+
+    await user.click(screen.getByLabelText(/Go to step 3:/))
+    // inverse of D' R' D R D F D' F' = F D F' D' R' D' R D
+    expect(screen.getByLabelText('Reset notation').textContent).toBe("FDF'D'R'D'RD")
+  })
+
+  it('should toggle the lesson complete on the last step', async () => {
     const user = userEvent.setup()
     render(<LessonPlayer lessonId='second-layer' />)
 
@@ -53,6 +62,12 @@ describe('LessonPlayer', () => {
       expect(screen.getByLabelText('Chapter completed')).toBeDefined()
     })
     expect($progress.get().completedLessons).toContain('second-layer')
+
+    await user.click(screen.getByText('Mark as not done'))
+    await waitFor(() => {
+      expect(screen.queryByLabelText('Chapter completed')).toBeNull()
+    })
+    expect($progress.get().completedLessons).not.toContain('second-layer')
   })
 
   it('should render a not-found state for an unknown lesson id', () => {

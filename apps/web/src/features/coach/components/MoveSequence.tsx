@@ -21,7 +21,7 @@ export const MoveSequence = ({ moves, currentIndex }: MoveSequenceProps) => (
           key={index}
           className={`kbd font-mono ${
             isCurrent
-              ? 'kbd-xl bg-cube-green text-cube-white text-lg font-bold'
+              ? 'kbd-xl bg-cube-green text-cube-green-content text-lg font-bold'
               : 'kbd-lg text-base-content/70'
           }`}
           aria-current={isCurrent ? 'step' : undefined}
