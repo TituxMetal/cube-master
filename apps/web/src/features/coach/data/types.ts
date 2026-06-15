@@ -6,13 +6,28 @@ import type { AlgorithmMethod, FaceCode, MoveToken } from '@packages/cube-engine
 // notation primer, whose `interactive` step carries individual face turns (R, R′)
 // as the alphabet it teaches — notation atoms, not a teachable algorithm.
 
-// A visual attached to an `understand` step. Either the solved cube (optionally a
-// partial goal to highlight) or a named algorithm's *case* — rendered by applying
-// the inverse of its moves to solved, so what the learner recognises is exactly
-// what the demo resolves. `caseOf` references a catalog id (NFR-004). (D-VISUAL)
+// Named illustrative cube states the store renders without the step carrying any
+// moves — so lesson data never holds an inline MoveToken[] (NFR-004). `solved` is
+// the finished cube; `cross-misaligned` is a white cross whose side colours don't
+// follow their centres (the classic White-Cross mistake), rendered internally by
+// the store. A `caseOf` references a catalog algorithm's case.
+export type IllustrativeState = 'solved' | 'cross-misaligned'
+
+// A visual attached to an `understand` step. Either an illustrative state
+// (optionally with a partial goal to highlight) or a named algorithm's *case* —
+// rendered by applying the inverse of its moves to solved, so what the learner
+// recognises is exactly what the demo resolves. (D-VISUAL / PD2)
 export type StepVisual = {
-  state: 'solved' | { caseOf: string }
+  state: IllustrativeState | { caseOf: string }
   highlight?: Partial<Record<FaceCode, readonly number[]>>
+}
+
+// The one non-uniform visual (PD2): two small captioned nets side by side — used
+// once, for White Cross's "good cross vs sides not matching" contrast. Kept a
+// bounded optional field, not a generalised layout model.
+export type CompareVisual = {
+  left: { visual: StepVisual; caption: string }
+  right: { visual: StepVisual; caption: string }
 }
 
 export type UnderstandStep = {
@@ -20,6 +35,7 @@ export type UnderstandStep = {
   title: string
   body: string
   visual?: StepVisual
+  compare?: CompareVisual
 }
 
 // Chapter 0's tap-to-turn primer (D-CH0-MODEL / PD4). The player renders a local
@@ -68,15 +84,24 @@ export type Lesson = {
 export const stepAlgorithmId = (step: LessonStep): string | null =>
   step.kind === 'demo' || step.kind === 'practice' ? step.algorithmId : null
 
+// The catalog id a visual's `caseOf` references, if any.
+const visualCaseId = (visual: StepVisual): string | null =>
+  typeof visual.state === 'object' ? visual.state.caseOf : null
+
 // Every catalog id a step references — the demo/practice algorithm and any
-// `understand` visual `caseOf`. Used by the referential-integrity guard so a
-// typo'd id reddens CI rather than rendering a blank cube.
+// `understand` visual or comparison `caseOf`. Used by the referential-integrity
+// guard so a typo'd id reddens CI rather than rendering a blank cube.
 export const stepCatalogIds = (step: LessonStep): readonly string[] => {
   const ids: string[] = []
   const algId = stepAlgorithmId(step)
   if (algId !== null) ids.push(algId)
-  if (step.kind === 'understand' && step.visual && step.visual.state !== 'solved') {
-    ids.push(step.visual.state.caseOf)
+  if (step.kind === 'understand') {
+    const visuals = [step.visual, step.compare?.left.visual, step.compare?.right.visual]
+    for (const visual of visuals) {
+      if (!visual) continue
+      const caseId = visualCaseId(visual)
+      if (caseId !== null) ids.push(caseId)
+    }
   }
   return ids
 }
