@@ -52,6 +52,23 @@ describe('CubeNet', () => {
     })
   })
 
+  it('should mark highlighted stickers on the named face only', () => {
+    const { container } = render(
+      <CubeNet stickersByFace={solvedStickers} highlight={{ U: [0, 1] }} />
+    )
+
+    const upFace = screen.getByLabelText('Up face')
+
+    expect(upFace.querySelectorAll('[data-highlighted]')).toHaveLength(2)
+    expect(container.querySelectorAll('[data-highlighted]')).toHaveLength(2)
+  })
+
+  it('should draw the active-move arrow on the affected face', () => {
+    render(<CubeNet stickersByFace={solvedStickers} activeMove="R'" />)
+
+    expect(screen.getByLabelText("turn R' counter-clockwise")).toBeDefined()
+  })
+
   it('should render face labels for all faces', () => {
     const { container } = render(<CubeNet stickersByFace={solvedStickers} />)
 

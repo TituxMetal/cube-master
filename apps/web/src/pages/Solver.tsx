@@ -140,7 +140,11 @@ const SolutionView = () => {
 
       <div className='grid grid-cols-1 gap-6 md:grid-cols-[1fr_16rem] lg:grid-cols-[1fr_18rem]'>
         <div className='pointer-events-none' inert>
-          <InteractiveCubeNet stickers={cubeAtStep} onPaintSticker={() => {}} />
+          <InteractiveCubeNet
+            stickers={cubeAtStep}
+            onPaintSticker={() => {}}
+            activeMove={currentMove ?? undefined}
+          />
         </div>
 
         <aside className='card bg-base-200 overflow-hidden p-4' aria-label='Solution phases'>

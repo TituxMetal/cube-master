@@ -74,4 +74,30 @@ describe('FaceGrid', () => {
     expect(figure?.className).toContain('col-start-2')
     expect(figure?.className).toContain('row-start-1')
   })
+
+  it('should mark only the highlighted sticker indices', () => {
+    const { container } = render(<FaceGrid stickers={mixedFace} highlight={[0, 4]} />)
+
+    const highlighted = container.querySelectorAll('[data-highlighted]')
+
+    expect(highlighted).toHaveLength(2)
+  })
+
+  it('should not mark any sticker when no highlight is given', () => {
+    const { container } = render(<FaceGrid stickers={mixedFace} />)
+
+    expect(container.querySelectorAll('[data-highlighted]')).toHaveLength(0)
+  })
+
+  it('should draw a move arrow when the active move turns this face', () => {
+    render(<FaceGrid stickers={solvedWhiteFace} label='R' activeMove='R' />)
+
+    expect(screen.getByLabelText('turn R clockwise')).toBeDefined()
+  })
+
+  it('should not draw a move arrow when the active move turns another face', () => {
+    render(<FaceGrid stickers={solvedWhiteFace} label='R' activeMove='U' />)
+
+    expect(screen.queryByLabelText(/^turn/)).toBeNull()
+  })
 })
