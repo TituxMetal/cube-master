@@ -7,6 +7,7 @@ import {
 } from '@packages/cube-engine'
 import { beforeEach, describe, expect, it } from 'bun:test'
 
+import { crossMisaligned, whiteCrossOnly } from '~/features/coach/data/illustrative'
 import {
   $currentLessonId,
   $demoFrame,
@@ -99,11 +100,11 @@ describe('coach progress', () => {
 })
 
 describe('understand visuals', () => {
-  it('should resolve the goal visual to the solved cube with its highlight', () => {
+  it('should resolve the goal visual to the white-cross-only cube with its highlight', () => {
     startLesson('white-cross')
     goToStep(0)
     const visual = $understandVisual.get()
-    expect(visual?.stickers).toEqual(solved())
+    expect(visual?.stickers).toEqual(whiteCrossOnly())
     expect(visual?.highlight?.U).toEqual([1, 3, 5, 7])
   })
 
@@ -115,9 +116,8 @@ describe('understand visuals', () => {
 
   it('should resolve illustrative and case states directly', () => {
     expect(resolveStepVisual({ state: 'solved' })?.stickers).toEqual(solved())
-    expect(resolveStepVisual({ state: 'cross-misaligned' })?.stickers).toEqual(
-      toStickers(applyMoves(createSolvedState(), ['U']))
-    )
+    expect(resolveStepVisual({ state: 'white-cross-only' })?.stickers).toEqual(whiteCrossOnly())
+    expect(resolveStepVisual({ state: 'cross-misaligned' })?.stickers).toEqual(crossMisaligned())
     expect(resolveStepVisual({ state: { caseOf: 'white-cross-flip' } })?.stickers).toEqual(
       caseStickers()
     )

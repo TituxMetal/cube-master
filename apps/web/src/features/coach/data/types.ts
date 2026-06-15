@@ -8,10 +8,12 @@ import type { AlgorithmMethod, FaceCode, MoveToken } from '@packages/cube-engine
 
 // Named illustrative cube states the store renders without the step carrying any
 // moves — so lesson data never holds an inline MoveToken[] (NFR-004). `solved` is
-// the finished cube; `cross-misaligned` is a white cross whose side colours don't
-// follow their centres (the classic White-Cross mistake), rendered internally by
-// the store. A `caseOf` references a catalog algorithm's case.
-export type IllustrativeState = 'solved' | 'cross-misaligned'
+// the finished cube; `white-cross-only` is a real, reachable cube with just the
+// white cross done and the rest mixed (a meaningful goal, not a solved cube);
+// `cross-misaligned` is that same cube with the side bands rotated off their
+// centres (the classic White-Cross mistake). A `caseOf` references a catalog
+// algorithm's case.
+export type IllustrativeState = 'solved' | 'white-cross-only' | 'cross-misaligned'
 
 // A visual attached to an `understand` step. Either an illustrative state
 // (optionally with a partial goal to highlight) or a named algorithm's *case* —

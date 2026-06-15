@@ -9,6 +9,7 @@ import {
 } from '@packages/cube-engine'
 import { atom, computed } from 'nanostores'
 
+import { crossMisaligned, whiteCrossOnly } from '~/features/coach/data/illustrative'
 import { getLesson } from '~/features/coach/data/lessons'
 import type { Lesson, LessonStep, StepVisual } from '~/features/coach/data/types'
 import { createVersionedStorage } from '~/lib/storage'
@@ -123,17 +124,14 @@ export type UnderstandVisual = {
   highlight?: Partial<Record<FaceCode, readonly number[]>>
 }
 
-// A white cross intact on top with the side colours rotated off their centres —
-// the classic "looks right but isn't" mistake. A presentation rotation, not a
-// taught algorithm, so it lives here rather than as inline data (NFR-004).
-const MISALIGNED_CROSS = toStickers(applyMoves(createSolvedState(), ['U']))
-
 // Resolve a step visual to concrete stickers + its highlight. Pure — usable both
-// reactively (the current step) and directly (a comparison's two nets).
+// reactively (the current step) and directly (a comparison's two nets). The
+// partial states come from the solver-derived illustrative module (memoised).
 export const resolveStepVisual = (visual: StepVisual): UnderstandVisual | null => {
   const { state, highlight } = visual
   if (state === 'solved') return { stickers: SOLVED_STICKERS, highlight }
-  if (state === 'cross-misaligned') return { stickers: MISALIGNED_CROSS, highlight }
+  if (state === 'white-cross-only') return { stickers: whiteCrossOnly(), highlight }
+  if (state === 'cross-misaligned') return { stickers: crossMisaligned(), highlight }
   const algorithm = getAlgorithm(state.caseOf)
   if (!algorithm) return null
   return {

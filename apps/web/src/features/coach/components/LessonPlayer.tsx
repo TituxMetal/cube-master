@@ -1,7 +1,7 @@
 import type { FaceCode } from '@packages/cube-engine'
 import { useEffect } from 'react'
 
-import { getLesson } from '~/features/coach/data/lessons'
+import { LESSONS, getLesson } from '~/features/coach/data/lessons'
 import type { InteractiveStep, LessonStep, UnderstandStep } from '~/features/coach/data/types'
 import {
   applyInteractiveMove,
@@ -62,7 +62,7 @@ const UnderstandVisualPane = ({ step }: { step: UnderstandStep }) => {
         ].map(({ caption, resolved }, index) =>
           resolved ? (
             <figure key={index} className='flex flex-col items-center gap-2'>
-              <CubeNet stickersByFace={resolved.stickers} highlight={resolved.highlight} />
+              <CubeNet stickersByFace={resolved.stickers} highlight={resolved.highlight} compact />
               <figcaption className='text-base-content/70 text-center text-xs'>
                 {caption}
               </figcaption>
@@ -168,6 +168,11 @@ export const LessonPlayer = ({ lessonId }: { lessonId: string }) => {
   const isLastStep = stepIndex >= lesson.steps.length - 1
   const isCompleted = progress.completedLessons.includes(lessonId)
 
+  // The next chapter in journey order, so the learner can continue without
+  // detouring back to the Coach index.
+  const ordered = [...LESSONS].sort((a, b) => a.order - b.order)
+  const nextLesson = ordered[ordered.findIndex(item => item.id === lessonId) + 1]
+
   return (
     <section
       className='flex flex-col gap-4 lg:h-full lg:min-h-0'
@@ -188,16 +193,19 @@ export const LessonPlayer = ({ lessonId }: { lessonId: string }) => {
         <p className='text-base-content/80 leading-relaxed'>{step.body}</p>
 
         <div className='flex min-h-0 flex-1 flex-col items-center justify-center'>
-          <div className='mx-auto w-full max-w-[min(100%,calc(52dvh*4/3))]'>
+          <div className='mx-auto w-full max-w-xl'>
             <StepCubePane step={step} />
           </div>
         </div>
       </div>
 
-      <nav className='flex items-center gap-4' aria-label='Navigation de la leçon'>
+      <nav
+        className='flex flex-wrap items-center gap-2 sm:gap-3'
+        aria-label='Navigation de la leçon'
+      >
         <button
           type='button'
-          className='btn btn-soft cursor-pointer'
+          className='btn btn-soft btn-sm sm:btn-md cursor-pointer'
           disabled={isFirstStep}
           onClick={() => goToStep(stepIndex - 1)}
           aria-label='Étape précédente'
@@ -206,31 +214,38 @@ export const LessonPlayer = ({ lessonId }: { lessonId: string }) => {
         </button>
 
         {isLastStep ? (
-          <div className='ml-auto flex items-center gap-3'>
+          <div className='flex flex-wrap items-center gap-2 sm:ml-auto sm:gap-3'>
             {isCompleted && (
-              <span className='text-success font-semibold' aria-label='Chapitre terminé'>
+              <span className='text-success text-sm font-semibold' aria-label='Chapitre terminé'>
                 ✓ Terminé
               </span>
             )}
             <button
               type='button'
-              className={
-                isCompleted
-                  ? 'btn btn-soft cursor-pointer'
-                  : 'btn bg-cube-green text-cube-green-content cursor-pointer'
-              }
+              className={`btn btn-sm sm:btn-md cursor-pointer ${
+                isCompleted ? 'btn-soft' : 'bg-cube-green text-cube-green-content'
+              }`}
               onClick={() => toggleLessonComplete(lessonId)}
             >
               {isCompleted ? 'Marquer comme non terminé' : 'Terminer le chapitre'}
             </button>
-            <Link to='/coach' className='btn btn-soft cursor-pointer'>
-              Retour au Coach
-            </Link>
+            {nextLesson ? (
+              <Link
+                to={`/coach/${nextLesson.id}`}
+                className='btn bg-cube-green text-cube-green-content btn-sm sm:btn-md cursor-pointer'
+              >
+                Chapitre suivant →
+              </Link>
+            ) : (
+              <Link to='/coach' className='btn btn-soft btn-sm sm:btn-md cursor-pointer'>
+                Retour au Coach
+              </Link>
+            )}
           </div>
         ) : (
           <button
             type='button'
-            className='btn bg-cube-green text-cube-green-content ml-auto cursor-pointer'
+            className='btn bg-cube-green text-cube-green-content btn-sm sm:btn-md ml-auto cursor-pointer'
             onClick={() => goToStep(stepIndex + 1)}
             aria-label='Étape suivante'
           >

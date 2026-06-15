@@ -63,10 +63,17 @@ describe('CubeNet', () => {
     expect(container.querySelectorAll('[data-highlighted]')).toHaveLength(2)
   })
 
-  it('should draw the active-move arrow on the affected face', () => {
+  it('should show a prominent move-label badge for the active move', () => {
     render(<CubeNet stickersByFace={solvedStickers} activeMove="R'" />)
 
-    expect(screen.getByLabelText("turn R' counter-clockwise")).toBeDefined()
+    expect(screen.getByLabelText("coup R', sens anti-horaire").textContent).toBe("R'")
+  })
+
+  it('should draw rotation arrows on the affected face only', () => {
+    const { container } = render(<CubeNet stickersByFace={solvedStickers} activeMove='R' />)
+
+    // 8 outer stickers of the single turning face
+    expect(container.querySelectorAll('[data-cell-arrow]')).toHaveLength(8)
   })
 
   it('should render face labels for all faces', () => {
