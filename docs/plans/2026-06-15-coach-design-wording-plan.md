@@ -2,7 +2,7 @@
 title: 'feat: Coach design + wording — a comprehensible beginner journey (F4 + F5)'
 type: plan
 date: 2026-06-15
-status: approved
+status: in_progress
 brainstorm: docs/brainstorms/2026-06-14-coach-design-wording-brainstorm.md
 confidence: high
 ---
@@ -125,22 +125,22 @@ copy, `[gate]` = human review. Acceptance lives in the Acceptance Criteria secti
 
 **F-engine — catalog promotions (engine only, independent):**
 
-- [ ] **F1** `[code]` Promote **`white-cross-flip`** (`['D','R',"F'","R'"]`, method `beginner`). In
+- [x] **F1** `[code]` Promote **`white-cross-flip`** (`['D','R',"F'","R'"]`, method `beginner`). In
       `solveWhiteCross.ts`, extract the `FLIPPED_INSERT['UF']` literal to an exported const
       `FLIPPED_EDGE_INSERT` and reference it in the table (zero runtime change). Add the catalog
       entry in `domain/catalog.ts`. Extend `catalog-parity.spec.ts` to deep-equal the entry's
       `moves` to the **live** `FLIPPED_EDGE_INSERT`. (D-WHITECROSS)
-- [ ] **F2** `[code]` Promote **`ua-perm`** (`['R','D',"R'",'D','R','D2',"R'",'D']`, method
+- [x] **F2** `[code]` Promote **`ua-perm`** (`['R','D',"R'",'D','R','D2',"R'",'D']`, method
       `beginner`). In `solveYellowCorners.ts`, extract `export const UA_PERM = [...SUNE, 'D']` and
       use it in the `ALGORITHMS` array in place of the inline spread (zero runtime change). Add the
       catalog entry; extend the parity spec to deep-equal the entry to the live `UA_PERM`.
       (D-CATALOG-FINISH) _Depends: none; parallel with F1._
-- [ ] **F3** `[design]` Record the two new entries in **ADR-0006**'s roster note (still within its
+- [x] **F3** `[design]` Record the two new entries in **ADR-0006**'s roster note (still within its
       stated scope; its expiry trigger is OLL/PLL scaling, not this). _Depends: F1, F2._
 
 **F-cubenet — shared CubeNet upgrades (shared layer; Solver + Timer inherit):**
 
-- [ ] **F4** `[code]` **Fluid sizing spike + apply (D-RESPONSIVE).** Replace discrete
+- [x] **F4** `[code]` **Fluid sizing spike + apply (D-RESPONSIVE).** Replace discrete
       `size-20/28/36` on `FaceGrid` with **one fluid face size** driven by Tailwind v4 container
       queries (in core since v4.0; repo is on `tailwindcss@4.2.2` → **no plugin, no dependency**).
       CSS-only, no JS. **This is a spike before propagation** — the feature support is not the risk
@@ -166,10 +166,10 @@ copy, `[gate]` = human review. Acceptance lives in the Acceptance Criteria secti
       Solver and Timer after, whichever path lands. _First F-cubenet task — gates the layout work
       (F9)._
 
-- [ ] **F5** `[code]` Add an optional **highlight** capability to `CubeNet` + `FaceGrid`
+- [x] **F5** `[code]` Add an optional **highlight** capability to `CubeNet` + `FaceGrid`
       (`highlight?: Partial<Record<FaceCode, readonly number[]>>` → ring/emphasis on those sticker
       indices). Pure addition; existing call sites unaffected. (D-VISUAL needs this.) _Depends: F4._
-- [ ] **F6** `[code]` Add an optional **active-move arrow** overlay to `CubeNet`
+- [x] **F6** `[code]` Add an optional **active-move arrow** overlay to `CubeNet`
       (`activeMove?: MoveToken` → a direction arrow on the affected face, derived from the token).
       SVG/CSS overlay, no dependency. Wire Solver's current move to it → **close issue #7** (eyeball
       Solver). _Depends: F4. May be tuned/finished within Phase P if direction-mapping proves fiddly
@@ -177,7 +177,7 @@ copy, `[gate]` = human review. Acceptance lives in the Acceptance Criteria secti
 
 **F-model — lesson Step model (coach data; independent of cubenet):**
 
-- [ ] **F7** `[design]` Extend `features/coach/data/types.ts` (D-VISUAL, D-CH0-MODEL, D-DEMO): -
+- [x] **F7** `[design]` Extend `features/coach/data/types.ts` (D-VISUAL, D-CH0-MODEL, D-DEMO): -
       `UnderstandStep` gains
       `visual?: { state: 'solved' | { caseOf: string }; highlight?: Partial<Record<FaceCode, readonly number[]>> }`
       — render solved/partial **or** an algorithm's case (`applyMoves(solved, invertMoves(alg))`),
@@ -190,7 +190,7 @@ copy, `[gate]` = human review. Acceptance lives in the Acceptance Criteria secti
 
 **F-store — demo frames + interactivity (depends on F7):**
 
-- [ ] **F8** `[code]` Rework `coachStore` `$demoFrame` per **D-DEMO**: a demo with
+- [x] **F8** `[code]` Rework `coachStore` `$demoFrame` per **D-DEMO**: a demo with
       `demoFrom: 'case'` starts from `applyMoves(solved, invertMoves(moves))` and plays **forward to
       solved**; `demoFrom: 'solved'` keeps the v1 solved→forward path. **Remove the inverse-reset
       machinery** (`$inverseMoves` surface) — no longer needed since case-resolver demos end solved.
@@ -200,14 +200,14 @@ copy, `[gate]` = human review. Acceptance lives in the Acceptance Criteria secti
 
 **F-player — compact player + chrome (depends on F4, F5, F7):**
 
-- [ ] **F9** `[code]` Rebuild `LessonPlayer` to **D-LAYOUT**: two-pane **text left / (cube +
+- [x] **F9** `[code]` Rebuild `LessonPlayer` to **D-LAYOUT**: two-pane **text left / (cube +
       move-row + controls) right**, both visible without scrolling on a 13"; replace the `1fr_16rem`
       step **sidebar** with a **slim horizontal progress bar in the header**. Mobile: tight stack
       (title → 2–3 prose lines → cube → controls → nav). Render the new `understand` visual (F8) and
       `interactive` step. Drop the inverse-reset block. _Depends: F4, F5, F7, F8._
-- [ ] **F10** `[code]` Add a **collapsible notation cheat-sheet** (6 faces + `'` / `2`) available in
+- [x] **F10** `[code]` Add a **collapsible notation cheat-sheet** (6 faces + `'` / `2`) available in
       every lesson's chrome (D-NOTATION). Reusable component in the player shell. _Depends: F9._
-- [ ] **F11** `[content]` **Translate all player/browser chrome to French** (D-LANG):
+- [x] **F11** `[content]` **Translate all player/browser chrome to French** (D-LANG):
       `LessonPlayer`, `LessonBrowser`, `LessonStepList`/progress bar, `StepControls` labels,
       cheat-sheet, not-found and practice-solved messages. Hardcoded FR strings;
       identifiers/comments stay EN. _Depends: F9, F10. Must land with Phase P so the 13" review sees
@@ -215,16 +215,16 @@ copy, `[gate]` = human review. Acceptance lives in the Acceptance Criteria secti
 
 ### Phase P — Proof slice (Chapter 0 + White Cross, in French)
 
-- [ ] **P1** `[content]` Author **Chapitre 0 "Lire le cube"** (`order: 0`): "Les 6 faces"
+- [x] **P1** `[content]` Author **Chapitre 0 "Lire le cube"** (`order: 0`): "Les 6 faces"
       (tap-to-highlight), "Tourner une face" (tap `R`, then `R'`), "Un détail sur nos coups" (the
       D-vs-U note, **once, here**). FR drafts in the brainstorm are the starting copy. _Depends:
       F8–F11._
-- [ ] **P2** `[content]` Rebuild **Chapitre 1 — La croix blanche** to the fixed template
+- [x] **P2** `[content]` Rebuild **Chapitre 1 — La croix blanche** to the fixed template
       (D-CHAPTERS): keep intuitive matching (understand + visuals, incl. the "bonne croix vs côtés
       non alignés" comparison), **add a `demo` + `practice`** for the flipped-edge case using
       `white-cross-flip`, `demoFrom: 'case'`. Catalog-id refs only. FR copy from the brainstorm.
       _Depends: F1, F8–F11._
-- [ ] **P3** `[code]` Wire `/coach` (Chapter 0 + White Cross visible, ordered) through the new
+- [x] **P3** `[code]` Wire `/coach` (Chapter 0 + White Cross visible, ordered) through the new
       player + fluid/arrow CubeNet; update `Coach.spec.tsx` / `LessonPlayer.spec.tsx`. _Depends: P1,
       P2._
 - [ ] **P4** `[gate]` **PREVIEW GATE — Titux reviews live, specifically on his 13" MacBook Pro**, in
