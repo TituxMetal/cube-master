@@ -5,14 +5,16 @@ import type { Lesson } from './types'
 // not matching" comparison on a real partial cube) and gains a real demo +
 // practice for the flipped-edge case using the promoted `white-cross-flip`
 // algorithm, demoed case → solved.
-const SIDE_TOP_ROW: readonly number[] = [0, 1, 2]
+// Only the cross itself: the four U edges and each side face's top-centre edge
+// (its colour band). Corners are not part of the cross — they come later.
 const U_EDGES: readonly number[] = [1, 3, 5, 7]
+const SIDE_EDGE: readonly number[] = [1]
 const CROSS_HIGHLIGHT = {
   U: U_EDGES,
-  F: SIDE_TOP_ROW,
-  R: SIDE_TOP_ROW,
-  B: SIDE_TOP_ROW,
-  L: SIDE_TOP_ROW
+  F: SIDE_EDGE,
+  R: SIDE_EDGE,
+  B: SIDE_EDGE,
+  L: SIDE_EDGE
 }
 
 export const whiteCross: Lesson = {

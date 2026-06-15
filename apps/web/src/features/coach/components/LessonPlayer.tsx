@@ -174,10 +174,7 @@ export const LessonPlayer = ({ lessonId }: { lessonId: string }) => {
   const nextLesson = ordered[ordered.findIndex(item => item.id === lessonId) + 1]
 
   return (
-    <section
-      className='flex flex-col gap-4 lg:h-full lg:min-h-0'
-      aria-label={`Leçon : ${lesson.title}`}
-    >
+    <section className='flex flex-col gap-4' aria-label={`Leçon : ${lesson.title}`}>
       <header className='flex flex-col gap-3'>
         <div>
           <p className='text-cube-green-text text-sm font-semibold tracking-wide uppercase'>
@@ -189,13 +186,13 @@ export const LessonPlayer = ({ lessonId }: { lessonId: string }) => {
         <NotationCheatSheet />
       </header>
 
-      <div className='grid min-h-0 flex-1 grid-cols-1 gap-6 lg:grid-cols-2'>
-        <p className='text-base-content/80 leading-relaxed'>{step.body}</p>
+      {/* Text above the cube (stacked, centred): most steps are text-light, so a
+          two-pane split wasted the space beside the net. */}
+      <div className='flex flex-1 flex-col items-center gap-5'>
+        <p className='text-base-content/80 max-w-2xl leading-relaxed'>{step.body}</p>
 
-        <div className='flex min-h-0 flex-1 flex-col items-center justify-center'>
-          <div className='mx-auto w-full max-w-xl'>
-            <StepCubePane step={step} />
-          </div>
+        <div className='w-full max-w-xl'>
+          <StepCubePane step={step} />
         </div>
       </div>
 

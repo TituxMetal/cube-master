@@ -39,8 +39,8 @@ export const cellArrowAngle = (index: number, turn: Turn): number | null => {
   return turn === 'ccw' ? (cw + 180) % 360 : cw
 }
 
-// A small high-contrast arrow drawn over one sticker, pointing the way that
-// sticker travels. White fill + dark outline so it reads on any colour.
+// A small discreet arrow drawn over one sticker, pointing the way that sticker
+// travels — plain semi-transparent black, like ruwix; no drop shadow.
 export const CellArrow = ({ angle }: { angle: number }) => (
   <span
     data-cell-arrow=''
@@ -49,10 +49,10 @@ export const CellArrow = ({ angle }: { angle: number }) => (
   >
     <svg
       viewBox='0 0 24 24'
-      className='size-3/5 text-white drop-shadow-[0_0_2px_rgba(0,0,0,0.95)]'
+      className='size-1/2 text-black/70'
       fill='none'
       stroke='currentColor'
-      strokeWidth='3.5'
+      strokeWidth='3'
       strokeLinecap='round'
       strokeLinejoin='round'
       style={{ transform: `rotate(${angle}deg)` }}
@@ -62,11 +62,11 @@ export const CellArrow = ({ angle }: { angle: number }) => (
   </span>
 )
 
-// The big, unmissable move label pinned to the cube net's corner — the move being
-// played, like ruwix's "F" / "B2". This is the primary "what am I turning" cue.
+// The move label pinned to the cube net's corner — the move being played, like
+// ruwix's "F" / "B2". The primary "what am I turning" cue.
 export const MoveBadge = ({ move }: { move: MoveToken }) => (
   <span
-    className='bg-cube-green text-cube-green-content absolute right-2 bottom-2 z-20 rounded-md px-3 py-1 font-mono text-2xl font-bold shadow-lg'
+    className='bg-cube-green text-cube-green-content ring-base-content/15 absolute right-2 bottom-2 z-20 rounded-md px-3 py-1 font-mono text-2xl font-bold ring-1'
     aria-label={`coup ${move}, ${turnLabel[moveTurn(move)]}`}
   >
     {move}
