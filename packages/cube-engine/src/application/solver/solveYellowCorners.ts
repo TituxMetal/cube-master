@@ -17,12 +17,16 @@ const ANTI_SUNE: MoveToken[] = [...getAlgorithm('anti-sune')!.moves]
 // pins the promoted `corner-3-cycle` entry to this live solver constant.
 export const CORNER_3_CYCLE: MoveToken[] = ['D', 'R', "D'", "L'", 'D', "R'", "D'", 'L']
 
+// Ua perm (last-layer edge 3-cycle): Sune followed by D. Exported so the catalog
+// parity spec pins the promoted `ua-perm` entry to this live solver constant.
+export const UA_PERM: MoveToken[] = [...SUNE, 'D']
+
 const ALGORITHMS: MoveToken[][] = [
   SUNE,
   ANTI_SUNE,
   CORNER_3_CYCLE,
   // Ua perm (edge swap)
-  [...SUNE, 'D'],
+  UA_PERM,
   // Ub perm
   [...ANTI_SUNE, "D'"],
   // [Sune, D] commutator (corner twist)

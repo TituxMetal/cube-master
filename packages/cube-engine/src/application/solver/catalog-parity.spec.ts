@@ -4,17 +4,20 @@ import { getAlgorithm } from '~/domain'
 
 import { SECOND_LAYER_INSERT_LEFT, SECOND_LAYER_INSERT_RIGHT } from './solveSecondLayer'
 import { SEXY_MOVE } from './solveWhiteCorners'
-import { CORNER_3_CYCLE } from './solveYellowCorners'
+import { FLIPPED_EDGE_INSERT } from './solveWhiteCross'
+import { CORNER_3_CYCLE, UA_PERM } from './solveYellowCorners'
 
-// The four promoted entries the solver does NOT consume structurally (D2/D5):
-// the catalog holds a canonical form while the solver keeps its own literal.
-// These deep-equal checks pin each catalog entry to the *live* solver constant
-// it was extracted from — edit one without the other and CI reddens (no drift).
+// The promoted entries the solver does NOT consume structurally (D2/D5): the
+// catalog holds a canonical form while the solver keeps its own literal. These
+// deep-equal checks pin each catalog entry to the *live* solver constant it was
+// extracted from — edit one without the other and CI reddens (no drift).
 const PARITY_CASES = [
   { id: 'sexy-move', constant: SEXY_MOVE },
   { id: 'second-layer-insert-right', constant: SECOND_LAYER_INSERT_RIGHT },
   { id: 'second-layer-insert-left', constant: SECOND_LAYER_INSERT_LEFT },
-  { id: 'corner-3-cycle', constant: CORNER_3_CYCLE }
+  { id: 'corner-3-cycle', constant: CORNER_3_CYCLE },
+  { id: 'white-cross-flip', constant: FLIPPED_EDGE_INSERT },
+  { id: 'ua-perm', constant: UA_PERM }
 ] as const
 
 describe('catalog ↔ solver parity', () => {
