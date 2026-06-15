@@ -9,7 +9,6 @@ import {
   toggleLessonComplete,
   useCurrentStepMoves,
   useDemoFrame,
-  useInverseMoves,
   useIsPracticeSolved,
   useLessonStepIndex,
   usePlaybackIndex,
@@ -43,7 +42,6 @@ export const LessonPlayer = ({ lessonId }: { lessonId: string }) => {
   const playbackTotal = usePlaybackTotal()
   const moves = useCurrentStepMoves()
   const frame = useDemoFrame()
-  const inverseMoves = useInverseMoves()
   const isPracticeSolved = useIsPracticeSolved()
   const progress = useProgress()
 
@@ -84,19 +82,6 @@ export const LessonPlayer = ({ lessonId }: { lessonId: string }) => {
               onPrevious={previousStep}
               onNext={nextStep}
             />
-          )}
-
-          {step.kind === 'demo' && inverseMoves.length > 0 && (
-            <div className='text-base-content/70 flex flex-wrap items-center justify-center gap-2 text-sm'>
-              <span>To set your cube back to solved, play:</span>
-              <span className='flex flex-wrap gap-1' aria-label='Reset notation'>
-                {inverseMoves.map((move, index) => (
-                  <kbd key={index} className='kbd kbd-sm font-mono'>
-                    {move}
-                  </kbd>
-                ))}
-              </span>
-            </div>
           )}
 
           {step.kind === 'practice' && isPracticeSolved && (

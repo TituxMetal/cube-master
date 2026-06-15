@@ -10,16 +10,19 @@ import { beforeEach, describe, expect, it } from 'bun:test'
 import {
   $currentLessonId,
   $demoFrame,
-  $inverseMoves,
+  $interactiveFrame,
+  $interactiveMoves,
   $isPracticeSolved,
   $lessonStepIndex,
   $playbackIndex,
   $playbackTotal,
   $progress,
+  applyInteractiveMove,
   goToStep,
   nextStep,
   parseCoachProgress,
   previousStep,
+  resetInteractive,
   startLesson,
   toggleLessonComplete
 } from '~/features/coach/stores/coachStore'
@@ -36,6 +39,7 @@ beforeEach(() => {
   $currentLessonId.set(null)
   $lessonStepIndex.set(0)
   $playbackIndex.set(0)
+  $interactiveMoves.set([])
 })
 
 describe('coach progress', () => {
@@ -97,22 +101,19 @@ describe('demo playback', () => {
     expect($demoFrame.get()).toBeNull()
   })
 
-  it('should start from solved at index 0 and reveal the case at the end', () => {
+  it('should play a case demo from the case at index 0 forward to solved', () => {
     startLesson('second-layer')
     goToStep(DEMO_RIGHT_STEP)
     expect($playbackTotal.get()).toBe(RIGHT_INSERT.length)
 
+    // demoFrom defaults to 'case': start scrambled, end solved.
     $playbackIndex.set(0)
-    expect($demoFrame.get()).toEqual(toStickers(createSolvedState()))
+    expect($demoFrame.get()).toEqual(
+      toStickers(applyMoves(createSolvedState(), invertMoves(RIGHT_INSERT)))
+    )
 
     $playbackIndex.set(RIGHT_INSERT.length)
-    expect($demoFrame.get()).toEqual(toStickers(applyMoves(createSolvedState(), RIGHT_INSERT)))
-  })
-
-  it('should expose the inverse algorithm so a demo can be reset to solved', () => {
-    startLesson('second-layer')
-    goToStep(DEMO_RIGHT_STEP)
-    expect($inverseMoves.get()).toEqual(invertMoves(RIGHT_INSERT))
+    expect($demoFrame.get()).toEqual(toStickers(createSolvedState()))
   })
 
   it('should clamp next/previous to [0, total]', () => {
@@ -143,5 +144,26 @@ describe('practice setup', () => {
     $playbackIndex.set(RIGHT_INSERT.length)
     expect($demoFrame.get()).toEqual(toStickers(createSolvedState()))
     expect($isPracticeSolved.get()).toBe(true)
+  })
+})
+
+describe('interactive primer', () => {
+  it('should turn the local cube as face moves are tapped', () => {
+    applyInteractiveMove('R')
+    expect($interactiveFrame.get()).toEqual(toStickers(applyMoves(createSolvedState(), ['R'])))
+
+    applyInteractiveMove("R'")
+    expect($interactiveFrame.get()).toEqual(toStickers(createSolvedState()))
+  })
+
+  it('should clear tapped moves on reset and on step change', () => {
+    applyInteractiveMove('R')
+    resetInteractive()
+    expect($interactiveMoves.get()).toEqual([])
+
+    startLesson('second-layer')
+    applyInteractiveMove('R')
+    goToStep(1)
+    expect($interactiveMoves.get()).toEqual([])
   })
 })

@@ -1,5 +1,5 @@
 import { useStore } from '@nanostores/react'
-import type { MoveToken, StickersByFace } from '@packages/cube-engine'
+import type { FaceCode, MoveToken, StickersByFace } from '@packages/cube-engine'
 import {
   applyMoves,
   createSolvedState,
@@ -61,6 +61,9 @@ const SOLVED_STICKERS = toStickers(createSolvedState())
 export const $currentLessonId = atom<string | null>(null)
 export const $lessonStepIndex = atom<number>(0)
 export const $playbackIndex = atom<number>(0)
+// Moves the learner has tapped on a Chapter 0 `interactive` step, applied to a
+// local solved cube. Reset whenever the step changes.
+export const $interactiveMoves = atom<MoveToken[]>([])
 export const $progress = atom<CoachProgress>(progressStorage.load())
 
 $progress.listen(progressStorage.save)
@@ -77,9 +80,15 @@ export const $currentStep = computed(
 )
 
 const stepMoves = (step: LessonStep | null): readonly MoveToken[] => {
-  if (step === null || step.kind === 'understand') return []
+  if (step === null || step.kind === 'understand' || step.kind === 'interactive') return []
   return getAlgorithm(step.algorithmId)?.moves ?? []
 }
+
+// True when a demo/practice frame should start from the case (inverse-scramble of
+// the algorithm) and play forward to solved. Practice always does; a demo does
+// unless it opts into solved→forward via demoFrom: 'solved' (the sexy move). (D-DEMO)
+const playsFromCase = (step: LessonStep): boolean =>
+  step.kind === 'practice' || (step.kind === 'demo' && (step.demoFrom ?? 'case') === 'case')
 
 // The move sequence the current step teaches — shown as notation so the learner
 // reads the algorithm (R, D, R′ …), not just the animated cube.
@@ -89,28 +98,45 @@ export const $currentStepMoves = computed($currentStep, (step): readonly MoveTok
 
 export const $playbackTotal = computed($currentStepMoves, (moves): number => moves.length)
 
-// Coach's own copy of the Solver's `$cubeAtStep` shape — it does not import solver
-// atoms. A demo plays forward from a solved cube so the learner sees what the
-// algorithm *does* to the cube; practice starts from the inverse-scramble of the
-// case and plays forward, returning the cube to solved.
+// The cube frame for a demo/practice step at the current playback index. Case
+// demos and all practice start from the inverse-scramble of the case and play
+// forward to solved (the learner watches it *resolve*); a solved-demo starts
+// solved and plays forward to reveal what the algorithm does. (D-DEMO / PD3)
 export const $demoFrame = computed(
   [$currentStep, $playbackIndex],
   (step, index): StickersByFace | null => {
-    if (step === null || step.kind === 'understand') return null
+    if (step === null || step.kind === 'understand' || step.kind === 'interactive') return null
     const moves = stepMoves(step)
-    const base =
-      step.kind === 'practice'
-        ? applyMoves(createSolvedState(), invertMoves(moves))
-        : createSolvedState()
+    const base = playsFromCase(step)
+      ? applyMoves(createSolvedState(), invertMoves(moves))
+      : createSolvedState()
     return toStickers(applyMoves(base, moves.slice(0, index)))
   }
 )
 
-// The inverse of a demo's algorithm, shown as notation only (no CubeNet). A demo
-// scrambles a solved cube to reveal the case; a beginner can't yet invert an
-// algorithm, so we hand them the exact sequence that resets their cube to solved.
-export const $inverseMoves = computed($currentStepMoves, (moves): readonly MoveToken[] =>
-  invertMoves(moves)
+// The cube state + highlight an `understand` step illustrates: the solved/goal
+// cube, or an algorithm's case (applyMoves(solved, invert(alg))) so what the
+// learner recognises is exactly what the matching demo resolves. (D-VISUAL / PD2)
+export type UnderstandVisual = {
+  stickers: StickersByFace
+  highlight?: Partial<Record<FaceCode, readonly number[]>>
+}
+
+export const $understandVisual = computed($currentStep, (step): UnderstandVisual | null => {
+  if (step === null || step.kind !== 'understand' || !step.visual) return null
+  const { state, highlight } = step.visual
+  if (state === 'solved') return { stickers: SOLVED_STICKERS, highlight }
+  const algorithm = getAlgorithm(state.caseOf)
+  if (!algorithm) return null
+  const stickers = toStickers(applyMoves(createSolvedState(), invertMoves(algorithm.moves)))
+  return { stickers, highlight }
+})
+
+// The live cube for a Chapter 0 `interactive` step — solved plus every move the
+// learner has tapped so far. Reuses applyMoves, so no engine change. (PD4)
+export const $interactiveFrame = computed(
+  $interactiveMoves,
+  (moves): StickersByFace => toStickers(applyMoves(createSolvedState(), moves))
 )
 
 const stickersEqual = (a: StickersByFace, b: StickersByFace): boolean =>
@@ -132,6 +158,11 @@ const setCurrent = (lesson: string | null, step: number) => {
   $progress.set({ ...$progress.get(), current: { lesson, step } })
 }
 
+const resetStepState = () => {
+  $playbackIndex.set(0)
+  $interactiveMoves.set([])
+}
+
 export const startLesson = (lessonId: string) => {
   $currentLessonId.set(lessonId)
   const lesson = getLesson(lessonId)
@@ -140,7 +171,7 @@ export const startLesson = (lessonId: string) => {
   const maxStep = lesson ? Math.max(0, lesson.steps.length - 1) : 0
   const step = Math.min(Math.max(0, resume), maxStep)
   $lessonStepIndex.set(step)
-  $playbackIndex.set(0)
+  resetStepState()
   setCurrent(lessonId, step)
 }
 
@@ -149,7 +180,7 @@ export const goToStep = (index: number) => {
   if (!lesson) return
   const clamped = Math.min(Math.max(0, index), lesson.steps.length - 1)
   $lessonStepIndex.set(clamped)
-  $playbackIndex.set(0)
+  resetStepState()
   setCurrent($currentLessonId.get(), clamped)
 }
 
@@ -162,6 +193,16 @@ export const nextStep = () => {
 export const previousStep = () => {
   const current = $playbackIndex.get()
   if (current > 0) $playbackIndex.set(current - 1)
+}
+
+// Tap a single face turn on a Chapter 0 interactive step — applied to the local
+// live cube so the learner sees notation turn into motion.
+export const applyInteractiveMove = (move: MoveToken) => {
+  $interactiveMoves.set([...$interactiveMoves.get(), move])
+}
+
+export const resetInteractive = () => {
+  $interactiveMoves.set([])
 }
 
 // Mark/unmark a lesson as complete — a toggle so a learner can correct a
@@ -186,6 +227,8 @@ export const usePlaybackIndex = (): number => useStore($playbackIndex)
 export const usePlaybackTotal = (): number => useStore($playbackTotal)
 export const useCurrentStepMoves = (): readonly MoveToken[] => useStore($currentStepMoves)
 export const useDemoFrame = (): StickersByFace | null => useStore($demoFrame)
-export const useInverseMoves = (): readonly MoveToken[] => useStore($inverseMoves)
+export const useUnderstandVisual = (): UnderstandVisual | null => useStore($understandVisual)
+export const useInteractiveFrame = (): StickersByFace => useStore($interactiveFrame)
+export const useInteractiveMoves = (): MoveToken[] => useStore($interactiveMoves)
 export const useIsPracticeSolved = (): boolean => useStore($isPracticeSolved)
 export const useProgress = (): CoachProgress => useStore($progress)
