@@ -49,10 +49,16 @@ const FACE2: Record<string, MoveToken> = {
   L: 'L2'
 }
 
+// Canonical flipped-edge insertion at UF (D R F′ R′), exported so the catalog
+// parity spec pins the promoted `white-cross-flip` entry to this live solver
+// constant. The other targets' inserts are face-adapted positional variants
+// (kept local) — solver mechanics, not named teachable algorithms (ADR-0006).
+export const FLIPPED_EDGE_INSERT: MoveToken[] = ['D', 'R', "F'", "R'"]
+
 // Flipped insertion: piece at D-below-target with white on side face
 // Each sequence inserts the edge and flips it so white faces U
 const FLIPPED_INSERT: Record<string, MoveToken[]> = {
-  UF: ['D', 'R', "F'", "R'"],
+  UF: FLIPPED_EDGE_INSERT,
   UR: ['D', 'B', "R'", "B'"],
   UB: ['D', 'L', "B'", "L'"],
   UL: ["D'", "B'", 'L', 'B']

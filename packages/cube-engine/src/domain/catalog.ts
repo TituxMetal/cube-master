@@ -70,6 +70,20 @@ export const ALGORITHM_CATALOG: readonly AlgorithmEntry[] = [
     moves: ['D', 'R', "D'", "L'", 'D', "R'", "D'", 'L'],
     method: 'beginner',
     description: 'Cycle three last-layer corners into their home positions.'
+  },
+  {
+    id: 'white-cross-flip',
+    name: 'White Cross Flip',
+    moves: ['D', 'R', "F'", "R'"],
+    method: 'beginner',
+    description: 'Flip a misoriented white edge into the cross with white on top.'
+  },
+  {
+    id: 'ua-perm',
+    name: 'Ua Perm',
+    moves: ['R', 'D', "R'", 'D', 'R', 'D2', "R'", 'D'],
+    method: 'beginner',
+    description: 'Cycle the last three top-layer edges into place to finish the cube.'
   }
 ]
 

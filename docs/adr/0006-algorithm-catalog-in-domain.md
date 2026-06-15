@@ -48,6 +48,21 @@ points into the catalog. Two views, one source of truth.
   full OLL/PLL — that many algorithms stacked into a TS array may no longer hold up (see plan
   Follow-Up F3).
 
+## Roster note — 2026-06-15 (Coach design + wording, F4/F5)
+
+Two more entries were promoted to complete the beginner journey's "demo = solver executes"
+guarantee, both parity-pinned to their live solver constants (no drift):
+
+- **`white-cross-flip`** (`D R F′ R′`) — extracted from `FLIPPED_INSERT['UF']` in
+  `solveWhiteCross.ts` to `FLIPPED_EDGE_INSERT`; gives White Cross a real demo + practice for the
+  misoriented-edge case (D-WHITECROSS).
+- **`ua-perm`** (`R D R′ D R D2 R′ D` = `[...SUNE, 'D']`) — extracted from the inline spread in
+  `solveYellowCorners.ts` to `UA_PERM`; the last-layer edge cycle the "Finir" chapter teaches
+  (D-CATALOG-FINISH).
+
+This stays within the amended consumer bar (each serves ≥1 solver phase and is teachable); the
+expiry trigger is unchanged — OLL/PLL scaling, not these two extractions.
+
 ## Alternatives considered
 
 - **Keep the strict "both consumers at once" bar** with inline move sequences in lessons 1–4 —
