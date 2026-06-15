@@ -2,7 +2,7 @@ import { getAlgorithm } from '@packages/cube-engine'
 import { describe, expect, it } from 'bun:test'
 
 import { LESSONS } from '~/features/coach/data/lessons'
-import { stepAlgorithmId } from '~/features/coach/data/types'
+import { stepCatalogIds } from '~/features/coach/data/types'
 
 describe('lesson registry', () => {
   it('should have unique lesson ids', () => {
@@ -10,12 +10,11 @@ describe('lesson registry', () => {
     expect(new Set(ids).size).toBe(ids.length)
   })
 
-  it('should resolve every referenced algorithm id in the catalog', () => {
+  it('should resolve every referenced catalog id (algorithm + visual case)', () => {
     for (const lesson of LESSONS) {
       for (const step of lesson.steps) {
-        const algorithmId = stepAlgorithmId(step)
-        if (algorithmId !== null) {
-          expect(getAlgorithm(algorithmId)).toBeDefined()
+        for (const id of stepCatalogIds(step)) {
+          expect(getAlgorithm(id)).toBeDefined()
         }
       }
     }

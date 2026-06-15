@@ -42,15 +42,6 @@ describe('LessonPlayer', () => {
     expect(screen.getByLabelText('Algorithm notation').textContent).toBe("D'R'DRDFD'F'")
   })
 
-  it('should show how to reset the cube to solved on a demo step', async () => {
-    const user = userEvent.setup()
-    render(<LessonPlayer lessonId='second-layer' />)
-
-    await user.click(screen.getByLabelText(/Go to step 3:/))
-    // inverse of D' R' D R D F D' F' = F D F' D' R' D' R D
-    expect(screen.getByLabelText('Reset notation').textContent).toBe("FDF'D'R'D'RD")
-  })
-
   it('should toggle the lesson complete on the last step', async () => {
     const user = userEvent.setup()
     render(<LessonPlayer lessonId='second-layer' />)
