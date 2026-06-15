@@ -89,15 +89,21 @@ describe('FaceGrid', () => {
     expect(container.querySelectorAll('[data-highlighted]')).toHaveLength(0)
   })
 
-  it('should draw a move arrow when the active move turns this face', () => {
-    render(<FaceGrid stickers={solvedWhiteFace} label='R' activeMove='R' />)
+  it('should draw a rotation arrow on each outer sticker when the move turns this face', () => {
+    const { container } = render(<FaceGrid stickers={solvedWhiteFace} label='R' activeMove='R' />)
 
-    expect(screen.getByLabelText('turn R clockwise')).toBeDefined()
+    expect(container.querySelectorAll('[data-cell-arrow]')).toHaveLength(8)
   })
 
-  it('should not draw a move arrow when the active move turns another face', () => {
-    render(<FaceGrid stickers={solvedWhiteFace} label='R' activeMove='U' />)
+  it('should draw no per-sticker arrows for a half turn', () => {
+    const { container } = render(<FaceGrid stickers={solvedWhiteFace} label='R' activeMove='R2' />)
 
-    expect(screen.queryByLabelText(/^turn/)).toBeNull()
+    expect(container.querySelectorAll('[data-cell-arrow]')).toHaveLength(0)
+  })
+
+  it('should draw no arrows when the active move turns another face', () => {
+    const { container } = render(<FaceGrid stickers={solvedWhiteFace} label='R' activeMove='U' />)
+
+    expect(container.querySelectorAll('[data-cell-arrow]')).toHaveLength(0)
   })
 })

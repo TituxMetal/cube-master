@@ -1,5 +1,6 @@
 import type { FaceCode, MoveToken, StickersByFace } from '@packages/cube-engine'
 
+import { MoveBadge } from '~/features/cube/components/MoveArrow'
 import { InteractiveFaceGrid } from '~/features/solver/components/InteractiveFaceGrid'
 
 interface InteractiveCubeNetProps {
@@ -14,7 +15,7 @@ export const InteractiveCubeNet = ({
   onPaintSticker,
   activeMove
 }: InteractiveCubeNetProps) => (
-  <section className='card bg-base-200 shadow-lg' aria-label='Interactive cube state'>
+  <section className='card bg-base-200 relative shadow-lg' aria-label='Interactive cube state'>
     <div className='card-body grid grid-cols-4 grid-rows-3 justify-items-center gap-1 p-4 md:gap-2 md:p-6 lg:gap-3 lg:p-8'>
       <InteractiveFaceGrid
         stickers={stickers.U}
@@ -59,5 +60,7 @@ export const InteractiveCubeNet = ({
         className='col-start-2 row-start-3'
       />
     </div>
+
+    {activeMove && <MoveBadge move={activeMove} />}
   </section>
 )

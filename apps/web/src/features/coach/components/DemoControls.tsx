@@ -26,7 +26,7 @@ export const DemoControls = ({
       <div className='flex items-center gap-3'>
         <button
           type='button'
-          className='btn btn-soft btn-sm cursor-pointer'
+          className='btn btn-soft btn-sm cursor-pointer disabled:cursor-not-allowed disabled:opacity-40'
           disabled={atStart}
           onClick={onPrevious}
           aria-label='Coup précédent'
@@ -36,7 +36,9 @@ export const DemoControls = ({
 
         <button
           type='button'
-          className='btn bg-cube-green text-cube-green-content btn-sm cursor-pointer'
+          // The custom green background would otherwise survive :disabled, leaving
+          // a "live"-looking button at the end; force a greyed disabled state.
+          className='btn bg-cube-green text-cube-green-content btn-sm disabled:bg-base-300 disabled:text-base-content/40 cursor-pointer disabled:cursor-not-allowed disabled:shadow-none'
           disabled={atEnd}
           onClick={onNext}
           aria-label='Coup suivant'
