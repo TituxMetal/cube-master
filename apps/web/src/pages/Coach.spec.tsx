@@ -14,43 +14,42 @@ afterEach(() => {
 })
 
 describe('Coach', () => {
-  it('should list the authored beginner chapters in order', () => {
+  it('should list the proof-slice chapters in journey order', () => {
     render(<Coach />)
-    const beginner = screen.getByRole('heading', { name: 'Beginner' }).parentElement!
+    const beginner = screen.getByRole('heading', { name: 'Débutant' }).parentElement!
     const titles = within(beginner)
       .getAllByRole('link')
       .map(link => link.textContent ?? '')
-    expect(titles[0]).toContain('White Cross')
-    expect(titles[1]).toContain('White Corners')
-    expect(titles[2]).toContain('Second Layer')
+    expect(titles[0]).toContain('Lire le cube')
+    expect(titles[1]).toContain('La croix blanche')
   })
 
   it('should reflect completion state with a marker', () => {
     $progress.set({ completedLessons: ['white-cross'], current: { lesson: null, step: 0 } })
     render(<Coach />)
-    expect(screen.getByLabelText('Completed')).toBeDefined()
+    expect(screen.getByLabelText('Terminé')).toBeDefined()
   })
 
   it('should offer a start CTA when nothing is in progress', () => {
     render(<Coach />)
-    expect(screen.getByText(/Start: White Cross/)).toBeDefined()
+    expect(screen.getByText(/Commencer : Lire le cube/)).toBeDefined()
   })
 
   it('should offer a resume CTA pointing at the in-progress chapter', () => {
-    $progress.set({ completedLessons: [], current: { lesson: 'white-corners', step: 1 } })
+    $progress.set({ completedLessons: [], current: { lesson: 'white-cross', step: 1 } })
     render(<Coach />)
-    expect(screen.getByText(/Resume: White Corners/)).toBeDefined()
+    expect(screen.getByText(/Reprendre : La croix blanche/)).toBeDefined()
   })
 
   it('should render the empty intermediate and advanced tiers without error', () => {
     render(<Coach />)
-    expect(screen.getByRole('heading', { name: 'Intermediate' })).toBeDefined()
-    expect(screen.getByRole('heading', { name: 'Advanced' })).toBeDefined()
-    expect(screen.getAllByText('More chapters coming soon.').length).toBe(2)
+    expect(screen.getByRole('heading', { name: 'Intermédiaire' })).toBeDefined()
+    expect(screen.getByRole('heading', { name: 'Avancé' })).toBeDefined()
+    expect(screen.getAllByText("D'autres chapitres arrivent bientôt.").length).toBe(2)
   })
 
   it('should render the lesson player when given a lessonId', () => {
-    render(<Coach lessonId='second-layer' />)
-    expect(screen.getByRole('heading', { name: 'Meet the middle layer' })).toBeDefined()
+    render(<Coach lessonId='white-cross' />)
+    expect(screen.getByRole('heading', { name: "La croix blanche, c'est quoi" })).toBeDefined()
   })
 })

@@ -1,11 +1,11 @@
-import { secondLayer } from './second-layer'
+import { cubeReading } from './cube-reading'
 import type { Lesson } from './types'
-import { whiteCorners } from './white-corners'
 import { whiteCross } from './white-cross'
 
-// The lesson registry, in journey order. v1 ships the first three beginner
-// chapters; the last-layer chapters (Follow-Up F5) land against this same shape.
-export const LESSONS: readonly Lesson[] = [whiteCross, whiteCorners, secondLayer]
+// The lesson registry, in journey order. This is the proof slice (Chapter 0 +
+// White Cross), reviewed live on a 13" before the remaining chapters (F5) are
+// authored against this same shape and added here.
+export const LESSONS: readonly Lesson[] = [cubeReading, whiteCross]
 
 export const getLesson = (id: string): Lesson | undefined =>
   LESSONS.find(lesson => lesson.id === id)

@@ -10,7 +10,7 @@ import {
 import { atom, computed } from 'nanostores'
 
 import { getLesson } from '~/features/coach/data/lessons'
-import type { Lesson, LessonStep } from '~/features/coach/data/types'
+import type { Lesson, LessonStep, StepVisual } from '~/features/coach/data/types'
 import { createVersionedStorage } from '~/lib/storage'
 
 // Progress is persisted via the shared versioned helper (ADR-0007) at version 1
@@ -115,22 +115,36 @@ export const $demoFrame = computed(
 )
 
 // The cube state + highlight an `understand` step illustrates: the solved/goal
-// cube, or an algorithm's case (applyMoves(solved, invert(alg))) so what the
-// learner recognises is exactly what the matching demo resolves. (D-VISUAL / PD2)
+// cube, an illustrative state, or an algorithm's case (applyMoves(solved,
+// invert(alg))) so what the learner recognises is exactly what the matching demo
+// resolves. (D-VISUAL / PD2)
 export type UnderstandVisual = {
   stickers: StickersByFace
   highlight?: Partial<Record<FaceCode, readonly number[]>>
 }
 
-export const $understandVisual = computed($currentStep, (step): UnderstandVisual | null => {
-  if (step === null || step.kind !== 'understand' || !step.visual) return null
-  const { state, highlight } = step.visual
+// A white cross intact on top with the side colours rotated off their centres —
+// the classic "looks right but isn't" mistake. A presentation rotation, not a
+// taught algorithm, so it lives here rather than as inline data (NFR-004).
+const MISALIGNED_CROSS = toStickers(applyMoves(createSolvedState(), ['U']))
+
+// Resolve a step visual to concrete stickers + its highlight. Pure — usable both
+// reactively (the current step) and directly (a comparison's two nets).
+export const resolveStepVisual = (visual: StepVisual): UnderstandVisual | null => {
+  const { state, highlight } = visual
   if (state === 'solved') return { stickers: SOLVED_STICKERS, highlight }
+  if (state === 'cross-misaligned') return { stickers: MISALIGNED_CROSS, highlight }
   const algorithm = getAlgorithm(state.caseOf)
   if (!algorithm) return null
-  const stickers = toStickers(applyMoves(createSolvedState(), invertMoves(algorithm.moves)))
-  return { stickers, highlight }
-})
+  return {
+    stickers: toStickers(applyMoves(createSolvedState(), invertMoves(algorithm.moves))),
+    highlight
+  }
+}
+
+export const $understandVisual = computed($currentStep, (step): UnderstandVisual | null =>
+  step?.kind === 'understand' && step.visual ? resolveStepVisual(step.visual) : null
+)
 
 // The live cube for a Chapter 0 `interactive` step — solved plus every move the
 // learner has tapped so far. Reuses applyMoves, so no engine change. (PD4)

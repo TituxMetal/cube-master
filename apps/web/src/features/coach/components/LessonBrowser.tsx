@@ -9,9 +9,9 @@ import { Link } from '~/lib/router'
 // and advanced are intentionally empty (types ready, content is post-v1) and
 // render a placeholder rather than a blank gap.
 const TIERS: { method: AlgorithmMethod; label: string }[] = [
-  { method: 'beginner', label: 'Beginner' },
-  { method: 'intermediate', label: 'Intermediate' },
-  { method: 'advanced', label: 'Advanced' }
+  { method: 'beginner', label: 'Débutant' },
+  { method: 'intermediate', label: 'Intermédiaire' },
+  { method: 'advanced', label: 'Avancé' }
 ]
 
 const byOrder = (a: Lesson, b: Lesson): number => a.order - b.order
@@ -32,8 +32,8 @@ const LessonRow = ({ lesson, isCompleted }: { lesson: Lesson; isCompleted: boole
       </span>
       <span className='text-base-content flex-1 font-semibold'>{lesson.title}</span>
       {isCompleted && (
-        <span className='text-success text-sm font-semibold' aria-label='Completed'>
-          Completed
+        <span className='text-success text-sm font-semibold' aria-label='Terminé'>
+          Terminé
         </span>
       )}
     </Link>
@@ -57,10 +57,10 @@ export const LessonBrowser = () => {
           <p className='text-cube-green-text text-sm font-semibold tracking-wide uppercase'>
             Coach
           </p>
-          <h1 className='text-base-content text-2xl font-bold'>The beginner journey</h1>
+          <h1 className='text-base-content text-2xl font-bold'>Le parcours débutant</h1>
           <p className='text-base-content/70 mt-1'>
-            Learn to solve the cube one chapter at a time — understand it, watch it, then do it
-            yourself.
+            Apprends à résoudre le cube chapitre par chapitre — comprends-le, regarde-le, puis
+            fais-le toi-même.
           </p>
         </div>
 
@@ -69,7 +69,8 @@ export const LessonBrowser = () => {
             to={`/coach/${resumeLesson.id}`}
             className='btn bg-cube-green text-cube-green-content w-fit cursor-pointer'
           >
-            {hasResumed ? `Resume: ${resumeLesson.title}` : `Start: ${resumeLesson.title}`} →
+            {hasResumed ? `Reprendre : ${resumeLesson.title}` : `Commencer : ${resumeLesson.title}`}{' '}
+            →
           </Link>
         )}
       </header>
@@ -82,7 +83,9 @@ export const LessonBrowser = () => {
             <h2 className='text-cube-green-text text-lg font-bold'>{tier.label}</h2>
 
             {lessons.length === 0 ? (
-              <p className='text-base-content/70 text-sm'>More chapters coming soon.</p>
+              <p className='text-base-content/70 text-sm'>
+                D&apos;autres chapitres arrivent bientôt.
+              </p>
             ) : (
               <ol className='flex flex-col gap-2'>
                 {lessons.map(lesson => (

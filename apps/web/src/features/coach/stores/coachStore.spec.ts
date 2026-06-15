@@ -17,21 +17,25 @@ import {
   $playbackIndex,
   $playbackTotal,
   $progress,
+  $understandVisual,
   applyInteractiveMove,
   goToStep,
   nextStep,
   parseCoachProgress,
   previousStep,
   resetInteractive,
+  resolveStepVisual,
   startLesson,
   toggleLessonComplete
 } from '~/features/coach/stores/coachStore'
 import type { CoachProgress } from '~/features/coach/stores/coachStore'
 import { createVersionedStorage } from '~/lib/storage'
 
-const RIGHT_INSERT = getAlgorithm('second-layer-insert-right')?.moves ?? []
-const DEMO_RIGHT_STEP = 2
-const PRACTICE_STEP = 5
+const FLIP = getAlgorithm('white-cross-flip')?.moves ?? []
+const DEMO_STEP = 3
+const PRACTICE_STEP = 4
+const solved = () => toStickers(createSolvedState())
+const caseStickers = () => toStickers(applyMoves(createSolvedState(), invertMoves(FLIP)))
 
 beforeEach(() => {
   localStorage.clear()
@@ -44,22 +48,22 @@ beforeEach(() => {
 
 describe('coach progress', () => {
   it('should record the current lesson and step on start', () => {
-    startLesson('second-layer')
-    expect($currentLessonId.get()).toBe('second-layer')
-    expect($progress.get().current).toEqual({ lesson: 'second-layer', step: 0 })
+    startLesson('white-cross')
+    expect($currentLessonId.get()).toBe('white-cross')
+    expect($progress.get().current).toEqual({ lesson: 'white-cross', step: 0 })
   })
 
   it('should toggle a lesson between complete and not complete', () => {
-    toggleLessonComplete('second-layer')
-    expect($progress.get().completedLessons).toEqual(['second-layer'])
-    toggleLessonComplete('second-layer')
+    toggleLessonComplete('white-cross')
+    expect($progress.get().completedLessons).toEqual(['white-cross'])
+    toggleLessonComplete('white-cross')
     expect($progress.get().completedLessons).toEqual([])
   })
 
   it('should round-trip progress through the versioned helper', () => {
-    startLesson('second-layer')
-    goToStep(4)
-    toggleLessonComplete('second-layer')
+    startLesson('white-cross')
+    goToStep(3)
+    toggleLessonComplete('white-cross')
 
     const reloaded = createVersionedStorage<CoachProgress>({
       key: 'cubeMaster:coachProgress',
@@ -67,15 +71,15 @@ describe('coach progress', () => {
       fallback: { completedLessons: [], current: { lesson: null, step: 0 } }
     }).load()
 
-    expect(reloaded.completedLessons).toEqual(['second-layer'])
-    expect(reloaded.current).toEqual({ lesson: 'second-layer', step: 4 })
+    expect(reloaded.completedLessons).toEqual(['white-cross'])
+    expect(reloaded.current).toEqual({ lesson: 'white-cross', step: 3 })
   })
 
   it('should resume the saved step when re-entering the same lesson', () => {
-    startLesson('second-layer')
-    goToStep(4)
-    startLesson('second-layer')
-    expect($lessonStepIndex.get()).toBe(4)
+    startLesson('white-cross')
+    goToStep(3)
+    startLesson('white-cross')
+    expect($lessonStepIndex.get()).toBe(3)
   })
 
   it('should reject a version-matching but malformed stored envelope', () => {
@@ -94,31 +98,54 @@ describe('coach progress', () => {
   })
 })
 
+describe('understand visuals', () => {
+  it('should resolve the goal visual to the solved cube with its highlight', () => {
+    startLesson('white-cross')
+    goToStep(0)
+    const visual = $understandVisual.get()
+    expect(visual?.stickers).toEqual(solved())
+    expect(visual?.highlight?.U).toEqual([1, 3, 5, 7])
+  })
+
+  it('should expose no understand visual on a demo step', () => {
+    startLesson('white-cross')
+    goToStep(DEMO_STEP)
+    expect($understandVisual.get()).toBeNull()
+  })
+
+  it('should resolve illustrative and case states directly', () => {
+    expect(resolveStepVisual({ state: 'solved' })?.stickers).toEqual(solved())
+    expect(resolveStepVisual({ state: 'cross-misaligned' })?.stickers).toEqual(
+      toStickers(applyMoves(createSolvedState(), ['U']))
+    )
+    expect(resolveStepVisual({ state: { caseOf: 'white-cross-flip' } })?.stickers).toEqual(
+      caseStickers()
+    )
+  })
+})
+
 describe('demo playback', () => {
   it('should expose no frame for an understand step', () => {
-    startLesson('second-layer')
+    startLesson('white-cross')
     goToStep(0)
     expect($demoFrame.get()).toBeNull()
   })
 
   it('should play a case demo from the case at index 0 forward to solved', () => {
-    startLesson('second-layer')
-    goToStep(DEMO_RIGHT_STEP)
-    expect($playbackTotal.get()).toBe(RIGHT_INSERT.length)
+    startLesson('white-cross')
+    goToStep(DEMO_STEP)
+    expect($playbackTotal.get()).toBe(FLIP.length)
 
-    // demoFrom defaults to 'case': start scrambled, end solved.
     $playbackIndex.set(0)
-    expect($demoFrame.get()).toEqual(
-      toStickers(applyMoves(createSolvedState(), invertMoves(RIGHT_INSERT)))
-    )
+    expect($demoFrame.get()).toEqual(caseStickers())
 
-    $playbackIndex.set(RIGHT_INSERT.length)
-    expect($demoFrame.get()).toEqual(toStickers(createSolvedState()))
+    $playbackIndex.set(FLIP.length)
+    expect($demoFrame.get()).toEqual(solved())
   })
 
   it('should clamp next/previous to [0, total]', () => {
-    startLesson('second-layer')
-    goToStep(DEMO_RIGHT_STEP)
+    startLesson('white-cross')
+    goToStep(DEMO_STEP)
     const total = $playbackTotal.get()
 
     $playbackIndex.set(0)
@@ -132,17 +159,15 @@ describe('demo playback', () => {
 
 describe('practice setup', () => {
   it('should start from the inverse-scramble of the case and resolve to solved', () => {
-    startLesson('second-layer')
+    startLesson('white-cross')
     goToStep(PRACTICE_STEP)
 
     $playbackIndex.set(0)
-    expect($demoFrame.get()).toEqual(
-      toStickers(applyMoves(createSolvedState(), invertMoves(RIGHT_INSERT)))
-    )
+    expect($demoFrame.get()).toEqual(caseStickers())
     expect($isPracticeSolved.get()).toBe(false)
 
-    $playbackIndex.set(RIGHT_INSERT.length)
-    expect($demoFrame.get()).toEqual(toStickers(createSolvedState()))
+    $playbackIndex.set(FLIP.length)
+    expect($demoFrame.get()).toEqual(solved())
     expect($isPracticeSolved.get()).toBe(true)
   })
 })
@@ -153,7 +178,7 @@ describe('interactive primer', () => {
     expect($interactiveFrame.get()).toEqual(toStickers(applyMoves(createSolvedState(), ['R'])))
 
     applyInteractiveMove("R'")
-    expect($interactiveFrame.get()).toEqual(toStickers(createSolvedState()))
+    expect($interactiveFrame.get()).toEqual(solved())
   })
 
   it('should clear tapped moves on reset and on step change', () => {
@@ -161,9 +186,9 @@ describe('interactive primer', () => {
     resetInteractive()
     expect($interactiveMoves.get()).toEqual([])
 
-    startLesson('second-layer')
+    startLesson('cube-reading')
     applyInteractiveMove('R')
-    goToStep(1)
+    goToStep(0)
     expect($interactiveMoves.get()).toEqual([])
   })
 })

@@ -1,35 +1,72 @@
 import type { Lesson } from './types'
 
-// White Cross — the first chapter. The cross is solved intuitively, with no
-// algorithm to memorize, so this lesson is understand-only: it teaches the goal
-// and the way of thinking, then hands the learner off to the first real
-// algorithm in White Corners. (No catalog id — there is no named white-cross
-// sequence; never inline moves, per NFR-004.)
+// Chapitre 1 — La croix blanche. The proof-slice chapter (D-WHITECROSS): keeps the
+// intuitive matching (understand + visuals, incl. the one-off "good cross vs sides
+// not matching" comparison) and gains a real demo + practice for the flipped-edge
+// case using the promoted `white-cross-flip` algorithm, demoed case → solved.
+const SIDE_TOP_ROW: readonly number[] = [0, 1, 2]
+const U_EDGES: readonly number[] = [1, 3, 5, 7]
+
 export const whiteCross: Lesson = {
   id: 'white-cross',
-  title: 'White Cross',
+  title: 'La croix blanche',
   method: 'beginner',
   order: 1,
   steps: [
     {
       kind: 'understand',
-      title: 'Where every solve begins',
-      body: 'Welcome — this is your very first step. You are going to build a white cross on the top face: the four white edge pieces, each lined up with its matching centre. Good news to start with: there is no algorithm to memorize here. You solve the cross by looking at the cube and thinking, and that is a skill that pays off for the rest of the solve.'
+      title: "La croix blanche, c'est quoi",
+      body: "Bienvenue — on commence par le tout début : la croix blanche. Quatre arêtes blanches sur la face du haut, chacune alignée avec le centre de sa couleur. Bonne nouvelle : ici, presque tout se fait à l'œil, sans rien mémoriser. Regarde le but : la croix blanche dessus, et un bandeau de couleurs qui suit tout autour.",
+      visual: {
+        state: 'solved',
+        highlight: {
+          U: U_EDGES,
+          F: SIDE_TOP_ROW,
+          R: SIDE_TOP_ROW,
+          B: SIDE_TOP_ROW,
+          L: SIDE_TOP_ROW
+        }
+      }
     },
     {
       kind: 'understand',
-      title: 'Find a white edge',
-      body: 'Look around the cube for a piece with white on it that is an edge — an edge has exactly two colours. Ignore the corners for now. Pick any white edge you can see; you will bring them home one at a time, in any order you like.'
+      title: 'Le secret : la couleur de côté',
+      body: "Le réflexe qui change tout : chaque arête blanche a une deuxième couleur, et c'est elle qui commande. Une arête blanc-rouge va sous le centre rouge. Aligne d'abord la couleur de côté avec son centre, ensuite seulement rabats-la sur le dessus. À gauche, une vraie croix dont les côtés suivent ; à droite, une croix qui a l'air bonne mais dont les côtés ne tombent pas en face des centres — l'erreur classique.",
+      compare: {
+        left: {
+          visual: {
+            state: 'solved',
+            highlight: { F: SIDE_TOP_ROW, R: SIDE_TOP_ROW, B: SIDE_TOP_ROW, L: SIDE_TOP_ROW }
+          },
+          caption: 'Bonne croix : chaque côté suit son centre.'
+        },
+        right: {
+          visual: {
+            state: 'cross-misaligned',
+            highlight: { F: SIDE_TOP_ROW, R: SIDE_TOP_ROW, B: SIDE_TOP_ROW, L: SIDE_TOP_ROW }
+          },
+          caption: "Côtés non alignés : l'erreur classique."
+        }
+      }
     },
     {
       kind: 'understand',
-      title: 'Match the side colour first',
-      body: 'Each white edge has a second colour. That second colour tells the piece where it belongs: under the centre of the same colour. So a white-and-red edge lives next to the red centre. Line the piece up with its centre on the side, then fold it up onto the top so the white sits next to the white centre. Matching the side colour first is the whole trick — do that and the cross is correct, not just white.'
+      title: 'Amener une arête chez elle',
+      body: "En pratique : repère une arête blanche, amène-la sous le centre de sa couleur en tournant le bas, puis rabats-la d'un demi-tour de la face de côté. Le blanc se retrouve en haut, la couleur de côté pile sur son centre. Recommence pour les quatre, dans l'ordre que tu veux.",
+      visual: { state: 'solved', highlight: { U: [7], F: [1] } }
     },
     {
-      kind: 'understand',
-      title: 'Repeat for all four',
-      body: 'Do the same for the other three white edges. Take your time and check each one: white on top, side colour matched to its centre. When all four are home you will see a clean white cross with a matching band of colour around the top edge. That is your foundation — now you are ready for your first algorithm.'
+      kind: 'demo',
+      title: "Quand l'arête est à l'envers",
+      body: "Un seul cas résiste : l'arête est au bon endroit, mais le blanc est sur le côté au lieu du dessus. Cette petite séquence la retourne en place — pars du cas embêtant et regarde-la se résoudre, coup par coup, jusqu'à la croix.",
+      algorithmId: 'white-cross-flip',
+      demoFrom: 'case'
+    },
+    {
+      kind: 'practice',
+      title: 'À toi de jouer',
+      body: "À ton tour : voici ce cas embêtant. Déroule la séquence et regarde l'arête se remettre droite. Quand le cube est revenu résolu, tu as bouclé ta première croix.",
+      algorithmId: 'white-cross-flip'
     }
   ]
 }
