@@ -27,15 +27,19 @@ const Navbar = () => {
     <header className='bg-base-200 shadow-sm'>
       <nav
         aria-label='Main navigation'
-        className='mx-auto flex max-w-5xl items-center justify-between px-4 py-3'
+        className='mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-3'
       >
         <Link
           to='/'
+          aria-label='CubeMaster — accueil'
           className='focus-visible:ring-info rounded text-xl font-bold focus-visible:ring-2 focus-visible:outline-none'
         >
-          CubeMaster
+          {/* Short brand on phones so the nav never overflows 320–375px; full
+              name from sm up. */}
+          <span className='sm:hidden'>CM</span>
+          <span className='hidden sm:inline'>CubeMaster</span>
         </Link>
-        <ul aria-label='Mode navigation' className='flex gap-4'>
+        <ul aria-label='Mode navigation' className='flex flex-wrap gap-4'>
           {MODES.map(mode => {
             const isActive = currentPath === mode.path
 
@@ -59,11 +63,11 @@ const Navbar = () => {
 
 const Footer = () => (
   <footer className='bg-base-200 p-6 text-center' role='contentinfo'>
-    <p className='flex items-center justify-center gap-1'>
+    <p className='flex flex-wrap items-center justify-center gap-x-1 gap-y-0'>
       <Copyleft size={16} role='img' aria-label='Copyleft' />
       {new Date().getFullYear()} CubeMaster.
     </p>
-    <p className='mt-1 flex items-center justify-center gap-1'>
+    <p className='mt-1 flex flex-wrap items-center justify-center gap-x-1 gap-y-0'>
       Built by{' '}
       <a
         href={GITHUB_URL}
