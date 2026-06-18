@@ -67,7 +67,10 @@
 
   html {
     @apply h-full;
-    overflow-y: scroll;
+    /* Reserve the scrollbar gutter instead of forcing a permanent scrollbar:
+       no layout shift between short/tall pages, and a stable width so viewport
+       width is consistent across engines. */
+    scrollbar-gutter: stable;
   }
 
   body {

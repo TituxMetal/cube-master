@@ -17,12 +17,15 @@ interface FaceGridProps {
   compact?: boolean
 }
 
-// One robust, fluid face size for the whole net: clamp scales it with the viewport
-// without ever collapsing (unlike container queries against an indeterminate
-// parent — the April/June bug). Caps near the Solver's proven large size; the
-// compact variant keeps two nets readable side by side.
-const FACE_SIZE = 'clamp(3.5rem, 8vw, 7rem)'
-const FACE_SIZE_COMPACT = 'clamp(2.25rem, 4.5vw, 3.75rem)'
+// Fixed per-breakpoint face sizes (rem), mirroring the Solver's InteractiveFaceGrid.
+// Earlier tries were viewport-/container-driven and both failed: container-type:size
+// collapsed in flex parents (the April bug), and `vw` tied the cube to the viewport
+// width so it rendered a different size in Chromium vs Firefox (the scrollbar/vw
+// divergence). Fixed rem renders identically in every engine and never collapses;
+// vertical scroll absorbs the height. The smallest step (size-14) keeps a 4-wide net
+// under 320px with no horizontal overflow.
+const FACE_SIZE = 'size-14 sm:size-20 md:size-24 lg:size-28'
+const FACE_SIZE_COMPACT = 'size-12 sm:size-14 md:size-16'
 
 export const FaceGrid = ({
   stickers,
@@ -52,11 +55,9 @@ export const FaceGrid = ({
       ) : null}
 
       <ul
-        className='bg-base-300 ring-base-content/20 grid grid-cols-3 gap-1 rounded-sm p-1 ring-1'
-        style={{
-          width: compact ? FACE_SIZE_COMPACT : FACE_SIZE,
-          height: compact ? FACE_SIZE_COMPACT : FACE_SIZE
-        }}
+        className={`bg-base-300 ring-base-content/20 grid grid-cols-3 gap-1 rounded-sm p-1 ring-1 ${
+          compact ? FACE_SIZE_COMPACT : FACE_SIZE
+        }`}
       >
         {stickers.slice(0, 9).map((color, index) => {
           const isHighlighted = highlight?.includes(index) ?? false
