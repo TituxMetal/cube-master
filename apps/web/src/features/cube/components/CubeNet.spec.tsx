@@ -69,11 +69,13 @@ describe('CubeNet', () => {
     expect(screen.getByLabelText("coup R', sens anti-horaire").textContent).toBe("R'")
   })
 
-  it('should draw rotation arrows on the affected face only', () => {
+  it('should draw band arrows across the neighbouring faces plus a rotation arrow on the turning face', () => {
     const { container } = render(<CubeNet stickersByFace={solvedStickers} activeMove='R' />)
 
-    // 8 outer stickers of the single turning face
-    expect(container.querySelectorAll('[data-cell-arrow]')).toHaveLength(8)
+    // R turn: the band is U/F/D right columns (3 each) + B left column (3) = 12
+    // per-sticker arrows; the turning face R carries only the curved arrow.
+    expect(container.querySelectorAll('[data-cell-arrow]')).toHaveLength(12)
+    expect(container.querySelectorAll('[data-rotation-arrow]')).toHaveLength(1)
   })
 
   it('should render face labels for all faces', () => {

@@ -26,3 +26,16 @@ export const colorNameByCode: Record<ColorCode, string> = {
   Bl: 'blue',
   Gn: 'green'
 } as const
+
+// A darker shade of each sticker colour, used to fill the per-sticker move arrows.
+// This is ruwix's trick: a triangle drawn in a deeper tone of its own sticker reads
+// crisply on every colour — no white/black outline needed, and never the muddy
+// low-contrast result of one fixed arrow colour over six backgrounds.
+export const arrowFillByColor: Record<ColorCode, string> = {
+  Wt: '#565656',
+  Yl: '#6d5e00',
+  Rd: '#6f1414',
+  Og: '#7a3c08',
+  Bl: '#142a6e',
+  Gn: '#155b2c'
+} as const

@@ -89,21 +89,45 @@ describe('FaceGrid', () => {
     expect(container.querySelectorAll('[data-highlighted]')).toHaveLength(0)
   })
 
-  it('should draw a rotation arrow on each outer sticker when the move turns this face', () => {
-    const { container } = render(<FaceGrid stickers={solvedWhiteFace} label='R' activeMove='R' />)
+  it('should draw the band arrows on a neighbouring face, not the turning face', () => {
+    // An F turn carries U's bottom row (3 stickers) to the right.
+    const { container } = render(<FaceGrid stickers={solvedWhiteFace} label='U' activeMove='F' />)
 
-    expect(container.querySelectorAll('[data-cell-arrow]')).toHaveLength(8)
+    expect(container.querySelectorAll('[data-cell-arrow]')).toHaveLength(3)
+    expect(container.querySelector('[data-rotation-arrow]')).toBeNull()
   })
 
-  it('should draw no per-sticker arrows for a half turn', () => {
-    const { container } = render(<FaceGrid stickers={solvedWhiteFace} label='R' activeMove='R2' />)
+  it('should draw only a curved rotation arrow on the turning face itself', () => {
+    const { container } = render(<FaceGrid stickers={solvedWhiteFace} label='F' activeMove='F' />)
 
     expect(container.querySelectorAll('[data-cell-arrow]')).toHaveLength(0)
+    expect(container.querySelector('[data-rotation-arrow]')).not.toBeNull()
   })
 
-  it('should draw no arrows when the active move turns another face', () => {
-    const { container } = render(<FaceGrid stickers={solvedWhiteFace} label='R' activeMove='U' />)
+  it('should still draw the band on a half turn (doubles are not arrow-less)', () => {
+    const { container } = render(<FaceGrid stickers={solvedWhiteFace} label='U' activeMove='F2' />)
+
+    expect(container.querySelectorAll('[data-cell-arrow]')).toHaveLength(3)
+  })
+
+  it('should draw no arrows on a face the move does not touch', () => {
+    // An F turn leaves the B face untouched.
+    const { container } = render(<FaceGrid stickers={solvedWhiteFace} label='B' activeMove='F' />)
 
     expect(container.querySelectorAll('[data-cell-arrow]')).toHaveLength(0)
+    expect(container.querySelector('[data-rotation-arrow]')).toBeNull()
+  })
+
+  it('should veil the non-highlighted stickers when dimming is active', () => {
+    const { container } = render(<FaceGrid stickers={mixedFace} highlight={[0, 4]} dimOthers />)
+
+    // 9 stickers, 2 highlighted → 7 veiled.
+    expect(container.querySelectorAll('[data-dimmed]')).toHaveLength(7)
+  })
+
+  it('should veil the whole face when dimming is active but this face has no highlight', () => {
+    const { container } = render(<FaceGrid stickers={mixedFace} dimOthers />)
+
+    expect(container.querySelectorAll('[data-dimmed]')).toHaveLength(9)
   })
 })
