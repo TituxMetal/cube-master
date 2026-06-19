@@ -25,9 +25,9 @@ import {
   parseCoachProgress,
   previousStep,
   resetInteractive,
+  markLessonComplete,
   resolveStepVisual,
-  startLesson,
-  toggleLessonComplete
+  startLesson
 } from '~/features/coach/stores/coachStore'
 import type { CoachProgress } from '~/features/coach/stores/coachStore'
 import { createVersionedStorage } from '~/lib/storage'
@@ -54,17 +54,17 @@ describe('coach progress', () => {
     expect($progress.get().current).toEqual({ lesson: 'white-cross', step: 0 })
   })
 
-  it('should toggle a lesson between complete and not complete', () => {
-    toggleLessonComplete('white-cross')
+  it('should mark a lesson complete idempotently', () => {
+    markLessonComplete('white-cross')
     expect($progress.get().completedLessons).toEqual(['white-cross'])
-    toggleLessonComplete('white-cross')
-    expect($progress.get().completedLessons).toEqual([])
+    markLessonComplete('white-cross')
+    expect($progress.get().completedLessons).toEqual(['white-cross'])
   })
 
   it('should round-trip progress through the versioned helper', () => {
     startLesson('white-cross')
     goToStep(3)
-    toggleLessonComplete('white-cross')
+    markLessonComplete('white-cross')
 
     const reloaded = createVersionedStorage<CoachProgress>({
       key: 'cubeMaster:coachProgress',
@@ -105,7 +105,9 @@ describe('understand visuals', () => {
     goToStep(0)
     const visual = $understandVisual.get()
     expect(visual?.stickers).toEqual(whiteCrossOnly())
-    expect(visual?.highlight?.U).toEqual([1, 3, 5, 7])
+    // The plus shape: the white centre plus the four U edges (the centre belongs
+    // to the cross, so it stays lit, not veiled).
+    expect(visual?.highlight?.U).toEqual([1, 3, 4, 5, 7])
   })
 
   it('should expose no understand visual on a demo step', () => {

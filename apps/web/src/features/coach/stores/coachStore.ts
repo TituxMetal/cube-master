@@ -217,16 +217,15 @@ export const resetInteractive = () => {
   $interactiveMoves.set([])
 }
 
-// Mark/unmark a lesson as complete — a toggle so a learner can correct a
-// mis-click. The final "next chapter" navigation is a C1 (lesson browser) concern.
-export const toggleLessonComplete = (lessonId: string) => {
+// Mark a lesson complete — idempotent. Called automatically when the learner
+// reaches the last step, so completion needs no dedicated button cluttering the
+// player chrome: walking the chapter to its end *is* finishing it.
+export const markLessonComplete = (lessonId: string) => {
   const progress = $progress.get()
-  const isDone = progress.completedLessons.includes(lessonId)
+  if (progress.completedLessons.includes(lessonId)) return
   $progress.set({
     ...progress,
-    completedLessons: isDone
-      ? progress.completedLessons.filter(id => id !== lessonId)
-      : [...progress.completedLessons, lessonId]
+    completedLessons: [...progress.completedLessons, lessonId]
   })
 }
 
