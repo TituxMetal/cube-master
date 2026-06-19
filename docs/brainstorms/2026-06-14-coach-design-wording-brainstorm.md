@@ -89,7 +89,9 @@ Validate on a White Cross **proof slice** before propagating to all 7 chapters.
 - **Hard constraints:** never 3D (flat CubeNet only); dark theme only.
 - **Rejection criteria:**
   - a step that shows nothing (pure prose);
-  - **a step where you must scroll to see prose + cube + moves together** (esp. on a 13");
+  - **a step with horizontal scroll, or content overflowing its column** (esp. on a 13"; the goal
+    stays compact — some vertical scroll, e.g. clearing the navbar or on mobile, is tolerated when
+    needed, but never horizontal);
   - a demo that teaches a sequence the solver doesn't execute (no Coach-only invented algorithms);
   - chapter prose longer than a beginner's patience (split into steps with visuals instead).
 
@@ -135,6 +137,13 @@ visible without scrolling; the step list becomes a **slim horizontal progress ba
 (instead of a width-eating sidebar). Mobile: tight stack (title → 2–3 lines → cube → controls →
 nav). **Rationale:** the 13" scroll pain. **Rejected:** keep stacked + shrink (still scrolls).
 
+> **Adjusted in implementation.** Shipped as a **single vertical stack on all widths**, not the
+> two-pane "text left / cube right" — **deliberately**: the two-pane layout left too much empty
+> space beside the cube on desktop (the CubeNet isn't tall enough to fill the column). The
+> horizontal progress bar landed as planned. The compact intent still stands — the real contract is
+> **no _horizontal_ scroll**, with some vertical scroll (clearing the navbar, mobile) tolerated when
+> needed, not eliminated at all costs. See the plan's F9 outcome.
+
 ### D-RESPONSIVE: fluid CubeNet via container queries — RESOLVED _(first-class concern)_
 
 **Decision:** replace the discrete `size-20/28/36` breakpoints with **one fluid size variable**
@@ -146,6 +155,14 @@ cross is 4-wide × 3-tall with fixed rem sizes fought via media-queries — brea
 box". Container queries are the missing tool. **Residual work:** tuning the `clamp`/`min` bounds +
 gaps. **Rejected:** JS `ResizeObserver` sizing (heavier, a dependency-shaped path); more breakpoints
 (the original trap).
+
+> **Superseded in implementation (2026-06-18).** Container queries did not hold:
+> `container-type: size` collapsed inside the flex parent and the `vw` fallback rendered differently
+> in Chromium vs Firefox. Shipped **fixed rem per breakpoint**
+> (`size-14 sm:size-20 md:size-24 lg:size-28`) — the "more breakpoints" path, which here was the
+> correct answer, not the trap. See
+> `docs/solutions/2026-06-18-cubenet-cross-browser-sizing-and-mobile-overflow.md` and the plan's F4
+> outcome.
 
 ### D-ARROWS: arrows + highlighting on the shared CubeNet — RESOLVED
 
