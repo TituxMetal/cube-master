@@ -52,11 +52,19 @@ When this lands:
   understanding _why_, not just copying moves.
 - **Every step carries a visual.** No step is prose-only; `understand` steps render an illustrative
   cube state with piece highlighting.
-- The **player fits one viewport on a 13"** with no scrolling to see prose + cube + moves + controls
-  together (text left / cube + move-row + controls right; step list is a slim horizontal progress
-  bar in the header).
-- The **shared CubeNet is fluid** (Tailwind v4 container queries, CSS-only, no new dependency) — it
-  fits its panel by width **and** height. Solver and Timer inherit it without layout regression.
+- The **player has no _horizontal_ scroll on a 13"** and reads top-to-bottom as a single column
+  (title → prose → cube → move-row → controls → nav; step list is a slim horizontal progress bar in
+  the header). The **compact intent stands**: the important info sits near the top, reachable with
+  little scrolling. Some _vertical_ scroll (clearing the navbar, more so on mobile) is **tolerated
+  when needed** — not an objective to eliminate at all costs, not a free pass either. The hard
+  defect is _horizontal_ scroll, or content overflowing its column. _(Shipped as a vertical
+  **stack**, not the two-pane "text left / cube right" of D-LAYOUT — see F9 outcome.)_
+- The **shared CubeNet is sized in fixed rem per breakpoint**
+  (`size-14 sm:size-20 md:size-24 lg:size-28`, CSS-only, no new dependency) — it fits its panel **by
+  width** with no horizontal scroll and renders identically across engines; height is absorbed by
+  normal vertical scroll. Solver and Timer inherit it without layout regression. _(Container queries
+  and `vw` were both tried and reverted — see F4 outcome +
+  `docs/solutions/2026-06-18-cubenet-cross-browser-sizing-and-mobile-overflow.md`.)_
 - The shared CubeNet supports **piece highlighting** and an **active-move arrow** overlay; Solver
   consumes the arrows → **GitHub issue #7 closed**.
 - **All 7 chapters reference real, promoted, parity-pinned algorithms** — `white-cross-flip`
@@ -166,6 +174,17 @@ copy, `[gate]` = human review. Acceptance lives in the Acceptance Criteria secti
       Solver and Timer after, whichever path lands. _First F-cubenet task — gates the layout work
       (F9)._
 
+      **Outcome (2026-06-18) — both A and B failed; shipped the fallback.** `container-type: size`
+      collapsed to ~0 inside the flex `items-center` parent (the April bug), and the `vw`/`cqi`
+      fallback tied the cube to the viewport so it rendered a different size in Chromium vs Firefox.
+      Shipped **fixed rem per breakpoint** instead (`size-14 sm:size-20 md:size-24 lg:size-28`,
+      mirroring the Solver's `InteractiveFaceGrid`): identical across engines, never collapses, no
+      horizontal scroll; any extra height is absorbed by vertical scroll (tolerated when needed — the
+      compact intent still holds; see the balanced no-scroll clarification in the Subjective
+      Contract). F4 is **done via the breakpoint fallback, not A/B**.
+      Full root cause in `docs/solutions/2026-06-18-cubenet-cross-browser-sizing-and-mobile-overflow.md`
+      (S2).
+
 - [x] **F5** `[code]` Add an optional **highlight** capability to `CubeNet` + `FaceGrid`
       (`highlight?: Partial<Record<FaceCode, readonly number[]>>` → ring/emphasis on those sticker
       indices). Pure addition; existing call sites unaffected. (D-VISUAL needs this.) _Depends: F4._
@@ -205,6 +224,15 @@ copy, `[gate]` = human review. Acceptance lives in the Acceptance Criteria secti
       step **sidebar** with a **slim horizontal progress bar in the header**. Mobile: tight stack
       (title → 2–3 prose lines → cube → controls → nav). Render the new `understand` visual (F8) and
       `interactive` step. Drop the inverse-reset block. _Depends: F4, F5, F7, F8._
+
+      **Outcome:** shipped as a **single vertical stack** on all widths (title → prose → cube →
+      move-row → controls → nav), **not** the two-pane "text left / cube right". This is **deliberate**:
+      the two-pane layout left too much empty space beside the cube on desktop (the CubeNet isn't tall
+      enough to fill the column). The slim horizontal progress bar in the header landed as planned.
+      Consequence: some vertical scroll (past the navbar, more so on mobile) is tolerated when needed
+      — the goal stays compact, only horizontal scroll is an outright defect (see the Subjective
+      Contract clarification).
+
 - [x] **F10** `[code]` Add a **collapsible notation cheat-sheet** (6 faces + `'` / `2`) available in
       every lesson's chrome (D-NOTATION). Reusable component in the player shell. _Depends: F9._
 - [x] **F11** `[content]` **Translate all player/browser chrome to French** (D-LANG):
@@ -227,11 +255,17 @@ copy, `[gate]` = human review. Acceptance lives in the Acceptance Criteria secti
 - [x] **P3** `[code]` Wire `/coach` (Chapter 0 + White Cross visible, ordered) through the new
       player + fluid/arrow CubeNet; update `Coach.spec.tsx` / `LessonPlayer.spec.tsx`. _Depends: P1,
       P2._
-- [ ] **P4** `[gate]` **PREVIEW GATE — Titux reviews live, specifically on his 13" MacBook Pro**, in
-      fullscreen browser, against the Subjective Contract below. Resolve the two slice-time open
-      questions here (sexy-move demo framing; White Cross depth — flip-only vs also the straight
-      insert). **A pass propagates to Phase B; a failure returns the work to Phase P** (Rollout
-      rule).
+- [ ] **P4** `[gate]` **PREVIEW GATE — Titux reviewed live on his 13" MacBook Pro (2026-06-15):
+      FAILED**, then reworked. The fail flagged (among others) a microscopic/illegible CubeNet on
+      early steps, a pale self-biting arrow, horizontal overflow on the bottom nav, and a broken
+      home page. Rework in commits `cd53e88`→`ebb18c6` resolved the **scroll / CubeNet-sizing /
+      layout** items — Titux confirms **those** are now acceptable (fixed-rem sizing, single-column
+      stack, no horizontal scroll; see F4 + F9 outcomes and S2). **Not yet a full re-pass:** the
+      remaining fail items (arrow design, intermittent Solver "petit 2", wording, partial-state
+      visuals) are deferred to a later session, and no formal 13" re-approval of the whole slice is
+      recorded. Open questions: **White Cross depth → flip-only** (decided — see `white-cross.ts`);
+      **sexy-move framing → still open** (Chapter 2 unauthored). **Phase B stays gated until P4
+      fully passes.**
 
 ### Phase B — Broaden (gated on P4)
 
@@ -260,8 +294,13 @@ copy, `[gate]` = human review. Acceptance lives in the Acceptance Criteria secti
       deviation from the repo's English-UI convention (prose + chrome FR; rest of app EN; no i18n
       layer; revisit if usage justifies). Add it to AGENTS.md Read First / Task Routing if it
       belongs there.
-- [ ] **S2** `[design]` Capture the **container-query CubeNet** technique as a `docs/solutions/`
-      entry (candidate for `/compound`) — the fix for the April responsive pain.
+- [x] **S2** `[design]` Capture the **CubeNet cross-browser sizing** lesson as a `docs/solutions/`
+      entry — **done:**
+      `docs/solutions/2026-06-18-cubenet-cross-browser-sizing-and-mobile-overflow.md`. The captured
+      fix is the **opposite** of the original guess: **not** container queries but **fixed rem** —
+      never size with `vw` or `container-type: size` on a flex child (it collapses); plus
+      `flex-wrap` on navbar/footer and `grid-cols-1 sm:grid-cols-2` on the compare nets to kill the
+      mobile horizontal overflow.
 - [ ] **S3** `[code]` Full verification green: `format:check`, `lint:check`, `typecheck`, `test`,
       `build`.
 - [ ] **S4** `[design]` Update the **v1 plan**: mark F4 + F5 done, link this plan, flip **D2** to
@@ -356,7 +395,9 @@ Binding for every `[content]` and player task; inherited from the brainstorm.
   MVP-competition language.
 - **Rejection criteria (a result is wrong even if it compiles):**
   - a step that shows nothing (pure prose);
-  - **a step where you must scroll to see prose + cube + moves together — especially on a 13"**;
+  - **a step with _horizontal_ scroll, or content that overflows its column, on a 13"** — the goal
+    stays compact (key info reachable with little scrolling); some vertical scroll (clearing the
+    navbar, mobile) is tolerated when needed, but never horizontal;
   - a demo that teaches a sequence the solver doesn't execute (no Coach-only invented algorithms);
   - chapter prose longer than a beginner's patience (split into steps with visuals instead);
   - any 3D rendering; any light-theme surface.
@@ -368,31 +409,31 @@ Binding for every `[content]` and player task; inherited from the brainstorm.
 
 ## Assumptions
 
-| Assumption                                                                                              | Status            | Evidence                                                                                                                     |
-| ------------------------------------------------------------------------------------------------------- | ----------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| Tailwind v4 container queries can fit the 4×3 net in a panel by width **and** height without collapsing | **Unverified**    | No `@container`/`cqh` usage in the repo yet; `container-type: size` on a flex/grid child can collapse it → **F4 is a spike** |
-| `FLIPPED_INSERT['UF']` extract-to-const leaves solver output unchanged                                  | Verified-by-guard | `solveWhiteCross.spec.ts` asserts output; a drifted value reddens CI                                                         |
-| `[...SUNE,'D']` → `UA_PERM` extract-to-const leaves solver output unchanged                             | Verified-by-guard | `solveYellowCorners.spec.ts` asserts output; the parity spec pins `ua-perm` to the live const                                |
-| Tap-to-turn (Chapter 0) needs no engine change                                                          | Verified          | `applyMoves` is exported from the engine barrel; `applyMoves(state,[move])` covers a single tap                              |
-| Highlight can target stickers by index on the existing render                                           | Verified          | `FaceGrid` maps `stickers.slice(0,9)` by index → a `highlight` set rings those cells                                         |
-| Fluid CubeNet is a pure visual change to a shared component                                             | Verified          | `CubeNet`/`FaceGrid` props are `stickersByFace`/`className`/`label`; sizing is internal — Solver/Timer call sites unchanged  |
-| The 7 chapters' algorithms are all in (or promoted to) the catalog                                      | Verified          | Ch2–6 use existing entries; Ch1 `white-cross-flip` (F1) and Ch7 `ua-perm` (F2) are the only promotions                       |
-| FR copy quality is judged by a native speaker                                                           | Verified          | Reviewer is Titux (native FR), live on the 13" at P4                                                                         |
+| Assumption                                                                                              | Status            | Evidence                                                                                                                                                                               |
+| ------------------------------------------------------------------------------------------------------- | ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Tailwind v4 container queries can fit the 4×3 net in a panel by width **and** height without collapsing | **Refuted (F4)**  | `container-type: size` collapsed in the flex parent and the `vw` fallback diverged across engines; shipped **fixed rem per breakpoint** instead — see F4 outcome + solution 2026-06-18 |
+| `FLIPPED_INSERT['UF']` extract-to-const leaves solver output unchanged                                  | Verified-by-guard | `solveWhiteCross.spec.ts` asserts output; a drifted value reddens CI                                                                                                                   |
+| `[...SUNE,'D']` → `UA_PERM` extract-to-const leaves solver output unchanged                             | Verified-by-guard | `solveYellowCorners.spec.ts` asserts output; the parity spec pins `ua-perm` to the live const                                                                                          |
+| Tap-to-turn (Chapter 0) needs no engine change                                                          | Verified          | `applyMoves` is exported from the engine barrel; `applyMoves(state,[move])` covers a single tap                                                                                        |
+| Highlight can target stickers by index on the existing render                                           | Verified          | `FaceGrid` maps `stickers.slice(0,9)` by index → a `highlight` set rings those cells                                                                                                   |
+| Fluid CubeNet is a pure visual change to a shared component                                             | Verified          | `CubeNet`/`FaceGrid` props are `stickersByFace`/`className`/`label`; sizing is internal — Solver/Timer call sites unchanged                                                            |
+| The 7 chapters' algorithms are all in (or promoted to) the catalog                                      | Verified          | Ch2–6 use existing entries; Ch1 `white-cross-flip` (F1) and Ch7 `ua-perm` (F2) are the only promotions                                                                                 |
+| FR copy quality is judged by a native speaker                                                           | Verified          | Reviewer is Titux (native FR), live on the 13" at P4                                                                                                                                   |
 
 The single unverified assumption (**container-query fitment**) is de-risked by making **F4 an
 explicit spike** that must succeed before the layout work, and is the top entry in Risk Analysis.
 
 ## Risk Analysis
 
-| Risk                                                                         | Likelihood | Impact | Mitigation                                                                                                                                                                                                                                                                                                |
-| ---------------------------------------------------------------------------- | ---------- | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Container-query CubeNet collapses / doesn't fit by height (the April pain)   | Medium     | High   | **F4 is a structured spike:** path A (`container-type: size` over a bounded-height pane) → path B (`inline-size` + `aspect-ratio`, no collapse risk) → breakpoints only if both fail. Never ship `size` against a parent without a determinate height. Proven on the White Cross panel before propagating |
-| Fluid CubeNet regresses Solver or Timer layout                               | Low        | Medium | Pure-visual shared change; eyeball Solver **and** Timer right after F4; revert to prior sizing for those pages if needed                                                                                                                                                                                  |
-| Case→solved demo + inverse-reset removal breaks the 3 already-built chapters | Medium     | Medium | Do it in foundations (F8) with `coachStore.spec` updates; Ch2/Ch3 are rewritten in Phase B anyway against the new store                                                                                                                                                                                   |
-| Active-move arrows (#7) balloon in scope (token→direction mapping)           | Medium     | Low    | PD5 — highlight is the gating dependency; arrows can finish inside Phase P; gate is comprehension, not the overlay                                                                                                                                                                                        |
-| Preview gate (P4) rejects the player shape after foundations are built       | Low        | Medium | Slice is **one** chapter + Ch0 precisely so rework is cheap; Phase B is fully gated behind P4                                                                                                                                                                                                             |
-| FR copy fails a true beginner despite the structure                          | Medium     | Medium | The 13" review at P4 is against the comprehension contract; prose is content, cheap to iterate; FR drafts already in the brainstorm                                                                                                                                                                       |
-| `interactive` step kind leaks complexity into the player                     | Low        | Low    | PD4 — minimal, reuses `applyMoves`, kept to R/R'; one extra `step.kind` branch                                                                                                                                                                                                                            |
+| Risk                                                                         | Likelihood | Impact | Mitigation                                                                                                                                                                                                                                                                                                                                                                                              |
+| ---------------------------------------------------------------------------- | ---------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Container-query CubeNet collapses / doesn't fit by height (the April pain)   | Medium     | High   | **F4 is a structured spike:** path A (`container-type: size` over a bounded-height pane) → path B (`inline-size` + `aspect-ratio`, no collapse risk) → breakpoints only if both fail. Never ship `size` against a parent without a determinate height. Proven on the White Cross panel before propagating. **Materialized:** both A and B failed → shipped the fixed-rem fallback (solution 2026-06-18) |
+| Fluid CubeNet regresses Solver or Timer layout                               | Low        | Medium | Pure-visual shared change; eyeball Solver **and** Timer right after F4; revert to prior sizing for those pages if needed                                                                                                                                                                                                                                                                                |
+| Case→solved demo + inverse-reset removal breaks the 3 already-built chapters | Medium     | Medium | Do it in foundations (F8) with `coachStore.spec` updates; Ch2/Ch3 are rewritten in Phase B anyway against the new store                                                                                                                                                                                                                                                                                 |
+| Active-move arrows (#7) balloon in scope (token→direction mapping)           | Medium     | Low    | PD5 — highlight is the gating dependency; arrows can finish inside Phase P; gate is comprehension, not the overlay                                                                                                                                                                                                                                                                                      |
+| Preview gate (P4) rejects the player shape after foundations are built       | Low        | Medium | Slice is **one** chapter + Ch0 precisely so rework is cheap; Phase B is fully gated behind P4                                                                                                                                                                                                                                                                                                           |
+| FR copy fails a true beginner despite the structure                          | Medium     | Medium | The 13" review at P4 is against the comprehension contract; prose is content, cheap to iterate; FR drafts already in the brainstorm                                                                                                                                                                                                                                                                     |
+| `interactive` step kind leaks complexity into the player                     | Low        | Low    | PD4 — minimal, reuses `applyMoves`, kept to R/R'; one extra `step.kind` branch                                                                                                                                                                                                                                                                                                                          |
 
 ---
 
