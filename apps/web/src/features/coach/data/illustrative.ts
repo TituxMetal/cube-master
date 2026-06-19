@@ -1,4 +1,4 @@
-import type { MoveToken, StickersByFace } from '@packages/cube-engine'
+import type { CubeState, MoveToken, StickersByFace } from '@packages/cube-engine'
 import { applyMoves, createSolvedState, solveCube, toStickers } from '@packages/cube-engine'
 
 // Real, reachable illustrative cube states for `understand` visuals — so Coach
@@ -28,28 +28,34 @@ const FIXED_SCRAMBLE: MoveToken[] = [
   'F'
 ]
 
-type IllustrativeStickers = {
-  whiteCrossOnly: StickersByFace
-  crossMisaligned: StickersByFace
+type IllustrativeStates = {
+  whiteCrossOnly: CubeState
+  crossMisaligned: CubeState
 }
 
-let cache: IllustrativeStickers | null = null
+let cache: IllustrativeStates | null = null
 
-const compute = (): IllustrativeStickers => {
+const compute = (): IllustrativeStates => {
   const scrambled = applyMoves(createSolvedState(), FIXED_SCRAMBLE)
   const solution = solveCube(scrambled)
   const crossMoves = solution.phases[0].groups.flatMap(group => group.moves)
   const afterCross = applyMoves(scrambled, crossMoves)
 
   return {
-    whiteCrossOnly: toStickers(afterCross),
+    whiteCrossOnly: afterCross,
     // A U turn leaves the white cross on top but rotates the side bands off their
     // centres — the classic "looks like a cross but the sides don't follow" state.
-    crossMisaligned: toStickers(applyMoves(afterCross, ['U']))
+    crossMisaligned: applyMoves(afterCross, ['U'])
   }
 }
 
-const illustrative = (): IllustrativeStickers => (cache ??= compute())
+const illustrative = (): IllustrativeStates => (cache ??= compute())
 
-export const whiteCrossOnly = (): StickersByFace => illustrative().whiteCrossOnly
-export const crossMisaligned = (): StickersByFace => illustrative().crossMisaligned
+// CubeState milestones — the store builds a case demo as applyMoves(milestone,
+// invertMoves(alg)), so it needs the state, not just the stickers.
+export const whiteCrossOnlyState = (): CubeState => illustrative().whiteCrossOnly
+export const crossMisalignedState = (): CubeState => illustrative().crossMisaligned
+
+// Sticker projections — for understand visuals (the player renders stickers).
+export const whiteCrossOnly = (): StickersByFace => toStickers(whiteCrossOnlyState())
+export const crossMisaligned = (): StickersByFace => toStickers(crossMisalignedState())

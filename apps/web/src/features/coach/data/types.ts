@@ -15,12 +15,22 @@ import type { AlgorithmMethod, FaceCode, MoveToken } from '@packages/cube-engine
 // algorithm's case.
 export type IllustrativeState = 'solved' | 'white-cross-only' | 'cross-misaligned'
 
+// The subset of named states that is a *milestone* — the real goal of a chapter,
+// reached on a cube whose later layers are still scrambled (never the misaligned
+// contrast state). A demo/practice resolves *to* its goal, not to the fully-solved
+// cube — so the learner sees "the annoying case → this step's milestone" instead
+// of "almost solved → solved", which read as pointless. Defaults to 'solved' (the
+// last chapter, and any step whose goal genuinely is the finished cube). New
+// milestones are added here as Phase B authors the later chapters.
+export type GoalState = 'solved' | 'white-cross-only'
+
 // A visual attached to an `understand` step. Either an illustrative state
 // (optionally with a partial goal to highlight) or a named algorithm's *case* —
-// rendered by applying the inverse of its moves to solved, so what the learner
-// recognises is exactly what the demo resolves. (D-VISUAL / PD2)
+// rendered by applying the inverse of its moves to the goal milestone (default
+// solved), so what the learner recognises is exactly the state the matching demo
+// resolves. (D-VISUAL / PD2)
 export type StepVisual = {
-  state: IllustrativeState | { caseOf: string }
+  state: IllustrativeState | { caseOf: string; goal?: GoalState }
   highlight?: Partial<Record<FaceCode, readonly number[]>>
 }
 
@@ -60,9 +70,14 @@ export type DemoStep = {
   title: string
   body: string
   algorithmId: string
-  // Case-resolvers demo case → solved (default); the one pure-trigger (the sexy
-  // move) may demo solved → forward. (D-DEMO / PD3)
+  // Case-resolvers demo case → goal (default); the one pure-trigger (the sexy
+  // move) may demo goal → forward. (D-DEMO / PD3)
   demoFrom?: 'case' | 'solved'
+  // The milestone the algorithm resolves *to* — the step's real goal, not the
+  // fully-solved cube. Defaults to 'solved'. A case demo then plays from the case
+  // (the milestone with the algorithm's footprint reversed, so the surrounding
+  // layers stay scrambled) forward to this milestone. (the milestone-demo model)
+  goal?: GoalState
 }
 
 export type PracticeStep = {
@@ -70,6 +85,9 @@ export type PracticeStep = {
   title: string
   body: string
   algorithmId: string
+  // The milestone the learner resolves *to* — success is reaching this state, not
+  // the fully-solved cube. Defaults to 'solved'. (the milestone-demo model)
+  goal?: GoalState
 }
 
 export type LessonStep = UnderstandStep | InteractiveStep | DemoStep | PracticeStep

@@ -7,7 +7,11 @@ import {
 } from '@packages/cube-engine'
 import { beforeEach, describe, expect, it } from 'bun:test'
 
-import { crossMisaligned, whiteCrossOnly } from '~/features/coach/data/illustrative'
+import {
+  crossMisaligned,
+  whiteCrossOnly,
+  whiteCrossOnlyState
+} from '~/features/coach/data/illustrative'
 import {
   $currentLessonId,
   $demoFrame,
@@ -17,14 +21,19 @@ import {
   $lessonStepIndex,
   $playbackIndex,
   $playbackTotal,
+  $practiceFrame,
+  $practiceMoves,
+  $practiceProgress,
   $progress,
   $understandVisual,
   applyInteractiveMove,
+  applyPracticeMove,
   goToStep,
   nextStep,
   parseCoachProgress,
   previousStep,
   resetInteractive,
+  resetPractice,
   markLessonComplete,
   resolveStepVisual,
   startLesson
@@ -36,7 +45,13 @@ const FLIP = getAlgorithm('white-cross-flip')?.moves ?? []
 const DEMO_STEP = 3
 const PRACTICE_STEP = 4
 const solved = () => toStickers(createSolvedState())
-const caseStickers = () => toStickers(applyMoves(createSolvedState(), invertMoves(FLIP)))
+// Ch1's demo/practice resolve to the white-cross milestone (not solved): the case
+// is that milestone with the algorithm's footprint reversed, so the surrounding
+// layers stay scrambled and applying the algorithm lands back on the cross.
+const crossGoal = () => whiteCrossOnly()
+const crossCaseStickers = () => toStickers(applyMoves(whiteCrossOnlyState(), invertMoves(FLIP)))
+// The understand `caseOf` visual still renders on solved (default goal).
+const caseFromSolved = () => toStickers(applyMoves(createSolvedState(), invertMoves(FLIP)))
 
 beforeEach(() => {
   localStorage.clear()
@@ -45,6 +60,7 @@ beforeEach(() => {
   $lessonStepIndex.set(0)
   $playbackIndex.set(0)
   $interactiveMoves.set([])
+  $practiceMoves.set([])
 })
 
 describe('coach progress', () => {
@@ -121,7 +137,7 @@ describe('understand visuals', () => {
     expect(resolveStepVisual({ state: 'white-cross-only' })?.stickers).toEqual(whiteCrossOnly())
     expect(resolveStepVisual({ state: 'cross-misaligned' })?.stickers).toEqual(crossMisaligned())
     expect(resolveStepVisual({ state: { caseOf: 'white-cross-flip' } })?.stickers).toEqual(
-      caseStickers()
+      caseFromSolved()
     )
   })
 })
@@ -133,16 +149,18 @@ describe('demo playback', () => {
     expect($demoFrame.get()).toBeNull()
   })
 
-  it('should play a case demo from the case at index 0 forward to solved', () => {
+  it('should play a case demo from the case at index 0 forward to the cross milestone', () => {
     startLesson('white-cross')
     goToStep(DEMO_STEP)
     expect($playbackTotal.get()).toBe(FLIP.length)
 
     $playbackIndex.set(0)
-    expect($demoFrame.get()).toEqual(caseStickers())
+    expect($demoFrame.get()).toEqual(crossCaseStickers())
 
     $playbackIndex.set(FLIP.length)
-    expect($demoFrame.get()).toEqual(solved())
+    expect($demoFrame.get()).toEqual(crossGoal())
+    // The milestone is *not* the solved cube — the surrounding layers stay mixed.
+    expect($demoFrame.get()).not.toEqual(solved())
   })
 
   it('should clamp next/previous to [0, total]', () => {
@@ -159,18 +177,39 @@ describe('demo playback', () => {
   })
 })
 
-describe('practice setup', () => {
-  it('should start from the inverse-scramble of the case and resolve to solved', () => {
+describe('practice (interactive)', () => {
+  it('should start from the case and reach the cross milestone as the learner taps the moves', () => {
     startLesson('white-cross')
     goToStep(PRACTICE_STEP)
 
-    $playbackIndex.set(0)
-    expect($demoFrame.get()).toEqual(caseStickers())
+    // Before any tap: the case, surrounding layers scrambled, not yet solved.
+    expect($practiceFrame.get()).toEqual(crossCaseStickers())
+    expect($practiceProgress.get()).toBe(0)
+    expect($isPracticeSolved.get()).toBe(false)
+    // The demo frame is demo-only now — practice is driven by the learner's taps.
+    expect($demoFrame.get()).toBeNull()
+
+    // The learner *executes* the algorithm, move by move.
+    for (const move of FLIP) applyPracticeMove(move)
+
+    expect($practiceProgress.get()).toBe(FLIP.length)
+    expect($practiceFrame.get()).toEqual(crossGoal())
+    expect($practiceFrame.get()).not.toEqual(solved())
+    expect($isPracticeSolved.get()).toBe(true)
+  })
+
+  it('should not count a wrong tap as progress, and reset cleanly', () => {
+    startLesson('white-cross')
+    goToStep(PRACTICE_STEP)
+
+    // The algorithm starts with D, so a U tap is wrong: no progress, not solved.
+    applyPracticeMove('U')
+    expect($practiceProgress.get()).toBe(0)
     expect($isPracticeSolved.get()).toBe(false)
 
-    $playbackIndex.set(FLIP.length)
-    expect($demoFrame.get()).toEqual(solved())
-    expect($isPracticeSolved.get()).toBe(true)
+    resetPractice()
+    expect($practiceMoves.get()).toEqual([])
+    expect($practiceFrame.get()).toEqual(crossCaseStickers())
   })
 })
 
