@@ -9,7 +9,13 @@ import {
 } from '@packages/cube-engine'
 import { atom, computed } from 'nanostores'
 
-import { crossMisalignedState, whiteCrossOnlyState } from '~/features/coach/data/illustrative'
+import {
+  crossMisalignedState,
+  secondLayerState,
+  whiteCornersState,
+  whiteCrossOnlyState,
+  yellowCrossState
+} from '~/features/coach/data/illustrative'
 import { getLesson } from '~/features/coach/data/lessons'
 import type {
   GoalState,
@@ -67,6 +73,9 @@ const progressStorage = createVersionedStorage<CoachProgress>({
 const namedState = (state: IllustrativeState): CubeState => {
   if (state === 'white-cross-only') return whiteCrossOnlyState()
   if (state === 'cross-misaligned') return crossMisalignedState()
+  if (state === 'white-corners') return whiteCornersState()
+  if (state === 'second-layer') return secondLayerState()
+  if (state === 'yellow-cross') return yellowCrossState()
   return createSolvedState()
 }
 

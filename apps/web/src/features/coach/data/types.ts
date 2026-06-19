@@ -6,23 +6,36 @@ import type { AlgorithmMethod, FaceCode, MoveToken } from '@packages/cube-engine
 // notation primer, whose `interactive` step carries individual face turns (R, R′)
 // as the alphabet it teaches — notation atoms, not a teachable algorithm.
 
-// Named illustrative cube states the store renders without the step carrying any
-// moves — so lesson data never holds an inline MoveToken[] (NFR-004). `solved` is
-// the finished cube; `white-cross-only` is a real, reachable cube with just the
-// white cross done and the rest mixed (a meaningful goal, not a solved cube);
-// `cross-misaligned` is that same cube with the side bands rotated off their
-// centres (the classic White-Cross mistake). A `caseOf` references a catalog
-// algorithm's case.
-export type IllustrativeState = 'solved' | 'white-cross-only' | 'cross-misaligned'
+// The named *milestone* states — the real goal of each chapter, reached on a cube
+// whose later layers are still scrambled (or, for the last-layer chapters, whose
+// first two layers are genuinely solved). A demo/practice resolves *to* its goal,
+// not to the fully-solved cube — so the learner sees "the annoying case → this
+// step's milestone" instead of "almost solved → solved", which read as pointless.
+// Defaults to 'solved' (Ch7, and any step whose goal genuinely is the finished
+// cube). The early chapters each have a real partial milestone; the last-layer
+// chapters (Ch5 orient corners, Ch6 place corners, Ch7 place edges) resolve to
+// 'solved' — there the first two layers + yellow cross are genuinely complete, so
+// "near-solved → solved" is the truth, not the misleading fake PD6 rejects. (A
+// clean all-yellow / corners-placed intermediate isn't derivable from the BFS
+// solver's hybrid OLL/PLL algorithms — noted as a full-journey follow-up.) One per
+// early chapter, in journey order:
+//   white-cross-only  Ch1 — the white cross, rest mixed
+//   white-corners     Ch2 — the whole white (first) layer
+//   second-layer      Ch3 — the first two layers
+//   yellow-cross      Ch4 — first two layers + the yellow cross on top
+export type GoalState =
+  | 'solved'
+  | 'white-cross-only'
+  | 'white-corners'
+  | 'second-layer'
+  | 'yellow-cross'
 
-// The subset of named states that is a *milestone* — the real goal of a chapter,
-// reached on a cube whose later layers are still scrambled (never the misaligned
-// contrast state). A demo/practice resolves *to* its goal, not to the fully-solved
-// cube — so the learner sees "the annoying case → this step's milestone" instead
-// of "almost solved → solved", which read as pointless. Defaults to 'solved' (the
-// last chapter, and any step whose goal genuinely is the finished cube). New
-// milestones are added here as Phase B authors the later chapters.
-export type GoalState = 'solved' | 'white-cross-only'
+// Every named state the store renders without the step carrying any moves — so
+// lesson data never holds an inline MoveToken[] (NFR-004): the milestones plus
+// `cross-misaligned`, the white cross with its side bands rotated off their centres
+// (the classic White-Cross mistake — an understand-only contrast, never a goal). A
+// `caseOf` references a catalog algorithm's case.
+export type IllustrativeState = GoalState | 'cross-misaligned'
 
 // A visual attached to an `understand` step. Either an illustrative state
 // (optionally with a partial goal to highlight) or a named algorithm's *case* —
