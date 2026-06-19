@@ -260,12 +260,28 @@ copy, `[gate]` = human review. Acceptance lives in the Acceptance Criteria secti
       early steps, a pale self-biting arrow, horizontal overflow on the bottom nav, and a broken
       home page. Rework in commits `cd53e88`→`ebb18c6` resolved the **scroll / CubeNet-sizing /
       layout** items — Titux confirms **those** are now acceptable (fixed-rem sizing, single-column
-      stack, no horizontal scroll; see F4 + F9 outcomes and S2). **Not yet a full re-pass:** the
-      remaining fail items (arrow design, intermittent Solver "petit 2", wording, partial-state
-      visuals) are deferred to a later session, and no formal 13" re-approval of the whole slice is
-      recorded. Open questions: **White Cross depth → flip-only** (decided — see `white-cross.ts`);
-      **sexy-move framing → still open** (Chapter 2 unauthored). **Phase B stays gated until P4
-      fully passes.**
+      stack, no horizontal scroll; see F4 + F9 outcomes and S2).
+
+      **Deferred fail-items resolved + validated (2026-06-19, commits `d733fda`→`abc22f0`).** The
+      remaining fail items are now fixed and **Titux validated them** ("tout est bon cette fois"):
+      - **Arrow design → ruwix-faithful.** The earlier model arrowed only the single turning face;
+        it now draws the **band across the four neighbouring faces** (the cycling strips), each
+        triangle a clean solid in a **darker shade of its sticker colour** (`arrowFillByColor`), with
+        a **solid circular rotation arrow** on the turning face. Verified by headless render against
+        the ruwix screenshots in `~/screenshots/2026-06-15/`.
+      - **Solver "petit 2" → fixed.** Double moves (R2/U2…) were arrow-less because the old per-cell
+        angle returned null for half turns; the band model keeps the arrows on half turns (badge
+        carries the "×2"). Shared `MoveArrow`, so Solver inherits it.
+      - **Wording → icons.** Wide-text nav/stepper buttons replaced by lucide icon buttons; the
+        "terminer le chapitre" toggle dropped for auto-completion on reaching the last step.
+      - **Partial-state visuals / highlight → dim-veil.** Highlighting now veils the non-relevant
+        stickers instead of a low-contrast outline; the white cross keeps its centre lit.
+
+      Open questions still standing: **sexy-move framing** (Chapter 2 unauthored). White Cross depth
+      → flip-only (decided, see `white-cross.ts`). No fresh *formal* full-slice 13" sign-off is
+      recorded as a single event, but every called-out fail-item is now individually validated.
+      **Phase B remains gated on Titux's explicit go** (deferred — plan updated 2026-06-19, Phase B
+      decision pending).
 
 ### Phase B — Broaden (gated on P4)
 
