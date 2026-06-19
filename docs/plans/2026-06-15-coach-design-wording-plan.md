@@ -325,24 +325,28 @@ copy, `[gate]` = human review. Acceptance lives in the Acceptance Criteria secti
 
 ### Phase B — Broaden (gated on P4 + P5)
 
-- [ ] **B1** `[content]` Rewrite **Chapitre 2 — Les coins blancs** to the template: understand +
-      visuals, `sexy-move` demo (framing per the P4 decision), practice case→solved. FR. _Depends:
-      P4._
-- [ ] **B2** `[content]` Rewrite **Chapitre 3 — Le deuxième étage** to the template: right +
-      mirrored left inserts (`second-layer-insert-{right,left}`), demos `demoFrom: 'case'`, one
-      practice. FR. _Depends: P4._
-- [ ] **B3** `[content]` Author **Chapitre 4 — La croix jaune** (`yellow-cross-line`,
-      `yellow-cross-l`): recognize dot/L/line, demo each case→solved. Resolve the dot-case
-      presentation (apply twice vs own recognize step) during authoring. FR. _Depends: P4._
-- [ ] **B4** `[content]` Author **Chapitre 5 — Orienter les coins** (`sune`, `anti-sune`): whole top
-      face yellow. FR. _Depends: P4._
-- [ ] **B5** `[content]` Author **Chapitre 6 — Placer les coins** (`corner-3-cycle`): cycle corners
-      home. FR. _Depends: P4._
-- [ ] **B6** `[content]` Author **Chapitre 7 — Finir** (`ua-perm`, promoted in F2): permute the last
-      edges → solved. FR. _Depends: F2, P4._
-- [ ] **B7** `[code]` `lessons.ts` registry lists all **8** lessons (Ch0–7); `lessons.spec.ts`
-      referential-integrity guard green for all; `LessonBrowser` tiers/orders them correctly.
-      _Depends: B1–B6._
+- [x] **B1** `[content]` **Chapitre 2 — Les coins blancs** (`white-corners.ts`): understand +
+      visuals, `sexy-move` demo + interactive practice, `goal: 'white-corners'` (the first layer
+      milestone). FR from the brainstorm draft. `demoFrom: 'case'` (case → milestone).
+- [x] **B2** `[content]` **Chapitre 3 — Le deuxième étage** (`second-layer.ts`): right + mirrored
+      left inserts (`second-layer-insert-{right,left}`), demos `demoFrom: 'case'`, one interactive
+      practice, `goal: 'second-layer'`. FR from the brainstorm draft.
+- [x] **B3** `[content]` **Chapitre 4 — La croix jaune** (`yellow-cross.ts`): `yellow-cross-line` +
+      `yellow-cross-l` demos, interactive practice, `goal: 'yellow-cross'`. **Dot case resolved:**
+      handled in prose (apply once → a line/L to retake), not its own step. FR.
+- [x] **B4** `[content]` **Chapitre 5 — Orienter les coins** (`orient-corners.ts`): `sune` +
+      `anti-sune`. FR. **Last-layer milestone note:** a clean "all-yellow" intermediate isn't
+      derivable from the BFS solver's hybrid OLL/PLL algorithms (none is orientation-preserving on
+      solved), so this and Ch6/Ch7 use `goal: 'solved'` — honest here because the first two layers +
+      yellow cross are genuinely complete (the case is one trigger from done). Noted for the
+      full-journey review.
+- [x] **B5** `[content]` **Chapitre 6 — Placer les coins** (`place-corners.ts`): `corner-3-cycle`,
+      `goal: 'solved'` (see B4 note). FR.
+- [x] **B6** `[content]` **Chapitre 7 — Finir** (`finish.ts`): `ua-perm` (promoted in F2),
+      `goal:     'solved'` — the genuine finish. FR.
+- [x] **B7** `[code]` `lessons.ts` registry lists all **8** lessons (Ch0–7) in journey order;
+      `lessons.spec.ts` referential-integrity guard green for all; `LessonBrowser` orders by
+      `lesson.order`. Full verification green (format/lint/typecheck/272 tests/build).
 
 ### Phase S — Ship
 
