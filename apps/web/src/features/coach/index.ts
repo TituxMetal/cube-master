@@ -4,10 +4,10 @@ export type { Lesson, LessonStep } from './data/types'
 export { stepAlgorithmId } from './data/types'
 export {
   goToStep,
+  markLessonComplete,
   nextStep,
   previousStep,
   startLesson,
-  toggleLessonComplete,
   useCurrentLesson,
   useCurrentStep,
   useDemoFrame,

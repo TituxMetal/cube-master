@@ -1,4 +1,5 @@
 import type { FaceCode } from '@packages/cube-engine'
+import { Check, ChevronLeft, ChevronRight, RotateCcw } from 'lucide-react'
 import { useEffect } from 'react'
 
 import { LESSONS, getLesson } from '~/features/coach/data/lessons'
@@ -6,12 +7,12 @@ import type { InteractiveStep, LessonStep, UnderstandStep } from '~/features/coa
 import {
   applyInteractiveMove,
   goToStep,
+  markLessonComplete,
   nextStep,
   previousStep,
   resetInteractive,
   resolveStepVisual,
   startLesson,
-  toggleLessonComplete,
   useCurrentStepMoves,
   useDemoFrame,
   useInteractiveFrame,
@@ -81,7 +82,10 @@ const UnderstandVisualPane = ({ step }: { step: UnderstandStep }) => {
 // the learner can try.
 const InteractivePane = ({ step }: { step: InteractiveStep }) => {
   const frame = useInteractiveFrame()
-  const highlight = step.faces ? facesHighlight(step.faces) : undefined
+  // Highlight only the naming step (no moves): there, dimming everything but the
+  // named centres makes them pop. On the turning step the point is to watch the
+  // whole cube move, so the net stays fully lit.
+  const highlight = step.faces && step.moves.length === 0 ? facesHighlight(step.faces) : undefined
 
   return (
     <div className='flex flex-col items-center gap-3'>
@@ -101,10 +105,11 @@ const InteractivePane = ({ step }: { step: InteractiveStep }) => {
           ))}
           <button
             type='button'
-            className='btn btn-ghost btn-sm cursor-pointer'
+            className='btn btn-ghost btn-circle btn-sm cursor-pointer'
             onClick={resetInteractive}
+            aria-label='Réinitialiser'
           >
-            Réinitialiser
+            <RotateCcw className='size-5' aria-hidden='true' />
           </button>
         </div>
       )}
@@ -161,6 +166,13 @@ export const LessonPlayer = ({ lessonId }: { lessonId: string }) => {
   const progress = useProgress()
 
   const lesson = getLesson(lessonId)
+
+  // Reaching the last step *is* finishing the chapter — mark it complete here so
+  // the player needs no dedicated "terminer" button (P4 chrome note). Idempotent.
+  useEffect(() => {
+    if (lesson && stepIndex >= lesson.steps.length - 1) markLessonComplete(lessonId)
+  }, [lesson, lessonId, stepIndex])
+
   if (!lesson) return <LessonNotFound />
 
   const step = lesson.steps[stepIndex] ?? lesson.steps[0]
@@ -196,42 +208,36 @@ export const LessonPlayer = ({ lessonId }: { lessonId: string }) => {
         </div>
       </div>
 
-      <nav
-        className='flex flex-wrap items-center gap-2 sm:gap-3'
-        aria-label='Navigation de la leçon'
-      >
+      <nav className='flex items-center gap-2 sm:gap-3' aria-label='Navigation de la leçon'>
         <button
           type='button'
-          className='btn btn-soft btn-sm sm:btn-md cursor-pointer'
+          className='btn btn-soft btn-circle btn-sm sm:btn-md cursor-pointer disabled:opacity-40'
           disabled={isFirstStep}
           onClick={() => goToStep(stepIndex - 1)}
           aria-label='Étape précédente'
         >
-          ← Précédent
+          <ChevronLeft className='size-5' aria-hidden='true' />
         </button>
 
         {isLastStep ? (
-          <div className='flex flex-wrap items-center gap-2 sm:ml-auto sm:gap-3'>
+          <div className='ml-auto flex items-center gap-2 sm:gap-3'>
             {isCompleted && (
-              <span className='text-success text-sm font-semibold' aria-label='Chapitre terminé'>
-                ✓ Terminé
+              <span
+                className='text-success inline-flex items-center gap-1 text-sm font-semibold'
+                aria-label='Chapitre terminé'
+              >
+                <Check className='size-4' aria-hidden='true' />
+                Terminé
               </span>
             )}
-            <button
-              type='button'
-              className={`btn btn-sm sm:btn-md cursor-pointer ${
-                isCompleted ? 'btn-soft' : 'bg-cube-green text-cube-green-content'
-              }`}
-              onClick={() => toggleLessonComplete(lessonId)}
-            >
-              {isCompleted ? 'Marquer comme non terminé' : 'Terminer le chapitre'}
-            </button>
             {nextLesson ? (
               <Link
                 to={`/coach/${nextLesson.id}`}
                 className='btn bg-cube-green text-cube-green-content btn-sm sm:btn-md cursor-pointer'
+                aria-label='Chapitre suivant'
               >
-                Chapitre suivant →
+                Chapitre suivant
+                <ChevronRight className='size-4' aria-hidden='true' />
               </Link>
             ) : (
               <Link to='/coach' className='btn btn-soft btn-sm sm:btn-md cursor-pointer'>
@@ -242,11 +248,11 @@ export const LessonPlayer = ({ lessonId }: { lessonId: string }) => {
         ) : (
           <button
             type='button'
-            className='btn bg-cube-green text-cube-green-content btn-sm sm:btn-md ml-auto cursor-pointer'
+            className='btn bg-cube-green text-cube-green-content btn-circle btn-sm sm:btn-md ml-auto cursor-pointer'
             onClick={() => goToStep(stepIndex + 1)}
             aria-label='Étape suivante'
           >
-            Continuer →
+            <ChevronRight className='size-5' aria-hidden='true' />
           </button>
         )}
       </nav>

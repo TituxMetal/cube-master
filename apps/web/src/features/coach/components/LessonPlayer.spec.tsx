@@ -53,26 +53,21 @@ describe('LessonPlayer', () => {
     await user.click(screen.getByLabelText(/^Étape 2 :/))
     expect(screen.getByLabelText('Tourner R')).toBeDefined()
     await user.click(screen.getByLabelText('Tourner R'))
-    expect(screen.getByText('Réinitialiser')).toBeDefined()
+    expect(screen.getByLabelText('Réinitialiser')).toBeDefined()
   })
 
-  it('should toggle the lesson complete on the last step', async () => {
+  it('should mark the lesson complete on reaching the last step, no button needed', async () => {
     const user = userEvent.setup()
     render(<LessonPlayer lessonId='white-cross' />)
 
+    expect($progress.get().completedLessons).not.toContain('white-cross')
+
     await user.click(screen.getByLabelText(/^Étape 5 :/))
-    await user.click(screen.getByText('Terminer le chapitre'))
 
     await waitFor(() => {
       expect(screen.getByLabelText('Chapitre terminé')).toBeDefined()
     })
     expect($progress.get().completedLessons).toContain('white-cross')
-
-    await user.click(screen.getByText('Marquer comme non terminé'))
-    await waitFor(() => {
-      expect(screen.queryByLabelText('Chapitre terminé')).toBeNull()
-    })
-    expect($progress.get().completedLessons).not.toContain('white-cross')
   })
 
   it('should render a not-found state for an unknown lesson id', () => {
