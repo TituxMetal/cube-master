@@ -1,7 +1,12 @@
 import type { ColorCode, FaceCode, MoveToken } from '@packages/cube-engine'
 
-import { CellArrow, cellArrowAngle, moveFace, moveTurn } from '~/features/cube/components/MoveArrow'
-import { colorNameByCode, faceNameByCode, stickerClassByColor } from '~/features/cube/lib/colors'
+import { CellArrow, RotationArrow, faceArrows } from '~/features/cube/components/MoveArrow'
+import {
+  arrowFillByColor,
+  colorNameByCode,
+  faceNameByCode,
+  stickerClassByColor
+} from '~/features/cube/lib/colors'
 
 interface InteractiveFaceGridProps {
   stickers: readonly ColorCode[]
@@ -24,8 +29,8 @@ export const InteractiveFaceGrid = ({
     throw new Error(`InteractiveFaceGrid expects 9 stickers, got ${stickers.length}`)
   }
 
-  const turn =
-    activeMove !== undefined && moveFace(activeMove) === face ? moveTurn(activeMove) : null
+  const arrows =
+    activeMove !== undefined ? faceArrows(activeMove, face) : { rotation: null, cells: {} }
 
   return (
     <figure
@@ -36,29 +41,34 @@ export const InteractiveFaceGrid = ({
         {face}
       </figcaption>
 
-      <ul className='bg-base-300 border-base-content/40 inline-grid auto-rows-[20px] grid-cols-[repeat(3,20px)] gap-[3px] rounded-sm border p-[3px] md:auto-rows-[32px] md:grid-cols-[repeat(3,32px)] lg:auto-rows-[40px] lg:grid-cols-[repeat(3,40px)]'>
-        {stickers.slice(0, 9).map((color, index) => {
-          const isCenter = index === 4
-          const arrowAngle = turn ? cellArrowAngle(index, turn) : null
+      <div className='relative'>
+        <ul className='bg-base-300 border-base-content/40 inline-grid auto-rows-[20px] grid-cols-[repeat(3,20px)] gap-[3px] rounded-sm border p-[3px] md:auto-rows-[32px] md:grid-cols-[repeat(3,32px)] lg:auto-rows-[40px] lg:grid-cols-[repeat(3,40px)]'>
+          {stickers.slice(0, 9).map((color, index) => {
+            const isCenter = index === 4
+            const arrowAngle = arrows.cells[index]
 
-          return (
-            <li key={index} className='relative'>
-              <button
-                type='button'
-                className={`size-full rounded-xs ${stickerClassByColor[color]} ${
-                  isCenter ? 'cursor-default' : 'cursor-pointer hover:brightness-110'
-                }`}
-                aria-label={`${faceNameByCode[face]} sticker ${index}: ${colorNameByCode[color]}`}
-                disabled={isCenter}
-                onClick={() => {
-                  if (!isCenter) onPaintSticker(face, index)
-                }}
-              />
-              {arrowAngle !== null && <CellArrow angle={arrowAngle} />}
-            </li>
-          )
-        })}
-      </ul>
+            return (
+              <li key={index} className='relative'>
+                <button
+                  type='button'
+                  className={`size-full rounded-xs ${stickerClassByColor[color]} ${
+                    isCenter ? 'cursor-default' : 'cursor-pointer hover:brightness-110'
+                  }`}
+                  aria-label={`${faceNameByCode[face]} sticker ${index}: ${colorNameByCode[color]}`}
+                  disabled={isCenter}
+                  onClick={() => {
+                    if (!isCenter) onPaintSticker(face, index)
+                  }}
+                />
+                {arrowAngle !== undefined && (
+                  <CellArrow angle={arrowAngle} fill={arrowFillByColor[color]} />
+                )}
+              </li>
+            )
+          })}
+        </ul>
+        {arrows.rotation && <RotationArrow turn={arrows.rotation} />}
+      </div>
     </figure>
   )
 }

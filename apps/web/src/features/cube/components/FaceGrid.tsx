@@ -1,7 +1,12 @@
 import type { ColorCode, FaceCode, MoveToken } from '@packages/cube-engine'
 
-import { CellArrow, cellArrowAngle, moveFace, moveTurn } from '~/features/cube/components/MoveArrow'
-import { colorNameByCode, faceNameByCode, stickerClassByColor } from '~/features/cube/lib/colors'
+import { CellArrow, RotationArrow, faceArrows } from '~/features/cube/components/MoveArrow'
+import {
+  arrowFillByColor,
+  colorNameByCode,
+  faceNameByCode,
+  stickerClassByColor
+} from '~/features/cube/lib/colors'
 
 interface FaceGridProps {
   stickers: readonly ColorCode[]
@@ -10,6 +15,12 @@ interface FaceGridProps {
   // Sticker indices (0–8) to emphasise — used by Coach to point at the pieces a
   // step is about. Pure addition; omitting it leaves every call site unchanged.
   highlight?: readonly number[]
+  // When highlighting is active across the net, dim every sticker that is *not*
+  // highlighted on this face (a grey veil) so the relevant pieces stand out by
+  // contrast — instead of a low-contrast coloured outline on the highlighted
+  // ones, which was unreadable against several sticker colours. A face with no
+  // highlight of its own dims entirely.
+  dimOthers?: boolean
   // The move currently being demonstrated. When its face matches this grid's
   // label, a small rotation arrow is drawn on each sticker that travels.
   activeMove?: MoveToken
@@ -32,6 +43,7 @@ export const FaceGrid = ({
   label,
   className = '',
   highlight,
+  dimOthers = false,
   activeMove,
   compact = false
 }: FaceGridProps) => {
@@ -39,9 +51,10 @@ export const FaceGrid = ({
     throw new Error(`FaceGrid expects 9 stickers, got ${stickers.length}`)
   }
 
-  const turnsThisFace =
-    activeMove !== undefined && label !== undefined && moveFace(activeMove) === label
-  const turn = turnsThisFace ? moveTurn(activeMove) : null
+  const arrows =
+    activeMove !== undefined && label !== undefined
+      ? faceArrows(activeMove, label)
+      : { rotation: null, cells: {} }
 
   return (
     <figure
@@ -54,31 +67,40 @@ export const FaceGrid = ({
         </figcaption>
       ) : null}
 
-      <ul
-        className={`bg-base-300 ring-base-content/20 grid grid-cols-3 gap-1 rounded-sm p-1 ring-1 ${
-          compact ? FACE_SIZE_COMPACT : FACE_SIZE
-        }`}
-      >
-        {stickers.slice(0, 9).map((color, index) => {
-          const isHighlighted = highlight?.includes(index) ?? false
-          const arrowAngle = turn ? cellArrowAngle(index, turn) : null
+      <div className='relative'>
+        <ul
+          className={`bg-base-300 ring-base-content/20 grid grid-cols-3 gap-1 rounded-sm p-1 ring-1 ${
+            compact ? FACE_SIZE_COMPACT : FACE_SIZE
+          }`}
+        >
+          {stickers.slice(0, 9).map((color, index) => {
+            const isHighlighted = highlight?.includes(index) ?? false
+            const isDimmed = dimOthers && !isHighlighted
+            const arrowAngle = arrows.cells[index]
 
-          return (
-            <li
-              key={index}
-              data-highlighted={isHighlighted || undefined}
-              className={`ring-base-content/10 relative aspect-square rounded-xs ring-1 ${stickerClassByColor[color]} ${
-                isHighlighted
-                  ? 'outline-cube-green-text z-10 outline outline-2 outline-offset-1'
-                  : ''
-              }`}
-            >
-              <span role='img' aria-label={colorNameByCode[color]} className='block size-full' />
-              {arrowAngle !== null && <CellArrow angle={arrowAngle} />}
-            </li>
-          )
-        })}
-      </ul>
+            return (
+              <li
+                key={index}
+                data-highlighted={isHighlighted || undefined}
+                className={`ring-base-content/10 relative aspect-square rounded-xs ring-1 ${stickerClassByColor[color]}`}
+              >
+                <span role='img' aria-label={colorNameByCode[color]} className='block size-full' />
+                {isDimmed && (
+                  <span
+                    data-dimmed=''
+                    aria-hidden='true'
+                    className='bg-base-300/75 pointer-events-none absolute inset-0 rounded-xs'
+                  />
+                )}
+                {arrowAngle !== undefined && (
+                  <CellArrow angle={arrowAngle} fill={arrowFillByColor[color]} />
+                )}
+              </li>
+            )
+          })}
+        </ul>
+        {arrows.rotation && <RotationArrow turn={arrows.rotation} />}
+      </div>
     </figure>
   )
 }
