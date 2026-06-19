@@ -255,12 +255,13 @@ copy, `[gate]` = human review. Acceptance lives in the Acceptance Criteria secti
 - [x] **P3** `[code]` Wire `/coach` (Chapter 0 + White Cross visible, ordered) through the new
       player + fluid/arrow CubeNet; update `Coach.spec.tsx` / `LessonPlayer.spec.tsx`. _Depends: P1,
       P2._
-- [ ] **P4** `[gate]` **PREVIEW GATE — Titux reviewed live on his 13" MacBook Pro (2026-06-15):
-      FAILED**, then reworked. The fail flagged (among others) a microscopic/illegible CubeNet on
-      early steps, a pale self-biting arrow, horizontal overflow on the bottom nav, and a broken
-      home page. Rework in commits `cd53e88`→`ebb18c6` resolved the **scroll / CubeNet-sizing /
-      layout** items — Titux confirms **those** are now acceptable (fixed-rem sizing, single-column
-      stack, no horizontal scroll; see F4 + F9 outcomes and S2).
+- [x] **P4** `[gate]` **PREVIEW GATE — Titux reviewed live on his 13" MacBook Pro (2026-06-15):
+      FAILED**, then reworked, then **PASSED (2026-06-19)** to unblock Phase B (see the re-proof
+      note below and P5). The fail flagged (among others) a microscopic/illegible CubeNet on early
+      steps, a pale self-biting arrow, horizontal overflow on the bottom nav, and a broken home
+      page. Rework in commits `cd53e88`→`ebb18c6` resolved the **scroll / CubeNet-sizing / layout**
+      items — Titux confirms **those** are now acceptable (fixed-rem sizing, single-column stack, no
+      horizontal scroll; see F4 + F9 outcomes and S2).
 
       **Deferred fail-items resolved + validated (2026-06-19, commits `d733fda`→`abc22f0`).** The
       remaining fail items are now fixed and **Titux validated them** ("tout est bon cette fois"):
@@ -280,10 +281,49 @@ copy, `[gate]` = human review. Acceptance lives in the Acceptance Criteria secti
       Open questions still standing: **sexy-move framing** (Chapter 2 unauthored). White Cross depth
       → flip-only (decided, see `white-cross.ts`). No fresh *formal* full-slice 13" sign-off is
       recorded as a single event, but every called-out fail-item is now individually validated.
-      **Phase B remains gated on Titux's explicit go** (deferred — plan updated 2026-06-19, Phase B
-      decision pending).
 
-### Phase B — Broaden (gated on P4)
+      **Phase B go given + demo model reopened (2026-06-19).** Titux gave the explicit go for Phase B.
+      Reviewing the White Cross demo he rejected the **case → solved** model (PD3): starting from a
+      *quasi-solved* cube and ending fully solved "ne montre pas le cas embêtant" — he wants the demo
+      to start from a **real mid-solve case** (surrounding layers still scrambled) and end on **the
+      step's milestone** (the white cross done), not the whole cube solved. This supersedes PD3 for
+      case-resolver demos — see **PD6**. A short re-proof on Ch1 (the new milestone demo, live on the
+      13") gated Phase B authoring.
+
+      **Re-proof passed (2026-06-19).** Titux reviewed the reworked Ch1 (milestone demo + interactive
+      practice) on his 13" and **validated it to unblock Phase B** ("oui c'est mieux… vas-y ça passe…
+      je valide pour qu'on puisse faire les autres chapitres"). **Standing concern, deferred by him to
+      the full-journey review:** demo and practice still teach the *same* case back-to-back, and the
+      intuitive insertion step (Ch1 step 3) shows no motion. He explicitly judged that this can only be
+      assessed once the template is **propagated to all chapters** ("tant que c'est pas propagé… c'est
+      tourner en rond"). So Phase B authors on the current template and the **chapter-structure
+      question (separate demo vs. integrated/again) is reopened at the end of Phase B**, on the whole
+      journey, not per chapter. **Phase B is unblocked.**
+
+- [x] **P5** `[gate]` **Milestone-demo re-proof (Ch1) — PASSED (validated by Titux 2026-06-19).**
+      Foundations reworked per PD6 (commits pending): `types.ts` adds `GoalState` + a per-step
+      `goal`; `illustrative.ts` exposes `CubeState` milestones; `coachStore` builds a case demo as
+      `applyMoves(goal, invertMoves(alg))` (ends on the milestone) and scores practice against the
+      milestone; Ch1 demo/practice carry `goal: 'white-cross-only'` with faithful FR prose. Full
+      verification green (format/lint/typecheck/271 tests/build). **Known trade-off to judge:**
+      anchored on the cross milestone, `invertMoves(white-cross-flip)` displaces one cross arm into
+      the scramble rather than leaving a clean flip-in-slot, so the case reads as "one cross edge
+      still to place on a mixed cube" — the prose was rewritten to match. A pass propagates the
+      model to Phase B; a failure tunes Ch1 (e.g. a less-scrambled anchor for this one demo) before
+      broadening. _Depends: P3._
+
+      **Demo vs practice disambiguated — practice is now interactive (2026-06-19).** Reviewing the
+      slice Titux flagged that **demo and practice did exactly the same thing** (both rendered the
+      same `PlaybackPane` stepper; only the end message differed) — the practice was never made
+      interactive, so it read as a second viewing. Resolved per **PD7**: a **demo** stays the cube the
+      learner *watches* step through (prev/next), a **practice** is now the cube the learner *drives*
+      — they **tap each move of the recipe themselves** (reusing the Ch0 tap mechanic, seeded from the
+      case), the notation highlights how far they've got, the active-move arrow + the next move's
+      button hint the next tap, and success is reaching the milestone. Store: `$practiceMoves` /
+      `$practiceFrame` / `$practiceProgress` + `applyPracticeMove`/`resetPractice`; `$demoFrame` is
+      demo-only; `$isPracticeSolved` scores the learner's taps. This is part of the P5 gate.
+
+### Phase B — Broaden (gated on P4 + P5)
 
 - [ ] **B1** `[content]` Rewrite **Chapitre 2 — Les coins blancs** to the template: understand +
       visuals, `sexy-move` demo (framing per the P4 decision), practice case→solved. FR. _Depends:
@@ -375,6 +415,41 @@ If arrow direction-mapping threatens the slice, highlight ships and arrows are f
 P rather than blocking it. This keeps the gate about comprehension (visuals, no-scroll), not about
 an SVG overlay. _Rejected:_ dropping arrows (they're resolved in the brainstorm and close #7);
 letting arrows block the comprehension gate.
+
+### PD6 — Case-resolver demos resolve to the step's _milestone_, not the solved cube (supersedes PD3's end-state)
+
+Reviewing the White Cross demo (2026-06-19), Titux rejected the case→**solved** end-state: starting
+from a quasi-solved cube and ending fully solved hides the real, mid-solve case and reads as
+pointless. The fix anchors a demo on a **milestone** (the step's true goal — the white cross done,
+the first layer done, …) instead of solved. A demo/practice step carries an optional
+`goal: GoalState` (default `'solved'`); the store builds a case demo as
+`applyMoves(milestone, invertMoves(alg))` and plays forward, landing **exactly on the milestone**
+(the surrounding layers stay scrambled), and practice success is equality to that milestone, not
+solved. This is **provably correct by construction** — `(milestone · invert(A)) · A = milestone`,
+the same invertibility the old model relied on, re-anchored — **reachable** (milestones are
+solver-derived, generalising `illustrative.ts` from phase 0 to phases 0..k, mirroring the five
+solver phases), and **NFR-004-clean** (a step still references a catalog id + a named milestone,
+never inline moves). It keeps `demoFrom` (PD3) for _direction_ but changes the _destination_; the
+last-layer chapters keep `goal: 'solved'` because there the surrounding cube genuinely is solved.
+_Rejected:_ hand-building a clean flip-in-slot case (breaks invertibility + risks impossible
+states); keeping case→solved (the rejected behaviour). _Trade-off accepted:_ a milestone-anchored
+case can displace a piece into the scramble rather than show a textbook in-slot case — judged per
+chapter at the gate (P5), prose written to match.
+
+### PD7 — Practice is interactive (the learner taps the moves); demo stays watch-only
+
+Reviewing the slice (2026-06-19) Titux found **demo and practice indistinguishable** — both rendered
+the same stepper, only the end message differed, because practice was never made interactive. The
+intent (D-CHAPTERS) was demo = _watch the algorithm resolve_, practice = _do it yourself_; only the
+first half shipped. The fix makes **practice genuinely interactive**: the learner **taps each move
+of the recipe** on the case (reusing the Chapter 0 tap mechanic + `applyMoves`, no engine change),
+the cube responds live, the notation highlights matched progress, the active-move arrow and the next
+move's emphasised button hint the next tap, and success is reaching the milestone (PD6). The demo
+keeps the prev/next stepper (app-driven). This makes the two steps clearly distinct and removes the
+redundancy, at the cost of one extra render path + three small store atoms. _Rejected:_ merging
+demo+practice into one step (loses the explicit "à toi de jouer" beat Titux wanted kept); free-form
+input from the full 18-move palette (overwhelming for a true beginner — the palette is the
+algorithm's own moves, guided).
 
 ---
 

@@ -3,14 +3,21 @@ import { Check, ChevronLeft, ChevronRight, RotateCcw } from 'lucide-react'
 import { useEffect } from 'react'
 
 import { LESSONS, getLesson } from '~/features/coach/data/lessons'
-import type { InteractiveStep, LessonStep, UnderstandStep } from '~/features/coach/data/types'
+import type {
+  InteractiveStep,
+  LessonStep,
+  PracticeStep,
+  UnderstandStep
+} from '~/features/coach/data/types'
 import {
   applyInteractiveMove,
+  applyPracticeMove,
   goToStep,
   markLessonComplete,
   nextStep,
   previousStep,
   resetInteractive,
+  resetPractice,
   resolveStepVisual,
   startLesson,
   useCurrentStepMoves,
@@ -20,6 +27,8 @@ import {
   useLessonStepIndex,
   usePlaybackIndex,
   usePlaybackTotal,
+  usePracticeFrame,
+  usePracticeProgress,
   useProgress,
   useUnderstandVisual
 } from '~/features/coach/stores/coachStore'
@@ -117,14 +126,18 @@ const InteractivePane = ({ step }: { step: InteractiveStep }) => {
   )
 }
 
-// The playback cube for a demo/practice step, with notation, an active-move arrow,
-// and Coach's French stepper.
-const PlaybackPane = ({ step }: { step: LessonStep }) => {
+// The reached-the-goal message — "Résolu" when the goal is the solved cube, "C'est
+// en place" when it's a milestone (the cube isn't fully solved yet).
+const successMessage = (goal: PracticeStep['goal']): string =>
+  (goal ?? 'solved') === 'solved' ? 'Résolu ! Bien joué.' : 'C’est en place ! Bien joué.'
+
+// The demo cube the learner *watches*: notation, an active-move arrow, and the
+// prev/next stepper. App-driven — no input, hence pointer-events-none.
+const DemoPane = () => {
   const moves = useCurrentStepMoves()
   const frame = useDemoFrame()
   const playbackIndex = usePlaybackIndex()
   const playbackTotal = usePlaybackTotal()
-  const isPracticeSolved = useIsPracticeSolved()
 
   const activeMove = playbackIndex < moves.length ? moves[playbackIndex] : undefined
 
@@ -142,9 +155,58 @@ const PlaybackPane = ({ step }: { step: LessonStep }) => {
         onPrevious={previousStep}
         onNext={nextStep}
       />
-      {step.kind === 'practice' && isPracticeSolved && (
+    </div>
+  )
+}
+
+// The practice cube the learner *drives*: they tap each move of the recipe
+// themselves and the cube responds. The notation guides (it highlights how far
+// they've got), the arrow points at the next move, and the next move's button is
+// emphasised — but they must read and pick it. The real "à toi de jouer", not a
+// second viewing of the demo. (PD6)
+const PracticePane = ({ step }: { step: PracticeStep }) => {
+  const moves = useCurrentStepMoves()
+  const frame = usePracticeFrame()
+  const progress = usePracticeProgress()
+  const isPracticeSolved = useIsPracticeSolved()
+
+  const nextMove = !isPracticeSolved && progress < moves.length ? moves[progress] : undefined
+  const palette = [...new Set(moves)]
+
+  return (
+    <div className='flex flex-col items-center gap-3'>
+      <MoveSequence moves={moves} currentIndex={progress} />
+      {frame && (
+        <div className='w-full'>
+          <CubeNet stickersByFace={frame} activeMove={nextMove} />
+        </div>
+      )}
+      <div className='flex flex-wrap items-center justify-center gap-2'>
+        {palette.map(move => (
+          <button
+            key={move}
+            type='button'
+            className={`btn btn-sm cursor-pointer font-mono ${
+              move === nextMove ? 'bg-cube-green text-cube-green-content' : 'btn-soft'
+            }`}
+            onClick={() => applyPracticeMove(move)}
+            aria-label={`Jouer ${move}`}
+          >
+            {move}
+          </button>
+        ))}
+        <button
+          type='button'
+          className='btn btn-ghost btn-circle btn-sm cursor-pointer'
+          onClick={resetPractice}
+          aria-label='Recommencer'
+        >
+          <RotateCcw className='size-5' aria-hidden='true' />
+        </button>
+      </div>
+      {isPracticeSolved && (
         <p className='text-success text-center font-semibold' aria-live='polite'>
-          Résolu&nbsp;! Bien joué.
+          {successMessage(step.goal)}
         </p>
       )}
     </div>
@@ -154,7 +216,8 @@ const PlaybackPane = ({ step }: { step: LessonStep }) => {
 const StepCubePane = ({ step }: { step: LessonStep }) => {
   if (step.kind === 'understand') return <UnderstandVisualPane step={step} />
   if (step.kind === 'interactive') return <InteractivePane step={step} />
-  return <PlaybackPane step={step} />
+  if (step.kind === 'practice') return <PracticePane step={step} />
+  return <DemoPane />
 }
 
 export const LessonPlayer = ({ lessonId }: { lessonId: string }) => {

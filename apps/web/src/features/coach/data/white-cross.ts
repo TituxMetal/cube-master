@@ -53,16 +53,18 @@ export const whiteCross: Lesson = {
     },
     {
       kind: 'demo',
-      title: "Quand l'arête est à l'envers",
-      body: "Un seul cas résiste : l'arête est au bon endroit, mais le blanc est tourné vers l'avant (la face devant toi) au lieu d'être sur le dessus. Cette petite séquence la retourne en place — pars du cas et regarde-la se résoudre, coup par coup, jusqu'à la croix.",
+      title: 'Quand une arête résiste',
+      body: "Il reste une arête blanche à poser — le cas qui résiste : sur ce cube encore mélangé, son blanc n'est pas encore en haut. Cette petite séquence va la chercher et la rabat sur la croix. Déroule-la coup par coup et regarde la croix se compléter, le reste du cube attend toujours.",
       algorithmId: 'white-cross-flip',
-      demoFrom: 'case'
+      demoFrom: 'case',
+      goal: 'white-cross-only'
     },
     {
       kind: 'practice',
       title: 'À toi de jouer',
-      body: "À ton tour : voici ce cas embêtant, le blanc tourné vers l'avant. Déroule la séquence et regarde l'arête se remettre droite. Quand le cube est revenu résolu, tu as bouclé ta première croix.",
-      algorithmId: 'white-cross-flip'
+      body: "À ton tour, sur un cube encore mélangé : il manque la dernière arête de la croix. Déroule la séquence et regarde l'arête venir se poser sur le dessus. Quand la croix blanche est complète, tu as bouclé ta première étape.",
+      algorithmId: 'white-cross-flip',
+      goal: 'white-cross-only'
     }
   ]
 }
