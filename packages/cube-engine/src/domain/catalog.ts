@@ -92,6 +92,14 @@ export const ALGORITHM_CATALOG: readonly AlgorithmEntry[] = [
     moves: ['R', 'D', "R'", 'D', 'R', 'D2', "R'", 'D'],
     method: 'beginner',
     description: 'Cycle the last three top-layer edges into place to finish the cube.'
+  },
+  {
+    id: 'edge-3-cycle',
+    name: 'Edge 3-Cycle',
+    moves: ['R', "D'", 'R', 'D', 'R', 'D', 'R', "D'", "R'", "D'", 'R2'],
+    method: 'beginner',
+    description:
+      'Cycle three last-layer edges into place while leaving the corners untouched — the corner-safe finishing move the Coach teaching solver uses for the last edges (the catalog ua-perm disturbs corners, so it cannot end a staged solve).'
   }
 ]
 
