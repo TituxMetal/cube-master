@@ -64,6 +64,7 @@ export type {
 export {
   flattenTeachingPlan,
   planWhiteCorners,
+  planSecondLayer,
   planYellowCross,
   planOrientLastCorners,
   planPlaceLastCorners,
