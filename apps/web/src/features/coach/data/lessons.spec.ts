@@ -11,9 +11,18 @@ const KNOWN_MILESTONES = new Set([
   'white-cross-only',
   'white-corners',
   'second-layer',
-  'yellow-cross'
+  'yellow-cross',
+  'yellow-corners-oriented',
+  'yellow-corners-placed'
 ])
-const KNOWN_TEACHING_PHASES = new Set(['white-corners'])
+const KNOWN_TEACHING_PHASES = new Set([
+  'white-corners',
+  'second-layer',
+  'yellow-cross',
+  'orient-corners',
+  'place-corners',
+  'permute-edges'
+])
 
 describe('lesson registry', () => {
   it('should have unique lesson ids', () => {

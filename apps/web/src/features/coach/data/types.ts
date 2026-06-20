@@ -7,28 +7,27 @@ import type { AlgorithmMethod, FaceCode, MoveToken } from '@packages/cube-engine
 // as the alphabet it teaches — notation atoms, not a teachable algorithm.
 
 // The named *milestone* states — the real goal of each chapter, reached on a cube
-// whose later layers are still scrambled (or, for the last-layer chapters, whose
-// first two layers are genuinely solved). A demo/practice resolves *to* its goal,
-// not to the fully-solved cube — so the learner sees "the annoying case → this
-// step's milestone" instead of "almost solved → solved", which read as pointless.
-// Defaults to 'solved' (Ch7, and any step whose goal genuinely is the finished
-// cube). The early chapters each have a real partial milestone; the last-layer
-// chapters (Ch5 orient corners, Ch6 place corners, Ch7 place edges) resolve to
-// 'solved' — there the first two layers + yellow cross are genuinely complete, so
-// "near-solved → solved" is the truth, not the misleading fake PD6 rejects. (A
-// clean all-yellow / corners-placed intermediate isn't derivable from the BFS
-// solver's hybrid OLL/PLL algorithms — noted as a full-journey follow-up.) One per
-// early chapter, in journey order:
-//   white-cross-only  Ch1 — the white cross, rest mixed
-//   white-corners     Ch2 — the whole white (first) layer
-//   second-layer      Ch3 — the first two layers
-//   yellow-cross      Ch4 — first two layers + the yellow cross on top
+// whose later layers are still scrambled. A demo/practice resolves *to* its goal, not
+// to the fully-solved cube, so the learner sees "the annoying case → this step's
+// milestone" instead of "almost solved → solved", which reads as pointless. Every
+// teaching milestone is built by chaining the teaching solver off the previous one
+// (illustrative.ts), so each chapter's practice lands exactly on it. One per chapter,
+// in journey order:
+//   white-cross-only        Ch1 — the white cross, rest mixed
+//   white-corners           Ch2 — the whole top crown (first layer)
+//   second-layer            Ch3 — the first two layers
+//   yellow-cross            Ch4 — first two layers + the yellow cross
+//   yellow-corners-oriented Ch5 — + the whole yellow face (corners oriented)
+//   yellow-corners-placed   Ch6 — + the last-layer corners home
+//   solved                  Ch7 — the finished cube
 export type GoalState =
   | 'solved'
   | 'white-cross-only'
   | 'white-corners'
   | 'second-layer'
   | 'yellow-cross'
+  | 'yellow-corners-oriented'
+  | 'yellow-corners-placed'
 
 // Every named state the store renders without the step carrying any moves — so
 // lesson data never holds an inline MoveToken[] (NFR-004): the milestones plus
@@ -83,7 +82,13 @@ export type InteractiveStep = {
 // chapter's milestone). All moves come from the engine at runtime — lesson data
 // never inlines a MoveToken[] (NFR-004). Phase 37 extends `TeachingPhase` with the
 // remaining last-layer phases.
-export type TeachingPhase = 'white-corners'
+export type TeachingPhase =
+  | 'white-corners'
+  | 'second-layer'
+  | 'yellow-cross'
+  | 'orient-corners'
+  | 'place-corners'
+  | 'permute-edges'
 
 export type TeachingScenario = {
   phase: TeachingPhase

@@ -13,7 +13,7 @@ import {
   whiteCrossOnly,
   whiteCrossOnlyState
 } from '~/features/coach/data/illustrative'
-import { getLesson } from '~/features/coach/data/lessons'
+import { LESSONS, getLesson } from '~/features/coach/data/lessons'
 import {
   $currentLessonId,
   $currentStepMoves,
@@ -258,6 +258,27 @@ describe('chapter 2 — teaching demos + full-chapter practice', () => {
       expect(demoMoves.join(' ')).not.toBe(practiceMoves)
     }
   })
+})
+
+describe('every full-chapter practice reaches its milestone (A2, all chapters)', () => {
+  const withPractice = LESSONS.filter(lesson =>
+    lesson.steps.some(step => step.kind === 'chapter-practice')
+  )
+
+  for (const lesson of withPractice) {
+    it(`${lesson.id} — executing the whole teaching recipe solves the chapter`, () => {
+      startLesson(lesson.id)
+      const index = lesson.steps.findIndex(step => step.kind === 'chapter-practice')
+      goToStep(index)
+
+      const recipe = $currentStepMoves.get()
+      expect(recipe.length).toBeGreaterThan(0)
+      expect($isPracticeSolved.get()).toBe(false)
+
+      for (const move of recipe) applyPracticeMove(move)
+      expect($isPracticeSolved.get()).toBe(true)
+    })
+  }
 })
 
 describe('interactive primer', () => {

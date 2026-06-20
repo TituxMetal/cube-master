@@ -12,7 +12,12 @@ import {
   flattenTeachingPlan,
   getAlgorithm,
   invertMoves,
+  planOrientLastCorners,
+  planPermuteLastEdges,
+  planPlaceLastCorners,
+  planSecondLayer,
   planWhiteCorners,
+  planYellowCross,
   toStickers
 } from '@packages/cube-engine'
 import { atom, computed } from 'nanostores'
@@ -22,6 +27,8 @@ import {
   secondLayerState,
   whiteCornersState,
   whiteCrossOnlyState,
+  yellowCornersOrientedState,
+  yellowCornersPlacedState,
   yellowCrossState
 } from '~/features/coach/data/illustrative'
 import { getLesson } from '~/features/coach/data/lessons'
@@ -86,6 +93,8 @@ const namedState = (state: IllustrativeState): CubeState => {
   if (state === 'white-corners') return whiteCornersState()
   if (state === 'second-layer') return secondLayerState()
   if (state === 'yellow-cross') return yellowCrossState()
+  if (state === 'yellow-corners-oriented') return yellowCornersOrientedState()
+  if (state === 'yellow-corners-placed') return yellowCornersPlacedState()
   return createSolvedState()
 }
 
@@ -122,7 +131,11 @@ export const $currentStep = computed(
 const runTeachingPlan = (scenario: TeachingScenario) => {
   const start = namedState(scenario.from)
   if (scenario.phase === 'white-corners') return planWhiteCorners(start, createSolvedState())
-  throw new Error(`Unknown teaching phase: ${scenario.phase}`)
+  if (scenario.phase === 'second-layer') return planSecondLayer(start)
+  if (scenario.phase === 'yellow-cross') return planYellowCross(start)
+  if (scenario.phase === 'orient-corners') return planOrientLastCorners(start)
+  if (scenario.phase === 'place-corners') return planPlaceLastCorners(start)
+  return planPermuteLastEdges(start)
 }
 
 // A step's resolved recipe — the unifying shape behind every demo/practice variant,

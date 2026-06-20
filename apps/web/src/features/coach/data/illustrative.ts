@@ -3,7 +3,11 @@ import {
   applyMoves,
   createSolvedState,
   flattenTeachingPlan,
+  planOrientLastCorners,
+  planPlaceLastCorners,
+  planSecondLayer,
   planWhiteCorners,
+  planYellowCross,
   solveCube,
   toStickers
 } from '@packages/cube-engine'
@@ -46,32 +50,38 @@ type Milestones = {
   whiteCorners: CubeState
   secondLayer: CubeState
   yellowCross: CubeState
+  yellowCornersOriented: CubeState
+  yellowCornersPlaced: CubeState
 }
 
 let cache: Milestones | null = null
 
+const advance = (from: CubeState, plan: ReturnType<typeof planSecondLayer>): CubeState =>
+  applyMoves(from, [...flattenTeachingPlan(plan)])
+
 const compute = (): Milestones => {
   const scrambled = applyMoves(createSolvedState(), FIXED_SCRAMBLE)
   const solution = solveCube(scrambled)
-  // Replay solver phases [0..k) from the scrambled cube — phase order is
-  // White Cross, White Corners, Second Layer, Yellow Cross, Yellow Layer.
-  const afterPhases = (count: number): CubeState =>
-    applyMoves(
-      scrambled,
-      solution.phases.slice(0, count).flatMap(phase => phase.groups.flatMap(group => group.moves))
-    )
+  // Only the white cross comes from the shared solver (Ch1 is untouched legacy). Every
+  // later milestone is built by **chaining the teaching solver** off the previous one
+  // (D-MILESTONES-FROM-TEACHING, extended to the whole journey): so each chapter's
+  // full-chapter practice, which replays that planner from the previous milestone,
+  // lands *exactly* on this state (stickersEqual success). The shared solver churns the
+  // lower layers differently and would never match the teaching recipe.
+  const whiteCrossOnly = applyMoves(
+    scrambled,
+    solution.phases.slice(0, 1).flatMap(phase => phase.groups.flatMap(group => group.moves))
+  )
+  const solved = createSolvedState()
 
-  const whiteCrossOnly = afterPhases(1)
-
-  // The white-corners milestone is built by the **teaching solver**, not the shared
-  // solver (extends D-MILESTONES-FROM-TEACHING to Ch2): so the full-chapter practice,
-  // which replays planWhiteCorners from white-cross-only, lands *exactly* on this
-  // state (stickersEqual success). The shared-solver afterPhases(2) completes the
-  // same first layer but churns the lower layers differently — it would never match
-  // the teaching recipe. The first layer is visually identical either way.
-  const whiteCorners = applyMoves(whiteCrossOnly, [
-    ...flattenTeachingPlan(planWhiteCorners(whiteCrossOnly, createSolvedState()))
-  ])
+  const whiteCorners = advance(whiteCrossOnly, planWhiteCorners(whiteCrossOnly, solved))
+  const secondLayer = advance(whiteCorners, planSecondLayer(whiteCorners))
+  const yellowCross = advance(secondLayer, planYellowCross(secondLayer))
+  const yellowCornersOriented = advance(yellowCross, planOrientLastCorners(yellowCross))
+  const yellowCornersPlaced = advance(
+    yellowCornersOriented,
+    planPlaceLastCorners(yellowCornersOriented)
+  )
 
   return {
     whiteCrossOnly,
@@ -79,8 +89,10 @@ const compute = (): Milestones => {
     // centres — the classic "looks like a cross but the sides don't follow" state.
     crossMisaligned: applyMoves(whiteCrossOnly, ['U']),
     whiteCorners,
-    secondLayer: afterPhases(3),
-    yellowCross: afterPhases(4)
+    secondLayer,
+    yellowCross,
+    yellowCornersOriented,
+    yellowCornersPlaced
   }
 }
 
@@ -93,6 +105,8 @@ export const crossMisalignedState = (): CubeState => milestones().crossMisaligne
 export const whiteCornersState = (): CubeState => milestones().whiteCorners
 export const secondLayerState = (): CubeState => milestones().secondLayer
 export const yellowCrossState = (): CubeState => milestones().yellowCross
+export const yellowCornersOrientedState = (): CubeState => milestones().yellowCornersOriented
+export const yellowCornersPlacedState = (): CubeState => milestones().yellowCornersPlaced
 
 // Sticker projections — for understand visuals (the player renders stickers).
 export const whiteCrossOnly = (): StickersByFace => toStickers(whiteCrossOnlyState())
