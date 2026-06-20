@@ -4,6 +4,8 @@ import { useEffect } from 'react'
 
 import { LESSONS, getLesson } from '~/features/coach/data/lessons'
 import type {
+  ChapterPracticeStep,
+  GoalState,
   InteractiveStep,
   LessonStep,
   PracticeStep,
@@ -29,6 +31,7 @@ import {
   usePlaybackTotal,
   usePracticeFrame,
   usePracticeProgress,
+  useStepSegmentMarkers,
   useProgress,
   useUnderstandVisual
 } from '~/features/coach/stores/coachStore'
@@ -128,8 +131,33 @@ const InteractivePane = ({ step }: { step: InteractiveStep }) => {
 
 // The reached-the-goal message — "Résolu" when the goal is the solved cube, "C'est
 // en place" when it's a milestone (the cube isn't fully solved yet).
-const successMessage = (goal: PracticeStep['goal']): string =>
-  (goal ?? 'solved') === 'solved' ? 'Résolu ! Bien joué.' : 'C’est en place ! Bien joué.'
+const successMessage = (goal: GoalState): string =>
+  goal === 'solved' ? 'Résolu ! Bien joué.' : 'C’est en place ! Bien joué.'
+
+// The milestone a practice resolves to: a legacy practice names it directly, a
+// full-chapter practice carries it on its scenario.
+const practiceGoal = (step: PracticeStep | ChapterPracticeStep): GoalState =>
+  step.kind === 'chapter-practice' ? step.scenario.to : (step.goal ?? 'solved')
+
+// A small caption telling the learner what this stretch of moves is doing —
+// "Placement" or the named trigger — for teaching demos/practice. Nothing for legacy.
+const SegmentBadge = ({ index }: { index: number }) => {
+  const markers = useStepSegmentMarkers()
+  const marker = markers[index]
+  if (!marker) return null
+  return (
+    <span
+      className={`rounded-full px-3 py-0.5 text-xs font-semibold ${
+        marker.kind === 'trigger'
+          ? 'bg-cube-green/20 text-cube-green-text'
+          : 'bg-base-content/10 text-base-content/70'
+      }`}
+      aria-live='polite'
+    >
+      {marker.kind === 'trigger' ? `Algorithme · ${marker.label}` : 'Placement'}
+    </span>
+  )
+}
 
 // The demo cube the learner *watches*: notation, an active-move arrow, and the
 // prev/next stepper. App-driven — no input, hence pointer-events-none.
@@ -143,6 +171,7 @@ const DemoPane = () => {
 
   return (
     <div className='flex flex-col items-center gap-3'>
+      <SegmentBadge index={Math.min(playbackIndex, moves.length - 1)} />
       <MoveSequence moves={moves} currentIndex={playbackIndex} />
       {frame && (
         <div className='pointer-events-none w-full'>
@@ -164,7 +193,7 @@ const DemoPane = () => {
 // they've got), the arrow points at the next move, and the next move's button is
 // emphasised — but they must read and pick it. The real "à toi de jouer", not a
 // second viewing of the demo. (PD6)
-const PracticePane = ({ step }: { step: PracticeStep }) => {
+const PracticePane = ({ step }: { step: PracticeStep | ChapterPracticeStep }) => {
   const moves = useCurrentStepMoves()
   const frame = usePracticeFrame()
   const progress = usePracticeProgress()
@@ -175,6 +204,7 @@ const PracticePane = ({ step }: { step: PracticeStep }) => {
 
   return (
     <div className='flex flex-col items-center gap-3'>
+      <SegmentBadge index={Math.min(progress, moves.length - 1)} />
       <MoveSequence moves={moves} currentIndex={progress} />
       {frame && (
         <div className='w-full'>
@@ -206,7 +236,7 @@ const PracticePane = ({ step }: { step: PracticeStep }) => {
       </div>
       {isPracticeSolved && (
         <p className='text-success text-center font-semibold' aria-live='polite'>
-          {successMessage(step.goal)}
+          {successMessage(practiceGoal(step))}
         </p>
       )}
     </div>
@@ -216,7 +246,8 @@ const PracticePane = ({ step }: { step: PracticeStep }) => {
 const StepCubePane = ({ step }: { step: LessonStep }) => {
   if (step.kind === 'understand') return <UnderstandVisualPane step={step} />
   if (step.kind === 'interactive') return <InteractivePane step={step} />
-  if (step.kind === 'practice') return <PracticePane step={step} />
+  if (step.kind === 'practice' || step.kind === 'chapter-practice')
+    return <PracticePane step={step} />
   return <DemoPane />
 }
 

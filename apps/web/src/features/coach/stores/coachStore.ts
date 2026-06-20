@@ -1,10 +1,18 @@
 import { useStore } from '@nanostores/react'
-import type { CubeState, FaceCode, MoveToken, StickersByFace } from '@packages/cube-engine'
+import type {
+  CubeState,
+  FaceCode,
+  MoveToken,
+  StickersByFace,
+  TeachingSegment
+} from '@packages/cube-engine'
 import {
   applyMoves,
   createSolvedState,
+  flattenTeachingPlan,
   getAlgorithm,
   invertMoves,
+  planWhiteCorners,
   toStickers
 } from '@packages/cube-engine'
 import { atom, computed } from 'nanostores'
@@ -22,8 +30,10 @@ import type {
   IllustrativeState,
   Lesson,
   LessonStep,
-  StepVisual
+  StepVisual,
+  TeachingScenario
 } from '~/features/coach/data/types'
+import { isTeachingDemo } from '~/features/coach/data/types'
 import { createVersionedStorage } from '~/lib/storage'
 
 // Progress is persisted via the shared versioned helper (ADR-0007) at version 1
@@ -79,11 +89,6 @@ const namedState = (state: IllustrativeState): CubeState => {
   return createSolvedState()
 }
 
-// The milestone a demo/practice step resolves to — its real goal, not necessarily
-// the solved cube. Steps without a goal (and every non-algorithm step) target solved.
-const stepGoal = (step: LessonStep): GoalState =>
-  (step.kind === 'demo' || step.kind === 'practice') && step.goal ? step.goal : 'solved'
-
 // --- atoms ---
 
 export const $currentLessonId = atom<string | null>(null)
@@ -111,38 +116,122 @@ export const $currentStep = computed(
   (lesson, index): LessonStep | null => lesson?.steps[index] ?? null
 )
 
-const stepMoves = (step: LessonStep | null): readonly MoveToken[] => {
-  if (step === null || step.kind === 'understand' || step.kind === 'interactive') return []
-  return getAlgorithm(step.algorithmId)?.moves ?? []
+// Run a teaching scenario's planner on its `from` milestone. The single source of
+// the moves a teaching demo / chapter practice replays — the engine, never inline
+// data (NFR-004). Phase 37 extends the switch with the remaining last-layer phases.
+const runTeachingPlan = (scenario: TeachingScenario) => {
+  const start = namedState(scenario.from)
+  if (scenario.phase === 'white-corners') return planWhiteCorners(start, createSolvedState())
+  throw new Error(`Unknown teaching phase: ${scenario.phase}`)
 }
 
-// The case a demo/practice step starts from: the goal milestone with the
-// algorithm's footprint reversed, so the surrounding layers stay scrambled and
-// applying the algorithm lands exactly back on the milestone. (the milestone-demo model)
-const caseBase = (step: LessonStep): CubeState =>
-  applyMoves(namedState(stepGoal(step)), invertMoves(stepMoves(step)))
+// A step's resolved recipe — the unifying shape behind every demo/practice variant,
+// legacy or teaching. `moves` is what the learner steps through or taps; `base` is
+// the starting cube; `successState` is the practice target (null for demos);
+// `segments` carries setup/trigger boundaries for highlighting (teaching only).
+type StepRecipe = {
+  moves: readonly MoveToken[]
+  base: CubeState
+  successState: CubeState | null
+  segments: readonly TeachingSegment[] | null
+}
+
+const EMPTY_RECIPE = (): StepRecipe => ({
+  moves: [],
+  base: createSolvedState(),
+  successState: null,
+  segments: null
+})
+
+// Legacy case base: the goal milestone with the algorithm's footprint reversed, so
+// the surrounding layers stay scrambled and the algorithm lands back on it.
+const legacyCaseBase = (goal: GoalState, moves: readonly MoveToken[]): CubeState =>
+  applyMoves(namedState(goal), invertMoves([...moves]))
+
+const resolveRecipe = (step: LessonStep | null): StepRecipe => {
+  if (step === null || step.kind === 'understand' || step.kind === 'interactive') {
+    return EMPTY_RECIPE()
+  }
+
+  if (step.kind === 'chapter-practice') {
+    const plan = runTeachingPlan(step.scenario)
+    return {
+      moves: flattenTeachingPlan(plan),
+      base: namedState(step.scenario.from),
+      successState: namedState(step.scenario.to),
+      segments: plan.groups.flatMap(group => group.segments)
+    }
+  }
+
+  if (step.kind === 'demo' && isTeachingDemo(step)) {
+    const plan = runTeachingPlan(step.scenario)
+    const before = plan.groups.slice(0, step.groupIndex)
+    const group = plan.groups[step.groupIndex]
+    const segments = group?.segments ?? []
+    return {
+      moves: segments.flatMap(segment => [...segment.moves]),
+      base: applyMoves(
+        namedState(step.scenario.from),
+        before.flatMap(g => g.segments.flatMap(s => [...s.moves]))
+      ),
+      successState: null,
+      segments
+    }
+  }
+
+  // Legacy single-algorithm demo or practice.
+  const moves = getAlgorithm(step.algorithmId)?.moves ?? []
+  const goal = step.goal ?? 'solved'
+  if (step.kind === 'demo') {
+    const base =
+      (step.demoFrom ?? 'case') === 'case' ? legacyCaseBase(goal, moves) : namedState(goal)
+    return { moves, base, successState: null, segments: null }
+  }
+  return {
+    moves,
+    base: legacyCaseBase(goal, moves),
+    successState: namedState(goal),
+    segments: null
+  }
+}
+
+// The current step's recipe — recomputed only when the step changes (the planner
+// runs once per step view, not per playback tick).
+export const $stepRecipe = computed($currentStep, resolveRecipe)
 
 // The move sequence the current step teaches — shown as notation so the learner
-// reads the algorithm (R, D, R′ …), not just the animated cube.
-export const $currentStepMoves = computed($currentStep, (step): readonly MoveToken[] =>
-  stepMoves(step)
+// reads the moves (R, D, R′ …), not just the animated cube.
+export const $currentStepMoves = computed(
+  $stepRecipe,
+  (recipe): readonly MoveToken[] => recipe.moves
 )
 
 export const $playbackTotal = computed($currentStepMoves, (moves): number => moves.length)
 
+// A per-move marker so the player can label setup ("Placement") vs trigger (the
+// named block) segments along the recipe. Empty for legacy steps (no segments).
+export type SegmentMarker = { kind: 'setup' | 'trigger'; label: string }
+export const $stepSegmentMarkers = computed($stepRecipe, (recipe): readonly SegmentMarker[] => {
+  if (!recipe.segments) return []
+  const markers: SegmentMarker[] = []
+  for (const segment of recipe.segments) {
+    const label =
+      segment.kind === 'trigger'
+        ? (getAlgorithm(segment.catalogId ?? '')?.name ?? 'Algorithme')
+        : 'Placement'
+    for (let i = 0; i < segment.moves.length; i++) markers.push({ kind: segment.kind, label })
+  }
+  return markers
+})
+
 // The cube frame for a *demo* step at the current playback index — the one the
-// learner watches the app step through. A case demo starts from the case and plays
-// forward to the milestone (it *resolves*); a solved→forward demo (the sexy move)
-// starts from the milestone and plays forward to reveal what the algorithm does.
-// Practice has its own frame ($practiceFrame) driven by the learner's taps.
-// (D-DEMO / PD3 / PD6 / the milestone-demo model)
+// learner watches the app step through, from the recipe's base forward.
+// (D-DEMO-DECOUPLE / the milestone-demo model)
 export const $demoFrame = computed(
-  [$currentStep, $playbackIndex],
-  (step, index): StickersByFace | null => {
+  [$currentStep, $stepRecipe, $playbackIndex],
+  (step, recipe, index): StickersByFace | null => {
     if (step === null || step.kind !== 'demo') return null
-    const moves = stepMoves(step)
-    const base = (step.demoFrom ?? 'case') === 'case' ? caseBase(step) : namedState(stepGoal(step))
-    return toStickers(applyMoves(base, moves.slice(0, index)))
+    return toStickers(applyMoves(recipe.base, [...recipe.moves.slice(0, index)]))
   }
 )
 
@@ -178,42 +267,56 @@ export const $interactiveFrame = computed(
   (moves): StickersByFace => toStickers(applyMoves(createSolvedState(), moves))
 )
 
-// The live cube for a `practice` step — the case plus every move the learner has
-// tapped. The learner *executes* the algorithm; the cube responds, so practice is
-// genuinely "your turn", not a second viewing of the demo. (PD6)
+// Both practice kinds drive their cube from the learner's taps: legacy single-
+// algorithm `practice` (Ch1) and the full-chapter `chapter-practice` (PD-3).
+const isPracticeKind = (step: LessonStep | null): boolean =>
+  step?.kind === 'practice' || step?.kind === 'chapter-practice'
+
+// The live cube for a practice step — the recipe's base plus every move the learner
+// has tapped. They *execute* the recipe; the cube responds, so practice is genuinely
+// "your turn", not a second viewing of the demo. (PD6 / PD-3)
 export const $practiceFrame = computed(
-  [$currentStep, $practiceMoves],
-  (step, moves): StickersByFace | null =>
-    step?.kind === 'practice' ? toStickers(applyMoves(caseBase(step), moves)) : null
+  [$currentStep, $stepRecipe, $practiceMoves],
+  (step, recipe, moves): StickersByFace | null =>
+    isPracticeKind(step) ? toStickers(applyMoves(recipe.base, moves)) : null
 )
 
-// How many of the learner's leading taps match the algorithm so far — drives the
+// How many of the learner's leading taps match the recipe so far — drives the
 // recipe highlight and the next-move hint, and stops at the first wrong tap so a
-// mistake shows immediately instead of silently counting.
-export const $practiceProgress = computed([$currentStep, $practiceMoves], (step, taps): number => {
-  if (step?.kind !== 'practice') return 0
-  const expected = stepMoves(step)
-  let matched = 0
-  while (matched < taps.length && matched < expected.length && taps[matched] === expected[matched])
-    matched++
-  return matched
-})
+// mistake shows immediately instead of silently counting. Length-agnostic, so it
+// scales from one algorithm to a whole-chapter recipe unchanged.
+export const $practiceProgress = computed(
+  [$currentStep, $stepRecipe, $practiceMoves],
+  (step, recipe, taps): number => {
+    if (!isPracticeKind(step)) return 0
+    const expected = recipe.moves
+    let matched = 0
+    while (
+      matched < taps.length &&
+      matched < expected.length &&
+      taps[matched] === expected[matched]
+    )
+      matched++
+    return matched
+  }
+)
 
 const stickersEqual = (a: StickersByFace, b: StickersByFace): boolean =>
   (['U', 'D', 'F', 'B', 'L', 'R'] as const).every(face =>
     a[face].every((color, i) => color === b[face][i])
   )
 
-// Practice success = the learner's executed moves bring the case to the step's goal
-// milestone (Decision D4): the case is the algorithm's footprint reversed on that
-// milestone, so executing the algorithm lands back on it (the solved cube when the
-// goal is 'solved').
+// Practice success = the learner's executed moves bring the base to the recipe's
+// success milestone (Decision D4 / D-PRACTICE-SOLVER). For chapter practice that is
+// this chapter's milestone reached from the previous one; for a legacy practice it
+// is the algorithm's goal reached from its case.
 export const $isPracticeSolved = computed(
-  [$currentStep, $practiceFrame],
-  (step, frame): boolean =>
-    step?.kind === 'practice' &&
+  [$currentStep, $stepRecipe, $practiceFrame],
+  (step, recipe, frame): boolean =>
+    isPracticeKind(step) &&
     frame !== null &&
-    stickersEqual(frame, toStickers(namedState(stepGoal(step))))
+    recipe.successState !== null &&
+    stickersEqual(frame, toStickers(recipe.successState))
 )
 
 // --- actions ---
@@ -300,6 +403,7 @@ export const useLessonStepIndex = (): number => useStore($lessonStepIndex)
 export const usePlaybackIndex = (): number => useStore($playbackIndex)
 export const usePlaybackTotal = (): number => useStore($playbackTotal)
 export const useCurrentStepMoves = (): readonly MoveToken[] => useStore($currentStepMoves)
+export const useStepSegmentMarkers = (): readonly SegmentMarker[] => useStore($stepSegmentMarkers)
 export const useDemoFrame = (): StickersByFace | null => useStore($demoFrame)
 export const useUnderstandVisual = (): UnderstandVisual | null => useStore($understandVisual)
 export const useInteractiveFrame = (): StickersByFace => useStore($interactiveFrame)

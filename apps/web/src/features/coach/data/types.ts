@@ -78,19 +78,45 @@ export type InteractiveStep = {
   faces?: readonly FaceCode[]
 }
 
+// A *teaching scenario* (D-DEMO-DECOUPLE / D-PRACTICE-SOLVER): which teaching-solver
+// phase to run and the milestone pair it travels (previous milestone → this
+// chapter's milestone). All moves come from the engine at runtime — lesson data
+// never inlines a MoveToken[] (NFR-004). Phase 37 extends `TeachingPhase` with the
+// remaining last-layer phases.
+export type TeachingPhase = 'white-corners'
+
+export type TeachingScenario = {
+  phase: TeachingPhase
+  from: GoalState
+  to: GoalState
+}
+
+// A demo step is EITHER legacy (a single catalog algorithm, Ch0/Ch1) OR a teaching
+// demo (one group of a teaching plan, shown on a realistic partial state — the
+// earlier pieces already placed). The store resolves both to a move list it steps
+// through; a teaching demo also exposes its setup/trigger segments for highlighting.
 export type DemoStep = {
   kind: 'demo'
   title: string
   body: string
+} & (LegacyAlgorithmRef | TeachingDemoRef)
+
+// Legacy: a case demo plays case → goal (default); the pure trigger may play
+// goal → forward. (D-DEMO / PD3)
+type LegacyAlgorithmRef = {
   algorithmId: string
-  // Case-resolvers demo case → goal (default); the one pure-trigger (the sexy
-  // move) may demo goal → forward. (D-DEMO / PD3)
   demoFrom?: 'case' | 'solved'
-  // The milestone the algorithm resolves *to* — the step's real goal, not the
-  // fully-solved cube. Defaults to 'solved'. A case demo then plays from the case
-  // (the milestone with the algorithm's footprint reversed, so the surrounding
-  // layers stay scrambled) forward to this milestone. (the milestone-demo model)
   goal?: GoalState
+  scenario?: never
+  groupIndex?: never
+}
+
+// Teaching: play group `groupIndex` of the chapter's teaching plan, on the cube with
+// groups [0..groupIndex) already applied (a realistic recognize → place → trigger case).
+type TeachingDemoRef = {
+  scenario: TeachingScenario
+  groupIndex: number
+  algorithmId?: never
 }
 
 export type PracticeStep = {
@@ -103,7 +129,34 @@ export type PracticeStep = {
   goal?: GoalState
 }
 
-export type LessonStep = UnderstandStep | InteractiveStep | DemoStep | PracticeStep
+// The full-chapter practice (D-DEMO-DECOUPLE, revises PD7): start from the *previous*
+// milestone (nothing of the chapter solved), run the whole teaching plan move by move,
+// success = reaching this chapter's milestone. A distinct kind keeps the legacy
+// single-algorithm `practice` (Ch1) untouched. (PD-3)
+export type ChapterPracticeStep = {
+  kind: 'chapter-practice'
+  title: string
+  body: string
+  scenario: TeachingScenario
+}
+
+export type LessonStep =
+  | UnderstandStep
+  | InteractiveStep
+  | DemoStep
+  | PracticeStep
+  | ChapterPracticeStep
+
+// Whether a demo step is a teaching demo (vs a legacy single-algorithm demo).
+export const isTeachingDemo = (step: DemoStep): step is DemoStep & TeachingDemoRef =>
+  step.scenario !== undefined
+
+// The teaching scenario a step carries, if any (teaching demo or chapter practice).
+export const stepScenario = (step: LessonStep): TeachingScenario | null => {
+  if (step.kind === 'chapter-practice') return step.scenario
+  if (step.kind === 'demo' && isTeachingDemo(step)) return step.scenario
+  return null
+}
 
 export type Lesson = {
   id: string
@@ -113,9 +166,13 @@ export type Lesson = {
   steps: LessonStep[]
 }
 
-// The catalog id a demo/practice step plays, or null for steps with no algorithm.
-export const stepAlgorithmId = (step: LessonStep): string | null =>
-  step.kind === 'demo' || step.kind === 'practice' ? step.algorithmId : null
+// The catalog id a step plays directly, or null. A teaching demo / chapter practice
+// carries no static id — its trigger blocks come from the engine at runtime.
+export const stepAlgorithmId = (step: LessonStep): string | null => {
+  if (step.kind === 'practice') return step.algorithmId
+  if (step.kind === 'demo' && !isTeachingDemo(step)) return step.algorithmId
+  return null
+}
 
 // The catalog id a visual's `caseOf` references, if any.
 const visualCaseId = (visual: StepVisual): string | null =>
