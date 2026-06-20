@@ -22,7 +22,13 @@ export const placeCorners: Lesson = {
     {
       kind: 'understand',
       title: 'Chaque coin chez lui',
-      body: 'Le dessous est tout jaune, mais certains coins ne sont pas chez eux : leurs couleurs de côté ne tombent pas en face des bons centres. Pour le repérer, regarde un coin et ses deux couleurs de côté — si elles ne longent pas les bonnes faces, il est mal placé. On va échanger trois coins d’un coup pour les renvoyer chez eux, sans toucher au reste.',
+      body: 'Le dessous est tout jaune. Le but maintenant : que chaque coin soit chez lui, ses deux couleurs de côté en face des bons centres — les coins surlignés sur l’image. Ils sont déjà jaunes et le resteront ; on ne fait que les déplacer entre eux.',
+      visual: { state: 'yellow-corners-placed', highlight: D_CORNERS }
+    },
+    {
+      kind: 'understand',
+      title: 'Repérer un coin mal placé',
+      body: 'Regarde un coin et ses deux couleurs de côté : si elles ne longent pas les bonnes faces, il est mal placé. Souvent un seul coin est déjà bon, parfois aucun. Le geste de ce chapitre échange trois coins d’un coup pour les renvoyer chez eux, sans toucher au reste.',
       visual: {
         state: { caseOf: 'corner-3-cycle', goal: 'yellow-corners-placed' },
         highlight: D_CORNERS
@@ -31,15 +37,9 @@ export const placeCorners: Lesson = {
     {
       kind: 'demo',
       title: 'Le cycle des coins',
-      body: 'Ce geste fait tourner trois coins entre eux. Cherche d’abord un coin déjà bien placé (ses deux côtés alignés) et garde-le en haut à droite ; déroule ensuite le geste, et les trois autres glissent vers leur maison.',
+      body: 'Ce geste fait tourner trois coins entre eux. Cherche d’abord un coin déjà bien placé (ses deux côtés alignés) et garde-le en haut à droite ; déroule ensuite le geste, et les trois autres glissent vers leur maison. Si aucun coin n’est bon, déroule-le une fois quand même : il en met au moins un en place.',
       scenario: SCENARIO,
       groupIndex: 0
-    },
-    {
-      kind: 'understand',
-      title: 'Si aucun coin n’est bon',
-      body: 'Parfois aucun coin n’est encore à sa place. Pas de souci : déroule le cycle une fois depuis n’importe quel coin, et il en met au moins un chez lui. Tu reprends alors avec un coin correct à garder en haut à droite.',
-      visual: { state: 'yellow-corners-placed', highlight: D_CORNERS }
     },
     {
       kind: 'demo',
