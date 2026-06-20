@@ -61,7 +61,14 @@ export type {
   TeachingStepGroup,
   TeachingPlan
 } from './application/teaching'
-export { flattenTeachingPlan, planWhiteCorners } from './application/teaching'
+export {
+  flattenTeachingPlan,
+  planWhiteCorners,
+  planYellowCross,
+  planOrientLastCorners,
+  planPlaceLastCorners,
+  planPermuteLastEdges
+} from './application/teaching'
 
 // Infrastructure
 export { toStickers } from './infrastructure/render/toStickers'
