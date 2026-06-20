@@ -1,5 +1,12 @@
 import type { CubeState, MoveToken, StickersByFace } from '@packages/cube-engine'
-import { applyMoves, createSolvedState, solveCube, toStickers } from '@packages/cube-engine'
+import {
+  applyMoves,
+  createSolvedState,
+  flattenTeachingPlan,
+  planWhiteCorners,
+  solveCube,
+  toStickers
+} from '@packages/cube-engine'
 
 // Real, reachable illustrative cube states + per-chapter milestones — so Coach
 // shows a *meaningful partial* cube (the white cross actually standing out on an
@@ -56,12 +63,22 @@ const compute = (): Milestones => {
 
   const whiteCrossOnly = afterPhases(1)
 
+  // The white-corners milestone is built by the **teaching solver**, not the shared
+  // solver (extends D-MILESTONES-FROM-TEACHING to Ch2): so the full-chapter practice,
+  // which replays planWhiteCorners from white-cross-only, lands *exactly* on this
+  // state (stickersEqual success). The shared-solver afterPhases(2) completes the
+  // same first layer but churns the lower layers differently — it would never match
+  // the teaching recipe. The first layer is visually identical either way.
+  const whiteCorners = applyMoves(whiteCrossOnly, [
+    ...flattenTeachingPlan(planWhiteCorners(whiteCrossOnly, createSolvedState()))
+  ])
+
   return {
     whiteCrossOnly,
     // A U turn leaves the white cross on top but rotates the side bands off their
     // centres — the classic "looks like a cross but the sides don't follow" state.
     crossMisaligned: applyMoves(whiteCrossOnly, ['U']),
-    whiteCorners: afterPhases(2),
+    whiteCorners,
     secondLayer: afterPhases(3),
     yellowCross: afterPhases(4)
   }
