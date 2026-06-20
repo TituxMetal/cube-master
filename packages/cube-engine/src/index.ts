@@ -54,6 +54,15 @@ export { invertMove, invertMoves } from './application/use-cases/invertMoves'
 export { solveCube } from './application/use-cases/solveCube'
 export type { MoveGroup, Solution, SolvePhase } from './application/solver/types'
 
+// Application — Coach teaching solver (pure, sibling to solver/)
+export type {
+  TeachingSegment,
+  TeachingSegmentKind,
+  TeachingStepGroup,
+  TeachingPlan
+} from './application/teaching'
+export { flattenTeachingPlan, planWhiteCorners } from './application/teaching'
+
 // Infrastructure
 export { toStickers } from './infrastructure/render/toStickers'
 export type { StickersByFace } from './infrastructure/render/toStickers'

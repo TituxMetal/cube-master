@@ -37,4 +37,10 @@ describe('getAlgorithm', () => {
   it('should return undefined for an unknown id without throwing', () => {
     expect(getAlgorithm('does-not-exist')).toBeUndefined()
   })
+
+  it('should expose the Coach-only sexy-move mirror as the left-hand L D L′ D′ trigger', () => {
+    const entry = getAlgorithm('sexy-move-mirror')
+    expect(entry).toBeDefined()
+    expect(entry?.moves).toEqual(['L', 'D', "L'", "D'"])
+  })
 })
