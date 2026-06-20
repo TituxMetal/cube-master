@@ -9,11 +9,14 @@ import { beforeEach, describe, expect, it } from 'bun:test'
 
 import {
   crossMisaligned,
+  whiteCornersState,
   whiteCrossOnly,
   whiteCrossOnlyState
 } from '~/features/coach/data/illustrative'
+import { getLesson } from '~/features/coach/data/lessons'
 import {
   $currentLessonId,
+  $currentStepMoves,
   $demoFrame,
   $interactiveFrame,
   $interactiveMoves,
@@ -210,6 +213,50 @@ describe('practice (interactive)', () => {
     resetPractice()
     expect($practiceMoves.get()).toEqual([])
     expect($practiceFrame.get()).toEqual(crossCaseStickers())
+  })
+})
+
+describe('chapter 2 — teaching demos + full-chapter practice', () => {
+  const lesson = () => getLesson('white-corners')!
+  const demoIndexes = () =>
+    lesson()
+      .steps.map((step, i) => (step.kind === 'demo' ? i : -1))
+      .filter(i => i >= 0)
+  const practiceIndex = () => lesson().steps.findIndex(step => step.kind === 'chapter-practice')
+
+  // A2 — the full-chapter practice starts from the *previous* milestone (nothing of
+  // the chapter solved) and succeeds only on reaching this chapter's milestone.
+  it('runs the practice from white-cross-only to the white-corners milestone', () => {
+    startLesson('white-corners')
+    goToStep(practiceIndex())
+
+    // Starts on the previous milestone, not yet solved.
+    expect($practiceFrame.get()).toEqual(whiteCrossOnly())
+    expect($isPracticeSolved.get()).toBe(false)
+
+    // The learner executes the whole teaching recipe, move by move.
+    for (const move of $currentStepMoves.get()) applyPracticeMove(move)
+
+    expect($isPracticeSolved.get()).toBe(true)
+    expect($practiceFrame.get()).toEqual(toStickers(whiteCornersState()))
+  })
+
+  // A3 — more than one demo, and the practice is not a replay of any demo (the
+  // demo==practice defect is gone): every demo plays a *different* recipe than the
+  // whole-chapter practice (a single corner vs all four).
+  it('has several demos, none of which replays the full-chapter practice', () => {
+    expect(demoIndexes().length).toBeGreaterThan(1)
+
+    startLesson('white-corners')
+    goToStep(practiceIndex())
+    const practiceMoves = $currentStepMoves.get().join(' ')
+
+    for (const index of demoIndexes()) {
+      goToStep(index)
+      const demoMoves = $currentStepMoves.get()
+      expect(demoMoves.length).toBeGreaterThan(0)
+      expect(demoMoves.join(' ')).not.toBe(practiceMoves)
+    }
   })
 })
 
