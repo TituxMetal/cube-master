@@ -23,6 +23,14 @@ export const ALGORITHM_CATALOG: readonly AlgorithmEntry[] = [
     description: 'The foundational R′ D′ R D trigger — repeated to lift white corners home.'
   },
   {
+    id: 'sexy-move-mirror',
+    name: 'Sexy Move (Mirror)',
+    moves: ['L', 'D', "L'", "D'"],
+    method: 'beginner',
+    description:
+      'The left-hand mirror of the sexy move — a second front working position (front-left) so the Coach teaching solver reaches every white corner with U/D placement and no cube rotation.'
+  },
+  {
     id: 'second-layer-insert-right',
     name: 'Second Layer Insert (Right)',
     moves: ["D'", "R'", 'D', 'R', 'D', 'F', "D'", "F'"],
