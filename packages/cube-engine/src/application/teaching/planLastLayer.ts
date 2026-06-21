@@ -110,15 +110,13 @@ export const planOrientLastCorners = (state: CubeState): TeachingPlan =>
   bfsPlan(state, [block('sune'), block('anti-sune')], allDCornersOriented, 6) ??
   fail('orient-corners')
 
-// Ch6 — place the (already oriented) last-layer corners with the corner 3-cycle.
-// The goal keeps them oriented, so success is a clean `yellow-corners-placed`.
+// Ch6 — place the (already oriented) last-layer corners with the orientation-safe
+// corner cycle (a-perm), NOT the catalog corner-3-cycle: the latter twists the
+// corners, lifting the yellow off the bottom and forcing many cycles to net it back.
+// The a-perm keeps every corner yellow-down, so success is a clean `yellow-corners-
+// placed` reached in one or two cycles, and the finished yellow face never flickers.
 export const planPlaceLastCorners = (state: CubeState): TeachingPlan =>
-  bfsPlan(
-    state,
-    [block('corner-3-cycle')],
-    s => allDCornersPlaced(s) && allDCornersOriented(s),
-    5
-  ) ?? fail('place-corners')
+  bfsPlan(state, [block('a-perm')], allDCornersPlaced, 5) ?? fail('place-corners')
 
 // Ch7 — permute the last-layer edges with the corner-safe edge 3-cycle → solved.
 export const planPermuteLastEdges = (state: CubeState): TeachingPlan =>

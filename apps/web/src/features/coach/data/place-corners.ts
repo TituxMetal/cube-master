@@ -28,30 +28,23 @@ export const placeCorners: Lesson = {
     {
       kind: 'understand',
       title: 'Repérer un coin mal placé',
-      body: 'Regarde un coin et ses deux couleurs de côté : si elles ne longent pas les bonnes faces, il est mal placé. Souvent un seul coin est déjà bon, parfois aucun. Le geste de ce chapitre échange trois coins d’un coup pour les renvoyer chez eux, sans toucher au reste.',
+      body: 'Regarde un coin et ses deux couleurs de côté : si elles ne longent pas les bonnes faces, il est mal placé. Souvent un seul coin est déjà bon, parfois aucun. Le geste de ce chapitre échange trois coins d’un coup pour les renvoyer chez eux, sans les retourner : le jaune reste en dessous.',
       visual: {
-        state: { caseOf: 'corner-3-cycle', goal: 'yellow-corners-placed' },
+        state: { caseOf: 'a-perm', goal: 'yellow-corners-placed' },
         highlight: D_CORNERS
       }
     },
     {
       kind: 'demo',
       title: 'Le cycle des coins',
-      body: 'Ce geste fait tourner trois coins entre eux. Cherche d’abord un coin déjà bien placé (ses deux côtés alignés) et garde-le en haut à droite ; déroule ensuite le geste, et les trois autres glissent vers leur maison. Si aucun coin n’est bon, déroule-le une fois quand même : il en met au moins un en place.',
+      body: 'Ce geste échange trois coins entre eux sans les retourner — le jaune reste en bas. Cherche un coin déjà bien placé, amène-le devant à gauche en tournant le bas, puis déroule le cycle : les trois autres glissent chez eux. Si aucun coin n’est bon, déroule-le une fois quand même, il en met au moins un en place, et tu recommences.',
       scenario: SCENARIO,
       groupIndex: 0
     },
     {
-      kind: 'demo',
-      title: 'Encore un tour',
-      body: 'Repère le coin bien placé, garde-le en haut à droite, réaligne le bas si besoin (la pastille « Placement »), et redéroule le cycle. Les derniers coins retrouvent leur maison, couleurs de côté en face des bons centres.',
-      scenario: SCENARIO,
-      groupIndex: 1
-    },
-    {
       kind: 'chapter-practice',
       title: 'À toi : chaque coin chez lui',
-      body: 'Pars du dessous tout jaune et renvoie les coins chez eux. Garde un coin bien placé en haut à droite, déroule le cycle, recommence tant qu’il en reste de travers. La pastille indique le prochain coup. C’est gagné quand les quatre coins ont leurs côtés alignés sur les bons centres.',
+      body: 'Pars du dessous tout jaune et renvoie les coins chez eux. Garde un coin déjà bon devant à gauche, déroule le cycle, recommence si besoin. Le jaune reste en dessous tout du long. La pastille indique le prochain coup. C’est gagné quand les quatre coins ont leurs côtés alignés sur les bons centres.',
       scenario: SCENARIO
     }
   ]

@@ -239,6 +239,7 @@ const GESTURE_LABELS: Record<string, string> = {
   sune: 'Sune',
   'anti-sune': 'Anti-Sune',
   'corner-3-cycle': 'Cycle des coins',
+  'a-perm': 'Cycle des coins',
   'edge-3-cycle': 'Cycle des arêtes'
 }
 
