@@ -190,5 +190,13 @@ export const planWhiteCorners = (state: CubeState, solved: CubeState): TeachingP
     if (!progressed) break
   }
 
+  // Fail loudly rather than return a partial plan: a silently incomplete plan would
+  // build a wrong `white-corners` milestone (illustrative.ts) and a chapter practice
+  // that "succeeds" on an unfinished first layer. Matches the last-layer planners.
+  if (!allSolved(cur)) {
+    throw new Error(
+      'planWhiteCorners could not complete the first layer within the iteration limit'
+    )
+  }
   return { groups }
 }

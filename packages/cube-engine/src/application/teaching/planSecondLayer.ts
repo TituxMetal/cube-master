@@ -134,5 +134,11 @@ export const planSecondLayer = (state: CubeState): TeachingPlan => {
     if (!anyUnsolved) break
   }
 
+  // Fail loudly rather than return a partial plan (see planWhiteCorners): a silently
+  // incomplete middle layer would build a wrong `second-layer` milestone and a
+  // chapter practice that "succeeds" on an unfinished layer.
+  if (!TARGETS.every(t => isEdgeHome(cur, t.id))) {
+    throw new Error('planSecondLayer could not complete the middle layer within the pass limit')
+  }
   return { groups }
 }
