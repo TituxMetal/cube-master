@@ -1,0 +1,86 @@
+# Coach last layer — the yellow-UP mental model leaks into a yellow-DOWN app
+
+**Date:** 2026-06-21 **Area:** engine / coach
+
+## Symptom
+
+Reviewing the Coach last-layer chapters live, two incoherences surfaced that a beginner spots
+immediately, cube in hand:
+
+1. **Ch6 "placer les coins" breaks the yellow face.** The chapter promises "les coins sont déjà
+   jaunes et le resteront", yet the placement visibly lifted yellow off the bottom and ground the
+   gesture up to **4 times** before the yellow face came back.
+2. **The copy says "en haut" while the yellow face is on the bottom.** Six places across
+   `yellow-cross`, `orient-corners`, `place-corners` told the learner to put a figure/corner "en
+   haut à gauche / en haut à droite" — but the app holds the cube **white-up / green-front, last
+   layer on D (bottom), no rotation**. "En haut" is where the white first layer is.
+
+Also found while digging: several teaching demos played **nothing** because they were pinned to a
+plan group (`groupIndex: 1`) that does not exist for the production scramble (a line case has one
+yellow-cross group, a single Sune has one orient group, the fixed-frame placement is one cycle).
+
+## Root cause
+
+All of it is **one root cause**: the last-layer content was authored with the **yellow-UP mental
+model** of every standard tutorial, and never adapted to this app's fixed **yellow-DOWN,
+no-rotation** frame.
+
+- The placement planner used `corner-3-cycle` (`D R D' L' D R' D' L`), which **twists** the corners
+  it cycles. Verified at the engine: one application leaves three non-yellow stickers on the D face.
+  In the "orient corners first, then place" order, that twist undoes the orientation Sune just did,
+  so the BFS needed ~4 cycles to net the twists back to zero — hence the flicker.
+- "En haut" is the yellow-up artifact: with yellow held up, a back corner _looks_ top-left when you
+  peer down. Hold the cube correctly (white up) and the same piece is at the **back-left bottom**.
+
+I repeatedly got the cube geometry wrong by **reasoning from memory** (e.g. proposed orienting
+corners with `R' U' R U`, which is U-based and wrong for a yellow-down layer; the engine's
+last-layer algs are all D + side faces, never U). Every position claim only became reliable once
+**verified against the engine** by applying the move list to a solved cube and reading the result.
+
+## Fix
+
+- **Orientation-safe placement.** Added a Coach-only catalog entry `a-perm`
+  (`R F' R B2 R' F R B2 R2`): a corner 3-cycle that **preserves orientation** — yellow stays on the
+  bottom throughout. `planPlaceLastCorners` now chains `a-perm`, not `corner-3-cycle`, so production
+  placement is **one clean cycle**. The Solver's parity-pinned `corner-3-cycle` (ADR-0006) is left
+  untouched — the A-perm is a separate, Coach-only block, behaviour-tested in `catalog.spec.ts`
+  (cycles exactly 3 D corners, every corner stays oriented, edges + top intact).
+- **Frame-correct positions, all verified at the engine** by inverting each algorithm onto a solved
+  cube and reading which piece is the anchor / which edges form the figure:
+  - A-perm anchor (fixed corner) = **DLF** → "devant à gauche".
+  - Sune pre-oriented corner = **DBL** → "au fond à gauche".
+  - Yellow-cross **L** = oriented edges DB+DL → coude "au fond à gauche"; **line** = DL+DR →
+    "horizontale" (already correct).
+  - Every last-layer "en haut" removed.
+- **Empty demos** converted from teaching-`groupIndex` demos to legacy algorithm-from-case demos
+  (Ch4 L, Ch5 Anti-Sune), so a variant the production cube does not exercise still shows its
+  gesture.
+
+Commit `59514ea` (placement + frame copy), `e8b78e2` (French), `08cda57` (white-corners efficiency).
+
+## Prevention
+
+- **Never reason cube geometry from memory — verify against the engine.** Apply the move list to
+  `createSolvedState()` and read `corners[p].id/orientation`, `toStickers(s).D`, etc. A throwaway
+  `_*.spec.ts` with `console.log` is the fastest loop; delete it after. This burned ~half the
+  session until adopted as a rule.
+- **Last-layer copy must use bottom-relative positions** (avant/arrière/gauche/droite, "au fond",
+  "en bas") — never "en haut". The yellow layer is on D. If a position word appears, confirm the
+  anchor piece at the engine first.
+- **Don't pin a demo to `groupIndex` for a variant the production scramble may not produce.** The
+  teaching planner emits only the groups the fixed cube needs; a second-variant demo (L vs line,
+  Sune vs Anti-Sune) must be a legacy algorithm-from-case demo, or it renders empty. There is no
+  test guarding "every teaching demo is non-empty" — worth adding.
+- **Orientation-preserving corner 3-cycles in the no-rotation frame are A-perms** (use F/B + R, no
+  U, no rotation). `R F' R B2 R' F R B2 R2` (anchors DLF) and `R2 F2 R B R' F2 R B' R` (anchors DBL)
+  both work in this engine; plain Niklas variants (`R D' L' D R' D' L D`) twist here.
+
+## Related
+
+- `docs/solutions/2026-06-20-coach-no-rotation-teaching-solver-feasibility.md` — the TS-0 spike that
+  proved no-rotation feasibility (this is the follow-on: feasibility was right, but the _placement
+  algorithm choice_ and the _copy frame_ were wrong).
+- `docs/plans/2026-06-20-feat-coach-placement-pedagogy-plan.md` — still describes Ch6 with
+  `corner-3-cycle`; needs updating to the A-perm.
+- `docs/adr/0006-algorithm-catalog-in-domain.md` — parity rule that forced adding a new entry rather
+  than mutating `corner-3-cycle`.
