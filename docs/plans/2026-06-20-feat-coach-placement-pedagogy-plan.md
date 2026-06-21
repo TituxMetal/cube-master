@@ -295,11 +295,14 @@ no-rotation feasibility of placement (Ch2) and of the last-layer sequence (Ch5-7
 
 Dependency-ordered. `[ ]` = todo. These are the `/work` tracker.
 
-> **Progress (2026-06-21).** All implementation (TS, PD, C2-1..C2-3, 37) and Phase R records (R-1,
-> R-2, R-3) are done; all five checks are green. **Two items remain:** **C2-4** — Titux's live 13"
-> comprehensibility review (human gate; chapters 3–7 were authored iteratively under live feedback,
-> but the formal gate sign-off is still Titux's to give), and the **PR step of R-4** (verification
-> is green; the PR to `develop` is not opened yet — pushing needs the GPG agent unlocked).
+> **Progress (2026-06-21, session 2).** All implementation (TS, PD, C2-1..C2-3, 37) and Phase R
+> records (R-1, R-2, R-3) are done. **C2-4 is signed off** — Titux passed the live 13"
+> comprehensibility review; chapters 3–7 were authored and reworked iteratively under that live
+> feedback. A second live-review pass tightened Ch3–7 (commit pending): **Ch3 second layer reworked
+> from two inserts to four named slot gestures** (front-right / front-left / back-right / back-left
+> — see updated `37-1` and the ADR-0006 roster note), plus Ch4/Ch5/Ch6/Ch7 demo-decoupling fixes
+> (`docs/solutions/2026-06-21-…-yellow-down-frame.md`, session-2 follow-up). The only open item is
+> the **PR step of R-4** (verification green; the PR to `develop` needs the GPG agent unlocked).
 
 ### Phase TS — Teaching solver foundations (engine)
 
@@ -337,13 +340,19 @@ Dependency-ordered. `[ ]` = todo. These are the `/work` tracker.
       cases.
 - [x] **C2-2** — Add the full-first-layer practice (from `white-cross-only` → `white-corners`).
 - [x] **C2-3** — FR copy pass honoring the tone rules; cheat-sheet + notation intact.
-- [ ] **C2-4 — Preview artifact + live review (GATE).** Live review of reworked Ch2 on a 13" screen
-      against the ergonomics bar. **Pass → Phase 37; fail → back to planning.**
+- [x] **C2-4 — Preview artifact + live review (GATE).** Live review of reworked Ch2 on a 13" screen
+      against the ergonomics bar. **Passed** (Titux, 2026-06-21) → Phase 37 propagated; a second
+      live pass refined Ch3–7.
 
 ### Phase 37 — Propagate to chapters 3-7 (web + engine) — gated on C2-4
 
-- [x] **37-1** — Ch3 (second layer): teaching scenario reusing `second-layer-insert-right/left` ("Le
-      Belge" hook); placement via D; full-chapter practice `white-corners` → `second-layer`.
+- [x] **37-1** — Ch3 (second layer): **four named slot gestures** — front-right / front-left (front
+      face) and back-right / back-left (back face) — each a legacy `algorithmId` +
+      `demoFrom: 'case'` demo on its own clean case; placement via D; full-chapter practice
+      `white-corners` → `second-layer`. _Reworked 2026-06-21 (live-review session 2): the original
+      two-insert version showed only the front pair while the practice ran back-face (B) inserts the
+      demos never taught. Promoted `second-layer-insert-{front-left,back-right,back-left}` to the
+      catalog, parity-pinned to `solveSecondLayer` constants — see ADR-0006 roster note 2026-06-21._
 - [x] **37-2** — Ch4 (yellow cross): `planYellowCross` (keep `yellow-cross-line/l` + pattern
       recognition); practice `second-layer` → `yellow-cross`.
 - [x] **37-3** — Ch5 (orient corners): `planOrientLastCorners` (sexy repeated); practice

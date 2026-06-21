@@ -75,6 +75,40 @@ Commit `59514ea` (placement + frame copy), `e8b78e2` (French), `08cda57` (white-
   U, no rotation). `R F' R B2 R' F R B2 R2` (anchors DLF) and `R2 F2 R B R' F2 R B' R` (anchors DBL)
   both work in this engine; plain Niklas variants (`R D' L' D R' D' L D`) twist here.
 
+## Follow-up — 2026-06-21 (session 2): second layer + method completeness
+
+The same root cause (`groupIndex` demos show whatever the fixed scramble produces, decoupled from
+the step's prose) bit the **second layer** and **yellow cross** too, and a live review pushed three
+more fixes — all verified at the engine with throwaway `_probe.spec.ts`:
+
+- **Ch3 second layer — the practice used gestures no demo showed.** `planSecondLayer` fills the two
+  BACK slots with **back-face (B) inserts**; the demos only showed the two front inserts, so the
+  practice asked the learner to turn B with nothing teaching it. Reworked as **four named slot
+  gestures** (front-right / front-left / back-right / back-left), each a legacy `algorithmId` +
+  `demoFrom: 'case'` demo on its own clean case. Promoted `second-layer-insert-front-left`,
+  `-back-right`, `-back-left` to the catalog, **parity-pinned to `solveSecondLayer` constants**
+  (`SECOND_LAYER_INSERT_FRONT_LEFT/_BACK_RIGHT/_BACK_LEFT`) — ADR-0006 roster note 2026-06-21. Each
+  is ≤8 moves and leaves the whole top layer intact (verified). Engine-verified cases: front edges
+  sit at **DF** (D[1]+F[7]), back edges at **DB** (D[7]+B[7]); slot stickers FR=F[5]/R[3],
+  FL=F[3]/L[5], BR=R[5]/B[3], BL=B[5]/L[3]. **A naïve "front insert with F→B" is NOT a clean back
+  insert** — `D' R' D R D B D' B'` breaks the top corners (UFR/UBL); the real back inserts are their
+  own sequences.
+- **Ch4 "barre" demo showed an L.** The bar demo was a `groupIndex` demo whose scramble figure was
+  an L (DL+DF). Switched to a legacy `yellow-cross-line` demo so "barre" shows a real horizontal bar
+  (DL+DR); the L demo uses `yellow-cross-l` (elbow DB+DL = back-left). Each figure highlighted.
+- **Ch7 copy said "à l'arrière" — it's the FRONT.** `edge-3-cycle` keeps the **DF** edge fixed
+  (engine verified), so the already-placed reference edge is kept **devant**, not at the back.
+
+**Method completeness (verified over 80 random cubes, 0 failures).** `a-perm` (corners) and
+`edge-3-cycle` (edges) solve **every** last-layer case — none "fail with the algorithm". The special
+cases just need the **same gesture twice**: the first pass converts the hard case into the simple
+one. Distribution at the place/permute steps: corners pre-placed = {0:31, 1:25, **2:22**, 4:2};
+edges pre-placed = {0:19, 1:53, 4:8}. So "**two corners already placed**" and "**two edge pairs
+swapped / zero pre-placed**" are common, not anomalies. The **0-oriented Sune** case is handled by
+one Sune from any position (0 → 2 or 1 oriented, verified). The in-app practice's next-move hint
+walks any case automatically; the chapter copy now names the special cases so a learner solving a
+physical cube knows to apply the gesture again.
+
 ## Related
 
 - `docs/solutions/2026-06-20-coach-no-rotation-teaching-solver-feasibility.md` — the TS-0 spike that
