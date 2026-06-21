@@ -63,6 +63,7 @@ export type {
 } from './application/teaching'
 export {
   flattenTeachingPlan,
+  collapseTeachingSetups,
   planWhiteCorners,
   planSecondLayer,
   planYellowCross,

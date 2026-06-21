@@ -8,8 +8,8 @@ import type {
 } from '@packages/cube-engine'
 import {
   applyMoves,
+  collapseTeachingSetups,
   createSolvedState,
-  flattenTeachingPlan,
   getAlgorithm,
   invertMoves,
   planOrientLastCorners,
@@ -168,11 +168,16 @@ const resolveRecipe = (step: LessonStep | null): StepRecipe => {
 
   if (step.kind === 'chapter-practice') {
     const plan = runTeachingPlan(step.scenario)
+    // Collapse the seams between groups (one corner's closing restore meets the next
+    // corner's opening placement) so the chained recipe shows no U U' / U2 U2 no-ops.
+    // Triggers are untouched, so the net cube transform — and the milestone it lands
+    // on — is unchanged. Moves derive from the same segments the markers read.
+    const segments = collapseTeachingSetups(plan.groups.flatMap(group => group.segments))
     return {
-      moves: flattenTeachingPlan(plan),
+      moves: segments.flatMap(segment => [...segment.moves]),
       base: namedState(step.scenario.from),
       successState: namedState(step.scenario.to),
-      segments: plan.groups.flatMap(group => group.segments)
+      segments
     }
   }
 

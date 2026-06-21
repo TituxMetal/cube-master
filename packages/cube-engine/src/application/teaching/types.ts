@@ -38,3 +38,53 @@ export type TeachingPlan = {
 // validates against. Pure; no rotation tokens by construction.
 export const flattenTeachingPlan = (plan: TeachingPlan): readonly MoveToken[] =>
   plan.groups.flatMap(group => group.segments.flatMap(segment => [...segment.moves]))
+
+// Net quarter-turns (mod 4) on one face → its canonical single token, or nothing.
+const faceTurn = (face: 'U' | 'D', quarters: number): MoveToken[] => {
+  const n = ((quarters % 4) + 4) % 4
+  if (n === 0) return []
+  return n === 1 ? [face] : n === 2 ? [`${face}2` as MoveToken] : [`${face}'` as MoveToken]
+}
+
+// Simplify a run of placement turns. Placement is only ever U/D turns, and U/D are
+// opposite faces (they commute), so the net effect is the per-face quarter-turn sum —
+// U2 then U2 cancels, U then U' cancels, U then U becomes U2. Bails to the input
+// untouched if anything other than a U/D turn appears (never expected in a setup).
+const simplifySetupMoves = (moves: readonly MoveToken[]): MoveToken[] => {
+  let u = 0
+  let d = 0
+  for (const m of moves) {
+    const quarters = m.length === 1 ? 1 : m[1] === '2' ? 2 : 3
+    if (m[0] === 'U') u += quarters
+    else if (m[0] === 'D') d += quarters
+    else return [...moves]
+  }
+  return [...faceTurn('U', u), ...faceTurn('D', d)]
+}
+
+// Collapse consecutive `setup` segments — merging and cancelling their placement
+// turns — while leaving every `trigger` (a named catalog block) untouched. When the
+// whole plan is chained for the full-chapter practice, one group's closing restore
+// meets the next group's opening placement; without this they read as `U U'` or
+// `U2 U2` no-ops on screen — exactly the speed-coded sloppiness we refuse. Empty
+// setups (a restore that fully cancels the next placement) drop out entirely.
+export const collapseTeachingSetups = (segments: readonly TeachingSegment[]): TeachingSegment[] => {
+  const out: TeachingSegment[] = []
+  let pending: MoveToken[] = []
+  const flush = () => {
+    if (pending.length === 0) return
+    const simplified = simplifySetupMoves(pending)
+    if (simplified.length > 0) out.push({ kind: 'setup', moves: simplified })
+    pending = []
+  }
+  for (const segment of segments) {
+    if (segment.kind === 'setup') {
+      pending.push(...segment.moves)
+      continue
+    }
+    flush()
+    out.push(segment)
+  }
+  flush()
+  return out
+}
