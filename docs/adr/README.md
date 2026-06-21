@@ -34,3 +34,5 @@ What this makes easy, what it makes hard, what we accept as a trade-off.
 - [0004 — Layered dependency boundaries](0004-layered-dependency-boundaries.md)
 - [0005 — Fly.io via native GitHub deploy](0005-flyio-native-github-deploy.md)
 - [0006 — Algorithm catalog in the engine's domain layer](0006-algorithm-catalog-in-domain.md)
+- [0007 — Versioned localStorage envelope](0007-versioned-localstorage-envelope.md)
+- [0009 — Coach teaching solver is a separate engine module](0009-teaching-solver-boundary.md)

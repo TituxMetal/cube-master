@@ -36,7 +36,13 @@ Progressive tutorials to learn solving methods, using the Solver engine for live
 - Practice mode: scramble to a specific case, user applies the algorithm
 - Content arc: beginner layer-by-layer → intuitive F2L, 2-look OLL/PLL → full OLL/PLL
 
-**Status:** not yet built — the next major piece of the product.
+**Status:** built, pending final review. The beginner layer-by-layer journey (chapters 0–7) is
+implemented on a dedicated **teaching solver** (`packages/cube-engine/src/application/teaching/`)
+that emits intuitive U/D placement + one trigger (sexy move & mirror) per piece — teaching _where_
+each piece goes, not just an algorithm to memorize. Every algorithm chapter ends with a full-chapter
+practice from the previous milestone. Remaining before shipped: Titux's live 13" comprehensibility
+review (gate C2-4) and merge per `docs/git-workflow.md`. Intermediate/advanced arcs (intuitive F2L,
+2-look then full OLL/PLL) are future work.
 
 ## Mode 3 — Timer (signature red)
 

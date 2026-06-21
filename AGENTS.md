@@ -22,7 +22,8 @@ scramble generator. Touch the engine, touch the product.
 Before any non-trivial edit, read these in order:
 
 1. [`docs/product.md`](docs/product.md) — three modes, capabilities, status (Solver and Timer
-   shipped; Coach is the next major piece).
+   shipped; Coach's beginner journey built on the teaching solver, pending final live review +
+   merge).
 2. [`docs/architecture.md`](docs/architecture.md) — monorepo layout, stack rationale, cube-engine
    layering, dependency boundaries.
 3. [`docs/frontend.md`](docs/frontend.md) — design system: dark "rubiks" theme, OKLch tokens, mode
@@ -30,7 +31,7 @@ Before any non-trivial edit, read these in order:
 4. [`docs/git-workflow.md`](docs/git-workflow.md) — branching, conventional commits, PR rules,
    rebase-merge + sync.
 5. [`docs/adr/`](docs/adr/) — why Hono, why no router library, why a standalone engine, dependency
-   boundaries, fly.io deploy.
+   boundaries, fly.io deploy, the Coach teaching-solver boundary.
 
 ---
 
