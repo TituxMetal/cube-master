@@ -2,7 +2,7 @@
 title: 'feat: Coach pedagogy rework — intuitive placement & full-chapter practice'
 type: plan
 date: 2026-06-20
-status: in_progress
+status: complete
 brainstorm: docs/brainstorms/2026-06-20-coach-placement-pedagogy-brainstorm.md
 confidence: medium
 ---
@@ -302,7 +302,9 @@ Dependency-ordered. `[ ]` = todo. These are the `/work` tracker.
 > from two inserts to four named slot gestures** (front-right / front-left / back-right / back-left
 > — see updated `37-1` and the ADR-0006 roster note), plus Ch4/Ch5/Ch6/Ch7 demo-decoupling fixes
 > (`docs/solutions/2026-06-21-…-yellow-down-frame.md`, session-2 follow-up). The only open item is
-> the **PR step of R-4** (verification green; the PR to `develop` needs the GPG agent unlocked).
+> **PR step of R-4** (now done — see below). **All tasks complete; PR #11 → `develop` is open.** The
+> only remaining action is Titux's manual merge after the automatic Copilot review — the agent does
+> not rebase/merge.
 
 ### Phase TS — Teaching solver foundations (engine)
 
@@ -370,8 +372,9 @@ Dependency-ordered. `[ ]` = todo. These are the `/work` tracker.
       AGENTS.md Read-First/Task-Routing if a new doc lands.
 - [x] **R-3** — `docs/solutions/` entry: the no-rotation placement model (symptom → root cause → fix
       → prevention), referencing TS-0.
-- [ ] **R-4** — Full verification: `format:check`, `lint:check`, `typecheck`, `test`, `build` all
-      green; PR per `docs/git-workflow.md`.
+- [x] **R-4** — Full verification (`format:check`, `lint:check`, `typecheck`, `test`, `build`)
+      green; **PR #11 → `develop`** opened per `docs/git-workflow.md`. Merge is Titux's to do after
+      the automatic Copilot review (no rebase/merge by the agent).
 
 ---
 
