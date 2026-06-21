@@ -32,13 +32,19 @@ type WorkingSlot = {
 const RIGHT: WorkingSlot = { home: 'UFR', dPos: 'DFR', triggerId: 'sexy-move' }
 const LEFT: WorkingSlot = { home: 'ULF', dPos: 'DLF', triggerId: 'sexy-move-mirror' }
 
-// Try the working slot nearest the corner's home first: a front-left corner is
-// taught with the left mirror, a front-/back-right corner with the right sexy move.
-// This exercises both triggers (the pedagogy) and keeps U-setup minimal; the other
-// slot stays as a correctness fallback. (D-GESTURE)
-const LEFT_HOMES = new Set<CornerPositionId>(['ULF', 'UBL'])
+// The candidate working slots for a corner, honouring the taught rule (D-GESTURE):
+// a FRONT corner uses its own side — front-right → sexy move, front-left → mirror —
+// with no exception, so the beginner's single rule ("droite → sexy, gauche → miroir")
+// always holds on screen. A BACK corner has no home side in that rule; it must be
+// brought to a front slot anyway, so it may use either, and Phase A picks whichever
+// seats it in the fewest repetitions (avoids grinding a back corner 5× when the other
+// front slot does it in 1).
+const FRONT_ONLY: Partial<Record<CornerPositionId, readonly WorkingSlot[]>> = {
+  UFR: [RIGHT],
+  ULF: [LEFT]
+}
 const slotsFor = (target: CornerPositionId): readonly WorkingSlot[] =>
-  LEFT_HOMES.has(target) ? [LEFT, RIGHT] : [RIGHT, LEFT]
+  FRONT_ONLY[target] ?? [RIGHT, LEFT]
 
 const triggerMoves = (id: string): readonly MoveToken[] => getAlgorithm(id)?.moves ?? []
 
@@ -145,6 +151,15 @@ const attemptExtract = (
   return { segments, state: s }
 }
 
+// The trigger repetitions an attempt costs — the pedagogical cost we minimise. Each
+// extra repetition is another full sexy move the learner grinds out, so a 1× seat is
+// far better than a 5× one. All triggers are four moves, so the trigger segment's
+// length is a faithful proxy (fewer moves ⇔ fewer repetitions).
+const triggerReps = (attempt: Attempt): number => {
+  const trigger = attempt.segments.find(seg => seg.kind === 'trigger')
+  return trigger ? trigger.moves.length : Number.POSITIVE_INFINITY
+}
+
 export const planWhiteCorners = (state: CubeState, solved: CubeState): TeachingPlan => {
   let cur = state
   const groups: TeachingStepGroup[] = []
@@ -153,7 +168,12 @@ export const planWhiteCorners = (state: CubeState, solved: CubeState): TeachingP
     const before = countSolved(cur)
     let progressed = false
 
-    // Phase A — insert a corner whose piece is already in the D layer.
+    // Phase A — insert a corner already in the D layer, choosing the (corner, slot)
+    // that seats in the FEWEST trigger repetitions. Committing the first slot that
+    // merely made progress would grind the sexy move up to 5× when the mirror at the
+    // other working slot seats the same corner in 1× — the inefficiency this avoids.
+    let best: Attempt | null = null
+    let bestReps = Number.POSITIVE_INFINITY
     for (const target of U_CORNERS) {
       if (isCornerHome(cur, target)) continue
       const colors = cornerColors(solved, target)
@@ -161,13 +181,18 @@ export const planWhiteCorners = (state: CubeState, solved: CubeState): TeachingP
       for (const slot of slotsFor(target)) {
         const attempt = attemptInsert(cur, colors, target, slot)
         if (attempt && countSolved(attempt.state) > before && crossIntact(attempt.state)) {
-          groups.push({ segments: attempt.segments })
-          cur = attempt.state
-          progressed = true
-          break
+          const reps = triggerReps(attempt)
+          if (reps < bestReps) {
+            best = attempt
+            bestReps = reps
+          }
         }
       }
-      if (progressed) break
+    }
+    if (best) {
+      groups.push({ segments: best.segments })
+      cur = best.state
+      progressed = true
     }
     if (progressed) continue
 

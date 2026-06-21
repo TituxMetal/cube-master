@@ -41,9 +41,10 @@ export const yellowCross: Lesson = {
     {
       kind: 'demo',
       title: 'Du L à la croix',
-      body: 'Place le L en haut à gauche et déroule le geste. Le coude se complète jusqu’à la croix jaune. Avant la croix, on aligne parfois le bas (D) pour mettre la figure dans le bon sens — c’est la pastille « Placement ».',
-      scenario: SCENARIO,
-      groupIndex: 1
+      body: 'Place le L en haut à gauche et déroule le geste : le coude se complète jusqu’à la croix jaune. C’est presque le geste de la barre, avec une figure de départ différente — tout le travail est dans la reconnaissance.',
+      algorithmId: 'yellow-cross-l',
+      demoFrom: 'case',
+      goal: 'yellow-cross'
     },
     {
       kind: 'chapter-practice',

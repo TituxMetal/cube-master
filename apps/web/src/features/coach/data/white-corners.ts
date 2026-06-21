@@ -64,9 +64,9 @@ export const whiteCorners: Lesson = {
     {
       kind: 'demo',
       title: 'Un coin dont la maison est à l’arrière',
-      body: 'Cette fois la maison du coin est à l’arrière. On l’amène devant avec un tour du haut (U), on déroule le sexy move jusqu’à ce que le blanc pointe en haut, puis on remet le haut comme il était (U’). La pastille montre les deux temps : « Placement » pour les tours d’installation, « Sexy Move » pour le geste.',
+      body: 'Cette fois la maison du coin est à l’arrière. On l’amène d’abord à une fente avant en tournant le haut, on glisse le coin juste dessous, puis on déroule le sexy move jusqu’à ce que le blanc pointe en haut — ici il faut trois passages — et on remet le haut comme il était. La pastille montre les deux temps : « Placement » pour les tours d’installation, « Sexy Move » pour le geste.',
       scenario: SCENARIO,
-      groupIndex: 1
+      groupIndex: 2
     },
     {
       kind: 'understand',
@@ -77,7 +77,7 @@ export const whiteCorners: Lesson = {
     {
       kind: 'demo',
       title: 'Le miroir en action',
-      body: 'Regarde le miroir L D L’ D’ poser un coin avant-gauche, exactement comme le sexy move à droite. Trois passages ici pour que le blanc finisse en haut — sur un vrai cube, tu répètes jusqu’à ce qu’il soit calé.',
+      body: 'Regarde le miroir L D L’ D’ poser un coin avant-gauche, exactement comme le sexy move à droite. Ici le blanc partait vers le bas : il faut répéter le geste cinq fois pour qu’il finisse en haut. Sur un vrai cube tu ne comptes pas — tu répètes simplement jusqu’à ce qu’il se cale.',
       scenario: SCENARIO,
       groupIndex: 3
     },
