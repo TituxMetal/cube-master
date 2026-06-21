@@ -328,9 +328,12 @@ copy, `[gate]` = human review. Acceptance lives in the Acceptance Criteria secti
 - [x] **B1** `[content]` **Chapitre 2 — Les coins blancs** (`white-corners.ts`): understand +
       visuals, `sexy-move` demo + interactive practice, `goal: 'white-corners'` (the first layer
       milestone). FR from the brainstorm draft. `demoFrom: 'case'` (case → milestone).
-- [x] **B2** `[content]` **Chapitre 3 — Le deuxième étage** (`second-layer.ts`): right + mirrored
-      left inserts (`second-layer-insert-{right,left}`), demos `demoFrom: 'case'`, one interactive
-      practice, `goal: 'second-layer'`. FR from the brainstorm draft.
+- [x] **B2** `[content]` **Chapitre 3 — Le deuxième étage** (`second-layer.ts`): **four named slot
+      gestures** — `second-layer-insert-{right,front-left,back-right,back-left}` — demos
+      `demoFrom: 'case'`, one interactive practice, `goal: 'second-layer'`. FR from the brainstorm
+      draft. _Reworked 2026-06-21 from the original two-insert version, which left the back-face (B)
+      inserts the practice runs untaught; see the placement-pedagogy plan `37-1` and the ADR-0006
+      roster note._
 - [x] **B3** `[content]` **Chapitre 4 — La croix jaune** (`yellow-cross.ts`): `yellow-cross-line` +
       `yellow-cross-l` demos, interactive practice, `goal: 'yellow-cross'`. **Dot case resolved:**
       handled in prose (apply once → a line/L to retake), not its own step. FR.

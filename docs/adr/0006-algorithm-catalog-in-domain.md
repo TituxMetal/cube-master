@@ -63,6 +63,24 @@ guarantee, both parity-pinned to their live solver constants (no drift):
 This stays within the amended consumer bar (each serves ≥1 solver phase and is teachable); the
 expiry trigger is unchanged — OLL/PLL scaling, not these two extractions.
 
+## Roster note — 2026-06-21 (Coach second-layer, four-slot teaching)
+
+Coach's second-layer chapter now teaches the insert as **four named gestures, one per slot** —
+front-right, front-left, back-right, back-left — so a learner who recognises their case can run the
+right short gesture directly (live-review feedback: the demos must _show_ the back-face inserts the
+practice uses, not just the two front ones). Three more inserts were promoted, parity-pinned to live
+`solveSecondLayer` constants (`SECOND_LAYER_INSERT_FRONT_LEFT` / `_BACK_RIGHT` / `_BACK_LEFT`):
+
+- **`second-layer-insert-front-left`** (`D L D′ L′ D′ F′ D F`) — the mirror of the right insert.
+- **`second-layer-insert-back-right`** (`D R D′ R′ D′ B′ D B`) — back-right slot, via the back face.
+- **`second-layer-insert-back-left`** (`D′ L′ D L D B D′ B′`) — back-left slot, via the back face.
+
+These were previously "local positional variants" of `solveSecondLayer`'s `TARGETS`. They cross the
+catalog bar now because Coach teaches them as gestures (each ≤8 moves, top layer intact). This is a
+deliberate, bounded exception to "positional variants stay local" — the four second-layer slots are
+the named vocabulary the chapter teaches, not internal solver mechanics. The expiry trigger is
+unchanged — OLL/PLL scaling, not these promotions.
+
 ## Alternatives considered
 
 - **Keep the strict "both consumers at once" bar** with inline move sequences in lessons 1–4 —
