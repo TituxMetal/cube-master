@@ -35,13 +35,13 @@ export const yellowCross: Lesson = {
     {
       kind: 'understand',
       title: 'Le cas du L',
-      body: 'Si tu vois un L jaune — deux arêtes en coude —, place le coude en haut à gauche : c’est presque le même geste, avec un point de départ différent. Tout le travail, c’est de reconnaître la figure ; ensuite, ce sont les mains.',
+      body: 'Si tu vois un L jaune — deux arêtes en coude —, place le coude au fond à gauche : c’est presque le même geste, avec un point de départ différent. Tout le travail, c’est de reconnaître la figure ; ensuite, ce sont les mains.',
       visual: { state: { caseOf: 'yellow-cross-l', goal: 'yellow-cross' } }
     },
     {
       kind: 'demo',
       title: 'Du L à la croix',
-      body: 'Place le L en haut à gauche et déroule le geste : le coude se complète jusqu’à la croix jaune. C’est presque le geste de la barre, avec une figure de départ différente — tout le travail est dans la reconnaissance.',
+      body: 'Place le coude du L au fond à gauche et déroule le geste : il se complète jusqu’à la croix jaune. C’est presque le geste de la barre, avec une figure de départ différente — tout le travail est dans la reconnaissance.',
       algorithmId: 'yellow-cross-l',
       demoFrom: 'case',
       goal: 'yellow-cross'

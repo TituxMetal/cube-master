@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'bun:test'
 
+import { applyMoves } from '~/application/use-cases/applyMoves'
+import { createSolvedState } from '~/application/use-cases/createSolvedState'
+import type { CornerPositionId, EdgePositionId } from '~/domain'
+import { toStickers } from '~/infrastructure/render/toStickers'
+
 import { ALGORITHM_CATALOG, getAlgorithm } from './catalog'
 import { isFaceMove } from './moves'
 
@@ -42,5 +47,43 @@ describe('getAlgorithm', () => {
     const entry = getAlgorithm('sexy-move-mirror')
     expect(entry).toBeDefined()
     expect(entry?.moves).toEqual(['L', 'D', "L'", "D'"])
+  })
+
+  // The Coach-only a-perm must cycle three bottom corners WITHOUT twisting them — the
+  // whole point of using it instead of corner-3-cycle for placement. Verified by
+  // behaviour, not just literal moves, so a wrong sequence reddens here.
+  it('a-perm cycles exactly three D corners, yellow staying down, edges and top intact', () => {
+    const solved = createSolvedState()
+    const moves = getAlgorithm('a-perm')?.moves
+    expect(moves).toEqual(['R', "F'", 'R', 'B2', "R'", 'F', 'R', 'B2', 'R2'])
+    const after = applyMoves(solved, [...moves!])
+
+    const D_CORNERS: CornerPositionId[] = ['DFR', 'DRB', 'DBL', 'DLF']
+    const movedCorners = D_CORNERS.filter(p => after.corners[p].id !== p)
+    expect(movedCorners.length).toBe(3) // a 3-cycle of bottom corners
+    // every corner stays oriented (orientation 0) — no twist
+    const ALL_CORNERS: CornerPositionId[] = ['UFR', 'URB', 'UBL', 'ULF', 'DFR', 'DRB', 'DBL', 'DLF']
+    expect(ALL_CORNERS.every(p => after.corners[p].orientation === 0)).toBe(true)
+    // the yellow (D) face is untouched as a colour set — still all one colour
+    const yellow = toStickers(solved).D[4]
+    expect(toStickers(after).D.every(c => c === yellow)).toBe(true)
+    // edges and the whole top (white) layer are left home
+    const ALL_EDGES: EdgePositionId[] = [
+      'UF',
+      'UR',
+      'UB',
+      'UL',
+      'FR',
+      'BR',
+      'BL',
+      'FL',
+      'DF',
+      'DR',
+      'DB',
+      'DL'
+    ]
+    expect(ALL_EDGES.every(p => after.edges[p].id === p && after.edges[p].orientation === 0)).toBe(
+      true
+    )
   })
 })

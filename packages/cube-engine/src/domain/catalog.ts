@@ -80,6 +80,14 @@ export const ALGORITHM_CATALOG: readonly AlgorithmEntry[] = [
     description: 'Cycle three last-layer corners into their home positions.'
   },
   {
+    id: 'a-perm',
+    name: 'Corner Cycle (orientation-safe)',
+    moves: ['R', "F'", 'R', 'B2', "R'", 'F', 'R', 'B2', 'R2'],
+    method: 'beginner',
+    description:
+      'Cycle three last-layer corners into their homes WITHOUT twisting them — the yellow stays on the bottom face throughout (an A-perm). The Coach uses this, not corner-3-cycle, to place already-oriented corners so the finished yellow face is never disturbed.'
+  },
+  {
     id: 'white-cross-flip',
     name: 'White Cross Flip',
     moves: ['D', 'R', "F'", "R'"],

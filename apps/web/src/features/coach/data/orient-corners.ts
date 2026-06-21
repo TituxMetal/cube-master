@@ -30,7 +30,7 @@ export const orientCorners: Lesson = {
     {
       kind: 'demo',
       title: 'Sune',
-      body: 'Voici Sune. Tourne le bas pour qu’un coin déjà jaune en dessous soit en haut à gauche, puis déroule le geste. Regarde les autres coins basculer, leur jaune venant vers le bas. Souvent il faut répéter Sune deux ou trois fois — chaque passage rapproche du tout-jaune.',
+      body: 'Voici Sune. Tourne le bas pour amener un coin déjà jaune dessous au fond à gauche, puis déroule le geste. Regarde les autres coins basculer, leur jaune venant en dessous. Souvent il faut répéter Sune deux ou trois fois — chaque passage rapproche du tout-jaune.',
       scenario: SCENARIO,
       groupIndex: 0
     },
