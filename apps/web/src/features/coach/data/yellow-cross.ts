@@ -1,11 +1,16 @@
 import type { Lesson, TeachingScenario } from './types'
 
-// Chapitre 4 — La croix jaune. First last-layer step: turn the yellow pattern on the
-// bottom face into a full yellow cross. Two cases (line, L) with their own gestures;
-// the dot is mentioned in prose. Teaching demos + full-chapter practice.
+// Chapitre 4 — La croix jaune. Turn the yellow edge figure on the bottom face into a
+// full yellow cross. Two cases, each on its OWN clean canonical figure (a real bar, a
+// real L) so the demo shows exactly what its text names: `yellow-cross-line` is a
+// horizontal bar (DL+DR), `yellow-cross-l` is an L whose elbow sits back-left (DB+DL).
 
-// The yellow cross on the bottom (D) face: its centre plus the four edges.
+// The finished yellow cross (centre + four edges) — the chapter goal.
 const YELLOW_CROSS = { D: [1, 3, 4, 5, 7] }
+// The bar: the two aligned yellow edges (left + right) with the centre.
+const BAR = { D: [3, 4, 5] }
+// The L: elbow back-left — the back and left yellow edges with the centre.
+const L_SHAPE = { D: [3, 4, 7] }
 
 const SCENARIO: TeachingScenario = {
   phase: 'yellow-cross',
@@ -22,26 +27,33 @@ export const yellowCross: Lesson = {
     {
       kind: 'understand',
       title: 'Le dernier étage',
-      body: 'Les deux premiers étages sont finis — on attaque le dernier, le jaune, sur la face du dessous. D’abord y dessiner une croix jaune, comme on l’a fait en blanc. Regarde la figure jaune des arêtes du dessous : un point, une barre, ou un L. Selon ce que tu vois, un petit geste la transforme en croix.',
+      body: 'Les deux premiers étages sont finis — on attaque le dernier, le jaune, sur la face du dessous. Première marche : y dessiner une croix jaune, surlignée sur l’image (l’objectif du chapitre). Au départ, tes quatre arêtes jaunes ne forment presque jamais la croix : tu auras un simple point, une barre, ou un L. Selon la figure, un petit geste la complète.',
       visual: { state: 'yellow-cross', highlight: YELLOW_CROSS }
+    },
+    {
+      kind: 'understand',
+      title: 'La barre',
+      body: 'La barre : deux arêtes jaunes alignées de part et d’autre du centre, surlignées sur l’image. Si la tienne est verticale, un tour du bas la couche à l’horizontale. Une fois horizontale, elle est prête.',
+      visual: { state: { caseOf: 'yellow-cross-line', goal: 'yellow-cross' }, highlight: BAR }
     },
     {
       kind: 'demo',
       title: 'De la barre à la croix',
-      body: 'Si tu vois une barre jaune, tiens-la à l’horizontale et déroule ce geste : les deux arêtes manquantes se rabattent et la croix apparaît. (Rien qu’un point jaune ? Applique le geste une fois : tu obtiens une barre ou un L, que tu reprends ensuite.)',
-      scenario: SCENARIO,
-      groupIndex: 0
+      body: 'La barre est à l’horizontale : déroule le geste. Les deux arêtes manquantes (devant et derrière) se rabattent, jaune vers le bas, et la croix apparaît. Suis-le coup par coup.',
+      algorithmId: 'yellow-cross-line',
+      demoFrom: 'case',
+      goal: 'yellow-cross'
     },
     {
       kind: 'understand',
-      title: 'Le cas du L',
-      body: 'Si tu vois un L jaune — deux arêtes en coude —, place le coude au fond à gauche : c’est presque le même geste, avec un point de départ différent. Tout le travail, c’est de reconnaître la figure ; ensuite, ce sont les mains.',
-      visual: { state: { caseOf: 'yellow-cross-l', goal: 'yellow-cross' } }
+      title: 'Le L',
+      body: 'Le L : deux arêtes jaunes en coude, surlignées. Tourne le bas pour amener le coude au fond à gauche — ses deux branches longent alors la face bleue (au fond) et l’orange (à gauche). C’est sa position de départ.',
+      visual: { state: { caseOf: 'yellow-cross-l', goal: 'yellow-cross' }, highlight: L_SHAPE }
     },
     {
       kind: 'demo',
       title: 'Du L à la croix',
-      body: 'Place le coude du L au fond à gauche et déroule le geste : il se complète jusqu’à la croix jaune. C’est presque le geste de la barre, avec une figure de départ différente — tout le travail est dans la reconnaissance.',
+      body: 'Le coude bien au fond à gauche, déroule le geste : le L se referme en croix. C’est presque le mouvement de la barre, avec une figure de départ différente.',
       algorithmId: 'yellow-cross-l',
       demoFrom: 'case',
       goal: 'yellow-cross'
@@ -49,7 +61,7 @@ export const yellowCross: Lesson = {
     {
       kind: 'chapter-practice',
       title: 'À toi : forme la croix',
-      body: 'Pars des deux étages finis et forme la croix jaune. Regarde la figure du dessous, mets-la dans le bon sens, puis déroule le geste de la barre ou du L — au besoin deux fois. La pastille indique le prochain coup. C’est gagné quand la croix jaune est complète.',
+      body: 'Pars des deux étages finis et forme la croix jaune. Regarde ta figure du dessous. Un simple point ? Déroule le geste une fois : tu obtiens une barre ou un L. Ensuite place-la — barre à l’horizontale, ou coude du L au fond à gauche — et déroule. La pastille indique le prochain coup. C’est gagné quand la croix jaune est complète.',
       scenario: SCENARIO
     }
   ]

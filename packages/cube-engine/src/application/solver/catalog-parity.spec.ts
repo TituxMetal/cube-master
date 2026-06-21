@@ -2,7 +2,13 @@ import { describe, expect, it } from 'bun:test'
 
 import { getAlgorithm } from '~/domain'
 
-import { SECOND_LAYER_INSERT_LEFT, SECOND_LAYER_INSERT_RIGHT } from './solveSecondLayer'
+import {
+  SECOND_LAYER_INSERT_BACK_LEFT,
+  SECOND_LAYER_INSERT_BACK_RIGHT,
+  SECOND_LAYER_INSERT_FRONT_LEFT,
+  SECOND_LAYER_INSERT_LEFT,
+  SECOND_LAYER_INSERT_RIGHT
+} from './solveSecondLayer'
 import { SEXY_MOVE } from './solveWhiteCorners'
 import { FLIPPED_EDGE_INSERT } from './solveWhiteCross'
 import { CORNER_3_CYCLE, UA_PERM } from './solveYellowCorners'
@@ -15,6 +21,9 @@ const PARITY_CASES = [
   { id: 'sexy-move', constant: SEXY_MOVE },
   { id: 'second-layer-insert-right', constant: SECOND_LAYER_INSERT_RIGHT },
   { id: 'second-layer-insert-left', constant: SECOND_LAYER_INSERT_LEFT },
+  { id: 'second-layer-insert-front-left', constant: SECOND_LAYER_INSERT_FRONT_LEFT },
+  { id: 'second-layer-insert-back-right', constant: SECOND_LAYER_INSERT_BACK_RIGHT },
+  { id: 'second-layer-insert-back-left', constant: SECOND_LAYER_INSERT_BACK_LEFT },
   { id: 'corner-3-cycle', constant: CORNER_3_CYCLE },
   { id: 'white-cross-flip', constant: FLIPPED_EDGE_INSERT },
   { id: 'ua-perm', constant: UA_PERM }
