@@ -221,8 +221,24 @@ export const $currentStepMoves = computed(
 
 export const $playbackTotal = computed($currentStepMoves, (moves): number => moves.length)
 
+// French gesture labels for the trigger badge — the catalog names are English (code
+// stays EN), but the learner-facing player must read in French. Falls back to a plain
+// word rather than leaking an English algorithm name into the UI.
+const GESTURE_LABELS: Record<string, string> = {
+  'sexy-move': 'Sexy move',
+  'sexy-move-mirror': 'Miroir',
+  'second-layer-insert-right': 'Insert droite',
+  'second-layer-insert-left': 'Insert gauche',
+  'yellow-cross-line': 'La barre',
+  'yellow-cross-l': 'Le L',
+  sune: 'Sune',
+  'anti-sune': 'Anti-Sune',
+  'corner-3-cycle': 'Cycle des coins',
+  'edge-3-cycle': 'Cycle des arêtes'
+}
+
 // A per-move marker so the player can label setup ("Placement") vs trigger (the
-// named block) segments along the recipe. Empty for legacy steps (no segments).
+// named gesture) segments along the recipe. Empty for legacy steps (no segments).
 export type SegmentMarker = { kind: 'setup' | 'trigger'; label: string }
 export const $stepSegmentMarkers = computed($stepRecipe, (recipe): readonly SegmentMarker[] => {
   if (!recipe.segments) return []
@@ -230,7 +246,7 @@ export const $stepSegmentMarkers = computed($stepRecipe, (recipe): readonly Segm
   for (const segment of recipe.segments) {
     const label =
       segment.kind === 'trigger'
-        ? (getAlgorithm(segment.catalogId ?? '')?.name ?? 'Algorithme')
+        ? (GESTURE_LABELS[segment.catalogId ?? ''] ?? 'Geste')
         : 'Placement'
     for (let i = 0; i < segment.moves.length; i++) markers.push({ kind: segment.kind, label })
   }
