@@ -35,22 +35,24 @@ export const secondLayer: Lesson = {
     {
       kind: 'demo',
       title: 'L’insert vers la droite',
-      body: 'Quand la maison est à droite, c’est l’insert droit. Ici la fente tenait déjà une mauvaise arête : le même insert la fait ressortir en bas, on réaligne, et on recommence pour la bonne. La face blanche en haut n’est jamais abîmée.',
-      scenario: SCENARIO,
-      groupIndex: 1
+      body: 'Quand la maison de l’arête est à droite de sa face, c’est l’insert droit. On aligne d’abord la couleur de face sous son centre, puis on déroule le geste : l’arête descend se glisser dans sa fente, et la face blanche du haut n’est pas abîmée.',
+      algorithmId: 'second-layer-insert-right',
+      demoFrom: 'case',
+      goal: 'second-layer'
     },
     {
       kind: 'understand',
       title: 'Le même geste, en miroir',
-      body: 'Quand la maison est à gauche, c’est exactement le même geste vu dans le miroir : là où la droite part avec R, la gauche part avec F. Si tu sais faire l’un, tu sais déjà l’autre.',
+      body: 'Quand la maison est à gauche, c’est exactement le même geste vu dans le miroir : là où la droite part avec R, la gauche part avec F. Si tu sais faire l’un, tu sais déjà l’autre. (À l’arrière, c’est encore le même geste, joué avec les faces de derrière.)',
       visual: { state: { caseOf: 'second-layer-insert-left', goal: 'second-layer' } }
     },
     {
       kind: 'demo',
       title: 'L’insert vers la gauche',
       body: 'Aligne l’arête sous son centre, puis déroule l’insert gauche. Tu reconnais le miroir du précédent : l’arête se glisse dans sa fente et l’étage du milieu se referme.',
-      scenario: SCENARIO,
-      groupIndex: 3
+      algorithmId: 'second-layer-insert-left',
+      demoFrom: 'case',
+      goal: 'second-layer'
     },
     {
       kind: 'chapter-practice',
