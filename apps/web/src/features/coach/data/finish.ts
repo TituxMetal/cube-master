@@ -1,18 +1,12 @@
-import type { Lesson, TeachingScenario } from './types'
+import type { Lesson } from './types'
 
-// Chapitre 7 — Finir. The last step: cycle the final three last-layer edges into
-// place with the corner-safe edge 3-cycle, and the cube is solved. A single gesture,
-// so one demo (a clean isolated case, so it is not a replay of the practice) plus the
-// full-chapter practice from the last milestone to the solved cube.
+// Chapitre 7 — Finir. Cycle the last three last-layer edges into place with the
+// corner-safe edge 3-cycle, and the cube is solved. The demo runs the gesture on its
+// clean canonical case: ONE edge is already home, at the FRONT (D[1]), and the cycle
+// turns the other three home without touching the corners.
 
-// The four edges of the bottom (yellow) face.
-const D_EDGES = { D: [1, 3, 5, 7] }
-
-const SCENARIO: TeachingScenario = {
-  phase: 'permute-edges',
-  from: 'yellow-corners-placed',
-  to: 'solved'
-}
+// The already-placed reference edge, kept at the front.
+const EDGE_REF = { D: [1] }
 
 export const finish: Lesson = {
   id: 'finish',
@@ -23,13 +17,13 @@ export const finish: Lesson = {
     {
       kind: 'understand',
       title: 'La dernière ligne droite',
-      body: 'Tout est en place sauf les dernières arêtes du dessous : elles sont jaunes, mais deux ou trois doivent encore échanger leur place pour aligner leurs couleurs de côté. Un seul geste les fait tourner entre elles sans toucher aux coins déjà rangés, et le cube est résolu. Tu y es presque.',
-      visual: { state: { caseOf: 'edge-3-cycle' }, highlight: D_EDGES }
+      body: 'Tout est en place sauf les dernières arêtes du dessous : elles sont jaunes, mais deux ou trois doivent encore échanger leur place pour aligner leurs couleurs de côté. Une est déjà bien placée — garde-la devant, surlignée sur l’image. Un seul geste fait tourner les trois autres entre elles, sans toucher aux coins déjà rangés, et le cube est résolu. Tu y es presque.',
+      visual: { state: { caseOf: 'edge-3-cycle' }, highlight: EDGE_REF }
     },
     {
       kind: 'demo',
       title: 'Le dernier échange',
-      body: 'Cherche l’arête déjà bien placée et garde-la à l’arrière, puis déroule le geste : les trois autres tournent jusqu’à retomber chez elles. Regarde le cube se refermer complètement.',
+      body: 'L’arête déjà bonne devant, déroule le geste : les trois autres tournent jusqu’à retomber chez elles. Regarde le cube se refermer complètement.',
       algorithmId: 'edge-3-cycle',
       demoFrom: 'case',
       goal: 'solved'
@@ -37,8 +31,8 @@ export const finish: Lesson = {
     {
       kind: 'chapter-practice',
       title: 'À toi : termine le cube',
-      body: 'Le dernier effort : aligne le bas pour garder l’arête correcte à l’arrière, puis déroule le geste — une fois, parfois deux. La pastille indique le prochain coup. Quand la toute dernière pièce tombe en place et que le cube est résolu : bravo, tu l’as fait toi-même, du début à la fin.',
-      scenario: SCENARIO
+      body: 'Le dernier effort : tourne le bas pour garder l’arête déjà correcte devant, puis déroule le geste — une fois, parfois deux. La pastille indique le prochain coup. Quand la toute dernière pièce tombe en place et que le cube est résolu : bravo, tu l’as fait toi-même, du début à la fin.',
+      scenario: { phase: 'permute-edges', from: 'yellow-corners-placed', to: 'solved' }
     }
   ]
 }

@@ -18,10 +18,45 @@ type SecondLayerTarget = {
 
 // Canonical FR-slot inserts, exported so the catalog parity spec pins the
 // promoted `second-layer-insert-{right,left}` entries to these live solver
-// constants. The other targets' inserts are face-adapted positional variants
-// (kept local).
+// constants.
 export const SECOND_LAYER_INSERT_RIGHT: MoveToken[] = ["D'", "R'", 'D', 'R', 'D', 'F', "D'", "F'"]
 export const SECOND_LAYER_INSERT_LEFT: MoveToken[] = ['D', 'F', "D'", "F'", "D'", "R'", 'D', 'R']
+
+// The other three slots' primary inserts — each the face-adapted version of the
+// right insert for that slot (front-left uses F+L, the back slots use the back face
+// B). Promoted so Coach teaches all four slots as named gestures, parity-pinned like
+// the FR pair above (ADR-0006 roster note, 2026-06-21). Each is ≤8 moves and leaves
+// the whole top layer intact — verified clean.
+export const SECOND_LAYER_INSERT_FRONT_LEFT: MoveToken[] = [
+  'D',
+  'L',
+  "D'",
+  "L'",
+  "D'",
+  "F'",
+  'D',
+  'F'
+]
+export const SECOND_LAYER_INSERT_BACK_RIGHT: MoveToken[] = [
+  'D',
+  'R',
+  "D'",
+  "R'",
+  "D'",
+  "B'",
+  'D',
+  'B'
+]
+export const SECOND_LAYER_INSERT_BACK_LEFT: MoveToken[] = [
+  "D'",
+  "L'",
+  'D',
+  'L',
+  'D',
+  'B',
+  "D'",
+  "B'"
+]
 
 // Correct F2L insertion algorithms for white-on-top (preserving U edges AND corners).
 // Each is a commutator [D'/D, face'][D/D', face] that creates a 3-cycle
@@ -42,7 +77,7 @@ const TARGETS: readonly SecondLayerTarget[] = [
     id: 'BR',
     colors: [Color.Blue, Color.Red],
     rightAlignDPos: 'DB',
-    insertRight: ['D', 'R', "D'", "R'", "D'", "B'", 'D', 'B'],
+    insertRight: SECOND_LAYER_INSERT_BACK_RIGHT,
     leftAlignDPos: 'DR',
     insertLeft: ["D'", "B'", 'D', 'B', 'D', 'R', "D'", "R'"]
   },
@@ -50,7 +85,7 @@ const TARGETS: readonly SecondLayerTarget[] = [
     id: 'BL',
     colors: [Color.Blue, Color.Orange],
     rightAlignDPos: 'DB',
-    insertRight: ["D'", "L'", 'D', 'L', 'D', 'B', "D'", "B'"],
+    insertRight: SECOND_LAYER_INSERT_BACK_LEFT,
     leftAlignDPos: 'DL',
     insertLeft: ['D', 'B', "D'", "B'", "D'", "L'", 'D', 'L']
   },
@@ -58,7 +93,7 @@ const TARGETS: readonly SecondLayerTarget[] = [
     id: 'FL',
     colors: [Color.Green, Color.Orange],
     rightAlignDPos: 'DF',
-    insertRight: ['D', 'L', "D'", "L'", "D'", "F'", 'D', 'F'],
+    insertRight: SECOND_LAYER_INSERT_FRONT_LEFT,
     leftAlignDPos: 'DL',
     insertLeft: ["D'", "F'", 'D', 'F', 'D', 'L', "D'", "L'"]
   }

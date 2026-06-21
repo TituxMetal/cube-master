@@ -45,6 +45,30 @@ export const ALGORITHM_CATALOG: readonly AlgorithmEntry[] = [
     description: 'Send a bottom edge up into the left-hand middle-layer slot.'
   },
   {
+    id: 'second-layer-insert-front-left',
+    name: 'Second Layer Insert (Front-Left)',
+    moves: ['D', 'L', "D'", "L'", "D'", "F'", 'D', 'F'],
+    method: 'beginner',
+    description:
+      'Send a bottom edge up into the front-left middle-layer slot — the mirror of the right insert.'
+  },
+  {
+    id: 'second-layer-insert-back-right',
+    name: 'Second Layer Insert (Back-Right)',
+    moves: ['D', 'R', "D'", "R'", "D'", "B'", 'D', 'B'],
+    method: 'beginner',
+    description:
+      'Send a bottom edge up into the back-right middle-layer slot, using the back face — no cube rotation.'
+  },
+  {
+    id: 'second-layer-insert-back-left',
+    name: 'Second Layer Insert (Back-Left)',
+    moves: ["D'", "L'", 'D', 'L', 'D', 'B', "D'", "B'"],
+    method: 'beginner',
+    description:
+      'Send a bottom edge up into the back-left middle-layer slot, using the back face — no cube rotation.'
+  },
+  {
     id: 'yellow-cross-line',
     name: 'Yellow Cross (Line)',
     moves: ["F'", "R'", "D'", 'R', 'D', 'F'],
