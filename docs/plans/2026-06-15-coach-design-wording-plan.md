@@ -422,6 +422,15 @@ letting arrows block the comprehension gate.
 
 ### PD6 — Case-resolver demos resolve to the step's _milestone_, not the solved cube (supersedes PD3's end-state)
 
+> **Superseded for the algorithm chapters (2026-06-21) by `D-MILESTONES-FROM-TEACHING` and
+> `D-PRACTICE-SOLVER`** in
+> [`2026-06-20-feat-coach-placement-pedagogy-plan.md`](2026-06-20-feat-coach-placement-pedagogy-plan.md).
+> The milestone-anchoring insight stands, but case demos built as
+> `applyMoves(milestone, invert(alg))` are replaced by teaching-solver scenarios (`from`/`to`
+> milestone pair + piece selector), and the last layer no longer collapses to `solved`: new
+> intermediate milestones `yellow-corners-oriented` and `yellow-corners-placed` are produced by the
+> teaching solver. Chapter 1 keeps the legacy single-`algorithmId` path described here.
+
 Reviewing the White Cross demo (2026-06-19), Titux rejected the case→**solved** end-state: starting
 from a quasi-solved cube and ending fully solved hides the real, mid-solve case and reads as
 pointless. The fix anchors a demo on a **milestone** (the step's true goal — the white cross done,
@@ -441,6 +450,15 @@ case can displace a piece into the scramble rather than show a textbook in-slot 
 chapter at the gate (P5), prose written to match.
 
 ### PD7 — Practice is interactive (the learner taps the moves); demo stays watch-only
+
+> **Extended for the algorithm chapters (2026-06-21) by `D-DEMO-DECOUPLE` and `D-PRACTICE-SOLVER`**
+> in
+> [`2026-06-20-feat-coach-placement-pedagogy-plan.md`](2026-06-20-feat-coach-placement-pedagogy-plan.md).
+> The interactive tap machinery defined here is kept verbatim, but a chapter now uses **several**
+> demo steps (placement, right trigger, left mirror, repeats) and a **full-chapter practice** that
+> starts from the _previous_ milestone and runs the whole teaching-solver sequence — ending "demo ==
+> practice" for the algorithm chapters. The `D-CHAPTERS` intent (demo = watch, practice = do) is
+> preserved.
 
 Reviewing the slice (2026-06-19) Titux found **demo and practice indistinguishable** — both rendered
 the same stepper, only the end message differed, because practice was never made interactive. The

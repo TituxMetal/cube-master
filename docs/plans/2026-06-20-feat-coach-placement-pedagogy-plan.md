@@ -2,7 +2,7 @@
 title: 'feat: Coach pedagogy rework — intuitive placement & full-chapter practice'
 type: plan
 date: 2026-06-20
-status: approved
+status: in_progress
 brainstorm: docs/brainstorms/2026-06-20-coach-placement-pedagogy-brainstorm.md
 confidence: medium
 ---
@@ -295,65 +295,71 @@ no-rotation feasibility of placement (Ch2) and of the last-layer sequence (Ch5-7
 
 Dependency-ordered. `[ ]` = todo. These are the `/work` tracker.
 
+> **Progress (2026-06-21).** All implementation (TS, PD, C2-1..C2-3, 37) and Phase R records (R-1,
+> R-2, R-3) are done; all five checks are green. **Two items remain:** **C2-4** — Titux's live 13"
+> comprehensibility review (human gate; chapters 3–7 were authored iteratively under live feedback,
+> but the formal gate sign-off is still Titux's to give), and the **PR step of R-4** (verification
+> is green; the PR to `develop` is not opened yet — pushing needs the GPG agent unlocked).
+
 ### Phase TS — Teaching solver foundations (engine)
 
-- [ ] **TS-0 — Feasibility spike (gating).** Prove, with throwaway scripts/specs, that (a) Ch2 white
+- [x] **TS-0 — Feasibility spike (gating).** Prove, with throwaway scripts/specs, that (a) Ch2 white
       corners and (b) Ch5-7 last layer are expressible as `setup`(U/D) + `trigger` segments
       **without rotation**, including clean `yellow-corners-oriented` / `yellow-corners-placed`
       intermediate states. Record findings in `docs/solutions/`. **Blocks all authoring.**
-- [ ] **TS-1** — Add `application/teaching/types.ts` (`TeachingSegment`, `TeachingStepGroup`,
+- [x] **TS-1** — Add `application/teaching/types.ts` (`TeachingSegment`, `TeachingStepGroup`,
       `TeachingPlan`). Named exports, no semicolons, arrow fns.
-- [ ] **TS-2** — Implement `planWhiteCorners` + spec (Ch2). Reuse the exported `SEXY_MOVE` and the
+- [x] **TS-2** — Implement `planWhiteCorners` + spec (Ch2). Reuse the exported `SEXY_MOVE` and the
       per-face `L`-variant for parity; assert it lands on the `white-corners` milestone from
       `white-cross-only`.
-- [ ] **TS-3** — Promote `sexy-move-mirror` to the catalog, parity-pinned; extend the catalog spec.
-- [ ] **TS-4** — Export the teaching module from the engine barrel; confirm boundaries lint passes.
+- [x] **TS-3** — Promote `sexy-move-mirror` to the catalog, parity-pinned; extend the catalog spec.
+- [x] **TS-4** — Export the teaching module from the engine barrel; confirm boundaries lint passes.
 
 ### Phase PD — Step + milestone model (web)
 
-- [ ] **PD-1** — Extend `GoalState` with `yellow-corners-oriented` / `yellow-corners-placed`; build
+- [x] **PD-1** — Extend `GoalState` with `yellow-corners-oriented` / `yellow-corners-placed`; build
       them in `illustrative.ts` by composing teaching-solver output; memoise as today.
-- [ ] **PD-2** — Demos consume a **teaching scenario** (`from`/`to` + piece selector) in addition to
+- [x] **PD-2** — Demos consume a **teaching scenario** (`from`/`to` + piece selector) in addition to
       legacy `algorithmId`; store derives moves from the teaching solver; player highlights `setup`
       vs `trigger` segments. Keep Ch1's legacy path working.
-- [ ] **PD-3** — Add the **full-chapter practice** step (recommend `chapter-practice` kind; final
+- [x] **PD-3** — Add the **full-chapter practice** step (recommend `chapter-practice` kind; final
       shape decided here): start = previous milestone, recipe = flattened teaching sequence, reuse
       PD7 tap/hint/validation, success = chapter milestone. Update `types.ts`, `coachStore.ts`
       computeds, `LessonPlayer.tsx` switch.
-- [ ] **PD-4** — Extend the referential-integrity spec (`lessons.spec.ts`): every demo/practice
+- [x] **PD-4** — Extend the referential-integrity spec (`lessons.spec.ts`): every demo/practice
       resolves to a catalog id **or** a valid teaching scenario; assert **no inline `MoveToken[]`**
       in `data/`.
 
 ### Phase C2 — Chapter 2 proof slice (web)
 
-- [ ] **C2-1** — Rework `white-corners.ts` end-to-end: recognize (realistic case) → place (U/D
+- [x] **C2-1** — Rework `white-corners.ts` end-to-end: recognize (realistic case) → place (U/D
       intuition) → sexy/mirror → repeats, as **several demo steps** on different representative
       cases.
-- [ ] **C2-2** — Add the full-first-layer practice (from `white-cross-only` → `white-corners`).
-- [ ] **C2-3** — FR copy pass honoring the tone rules; cheat-sheet + notation intact.
+- [x] **C2-2** — Add the full-first-layer practice (from `white-cross-only` → `white-corners`).
+- [x] **C2-3** — FR copy pass honoring the tone rules; cheat-sheet + notation intact.
 - [ ] **C2-4 — Preview artifact + live review (GATE).** Live review of reworked Ch2 on a 13" screen
       against the ergonomics bar. **Pass → Phase 37; fail → back to planning.**
 
 ### Phase 37 — Propagate to chapters 3-7 (web + engine) — gated on C2-4
 
-- [ ] **37-1** — Ch3 (second layer): teaching scenario reusing `second-layer-insert-right/left` ("Le
+- [x] **37-1** — Ch3 (second layer): teaching scenario reusing `second-layer-insert-right/left` ("Le
       Belge" hook); placement via D; full-chapter practice `white-corners` → `second-layer`.
-- [ ] **37-2** — Ch4 (yellow cross): `planYellowCross` (keep `yellow-cross-line/l` + pattern
+- [x] **37-2** — Ch4 (yellow cross): `planYellowCross` (keep `yellow-cross-line/l` + pattern
       recognition); practice `second-layer` → `yellow-cross`.
-- [ ] **37-3** — Ch5 (orient corners): `planOrientLastCorners` (sexy repeated); practice
+- [x] **37-3** — Ch5 (orient corners): `planOrientLastCorners` (sexy repeated); practice
       `yellow-cross` → `yellow-corners-oriented`.
-- [ ] **37-4** — Ch6 (place corners): `planPlaceLastCorners` (`corner-3-cycle` + mirror if needed;
+- [x] **37-4** — Ch6 (place corners): `planPlaceLastCorners` (`corner-3-cycle` + mirror if needed;
       promote `corner-3-cycle-mirror` only if emitted); practice → `yellow-corners-placed`.
-- [ ] **37-5** — Ch7 (permute edges): `planPermuteLastEdges` (`ua-perm`/`ub-perm`; promote `ub-perm`
+- [x] **37-5** — Ch7 (permute edges): `planPermuteLastEdges` (`ua-perm`/`ub-perm`; promote `ub-perm`
       if emitted); practice → `solved`.
 
 ### Phase R — Record & verify
 
-- [ ] **R-1** — Revise `PD6`/`PD7`/`D-CHAPTERS` in the plan record (note they are superseded by
+- [x] **R-1** — Revise `PD6`/`PD7`/`D-CHAPTERS` in the plan record (note they are superseded by
       D-DEMO-DECOUPLE / D-PRACTICE-SOLVER / D-MILESTONES-FROM-TEACHING).
-- [ ] **R-2** — Write an ADR fixing the **teaching-solver ↔ Solver boundary** (`docs/adr/`); update
+- [x] **R-2** — Write an ADR fixing the **teaching-solver ↔ Solver boundary** (`docs/adr/`); update
       AGENTS.md Read-First/Task-Routing if a new doc lands.
-- [ ] **R-3** — `docs/solutions/` entry: the no-rotation placement model (symptom → root cause → fix
+- [x] **R-3** — `docs/solutions/` entry: the no-rotation placement model (symptom → root cause → fix
       → prevention), referencing TS-0.
 - [ ] **R-4** — Full verification: `format:check`, `lint:check`, `typecheck`, `test`, `build` all
       green; PR per `docs/git-workflow.md`.
