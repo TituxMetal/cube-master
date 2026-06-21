@@ -37,15 +37,19 @@ export const orientCorners: Lesson = {
     {
       kind: 'understand',
       title: 'Anti-Sune, le miroir',
-      body: 'Quand les coins penchent dans l’autre sens, Anti-Sune fait le travail inverse de Sune — même logique, mains en miroir. C’est le même outil vu de l’autre côté, et il évite parfois un Sune de trop.',
-      visual: { state: { caseOf: 'anti-sune' }, highlight: D_CORNERS }
+      body: 'Quand les coins penchent dans l’autre sens, c’est Anti-Sune qui s’en charge : exactement le même geste que Sune, mais en miroir. Utilisé au bon moment, il t’évite parfois un Sune de trop.',
+      visual: {
+        state: { caseOf: 'anti-sune', goal: 'yellow-corners-oriented' },
+        highlight: D_CORNERS
+      }
     },
     {
       kind: 'demo',
       title: 'Anti-Sune',
-      body: 'Déroule Anti-Sune et regarde les coins basculer jaune vers le bas, comme avec Sune mais dans l’autre sens. La pastille « Placement » marque les petits tours du bas qui mettent le bon coin au bon endroit avant le geste.',
-      scenario: SCENARIO,
-      groupIndex: 1
+      body: 'Déroule Anti-Sune : les coins basculent, leur jaune vient se poser en dessous — comme avec Sune, mais dans l’autre sens. C’est Sune en miroir, tout simplement.',
+      algorithmId: 'anti-sune',
+      demoFrom: 'case',
+      goal: 'yellow-corners-oriented'
     },
     {
       kind: 'chapter-practice',
