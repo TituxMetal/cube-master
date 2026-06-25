@@ -112,6 +112,7 @@ export const $interactiveMoves = atom<MoveToken[]>([])
 export const $practiceMoves = atom<MoveToken[]>([])
 export const $progress = atom<CoachProgress>(progressStorage.load())
 
+// Single-tab assumption: concurrent writes from two tabs are last-write-wins. See ADR-0007.
 $progress.listen(progressStorage.save)
 
 // --- computed ---
