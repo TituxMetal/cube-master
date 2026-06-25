@@ -39,6 +39,16 @@ Coach persists `cubeMaster:coachProgress` at version 1 from day one. The helper 
   partly to enable it, not merely as Coach plumbing. Recorded as plan Follow-Up F1.
 - **Harder / accepted:** a tiny shared module to own and test, versus inline per-store persistence.
 
+## Known Limitations
+
+**Single-tab assumption.** `$progress.listen(progressStorage.save)` in `coachStore.ts` writes the
+full atom value on every change. If two browser tabs both have the Coach page open, each holds an
+independent `$progress` atom — whichever tab writes last silently overwrites the other tab's
+`completedLessons` entries. This is deliberate for v1 (single-tab assumed; the Decision section
+above notes "last-write-wins across tabs, no locking — acceptable for this app"). If multi-tab
+safety is ever required, replace the `atom + listen` pattern with a `storage` event listener that
+reads and merges `completedLessons` rather than overwriting.
+
 ## Alternatives considered
 
 - **Per-store hand-rolled persistence** (what the Timer does today) — rejected: repeats the
