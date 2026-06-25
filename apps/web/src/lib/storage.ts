@@ -57,6 +57,12 @@ export const createVersionedStorage = <T>(
         return migrated === null ? fallback : migrated
       }
 
+      if (parsed.version < version && !migrate) {
+        console.warn(
+          `[storage] ${key}: version bumped ${parsed.version}→${version} without a migrate function — stored data discarded. Provide migrate or document this as an intentional reset.`
+        )
+      }
+
       return fallback
     } catch {
       return fallback
