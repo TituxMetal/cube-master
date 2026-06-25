@@ -1,8 +1,7 @@
 import type { ColorCode, CornerPositionId, CubeState, MoveToken } from '~/domain'
 import { getAlgorithm } from '~/domain'
-import { applyMove } from '~/domain/moves/apply'
 
-import { findCornerByColors, invertUTurns, isCornerHome } from './helpers'
+import { applySeq, findCornerByColors, invertUTurns, isCornerHome } from './helpers'
 import type { TeachingPlan, TeachingSegment, TeachingStepGroup } from './types'
 
 // planWhiteCorners (Ch2) — the proof-slice planner. Turns a white-cross state into
@@ -68,12 +67,6 @@ const uSetupTo = (from: CornerPositionId, to: CornerPositionId): MoveToken[] =>
   ringTurn(U_ORDER, 'U', from, to)
 const dSetupTo = (from: CornerPositionId, to: CornerPositionId): MoveToken[] =>
   ringTurn(D_ORDER, 'D', from, to)
-
-const applySeq = (state: CubeState, moves: readonly MoveToken[]): CubeState => {
-  let s = state
-  for (const m of moves) s = applyMove(s, m)
-  return s
-}
 
 const cornerColors = (
   solved: CubeState,

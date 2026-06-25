@@ -1,5 +1,6 @@
 import type { ColorCode, CornerPositionId, CubeState, EdgePositionId, MoveToken } from '~/domain'
 import { CornerPosition, EdgePosition } from '~/domain/constants'
+import { applyMove } from '~/domain/moves/apply'
 
 // Pure local helpers for the teaching solver — kept here (not imported from
 // solver/helpers) so the teaching module stays independent of Solver mode.
@@ -43,3 +44,9 @@ export const isEdgeHome = (state: CubeState, pos: EdgePositionId): boolean =>
 // Invert a run of U turns (for the closing "restore" placement). Pure on U tokens.
 export const invertUTurns = (moves: readonly MoveToken[]): MoveToken[] =>
   moves.map(m => (m === 'U' ? "U'" : m === "U'" ? 'U' : 'U2'))
+
+export const applySeq = (state: CubeState, moves: readonly MoveToken[]): CubeState => {
+  let s = state
+  for (const m of moves) s = applyMove(s, m)
+  return s
+}
