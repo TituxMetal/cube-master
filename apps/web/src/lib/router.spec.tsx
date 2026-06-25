@@ -135,22 +135,22 @@ describe('navigate', () => {
 })
 
 describe('matchRoute', () => {
-  const render = (): null => null
+  const renderNull = (): null => null
 
   it('decodes a percent-encoded dynamic param so white%2Dcross matches white-cross', () => {
-    const result = matchRoute({ '/coach/:id': render }, '/coach/white%2Dcross')
+    const result = matchRoute({ '/coach/:id': renderNull }, '/coach/white%2Dcross')
     expect(result).not.toBeNull()
     expect(result?.params).toEqual({ id: 'white-cross' })
   })
 
   it('leaves an already-decoded param unchanged', () => {
-    const result = matchRoute({ '/coach/:id': render }, '/coach/white-cross')
+    const result = matchRoute({ '/coach/:id': renderNull }, '/coach/white-cross')
     expect(result).not.toBeNull()
     expect(result?.params).toEqual({ id: 'white-cross' })
   })
 
   it('returns null for a malformed percent-encoded param without throwing', () => {
-    const result = matchRoute({ '/coach/:id': render }, '/coach/%E0%A4')
+    const result = matchRoute({ '/coach/:id': renderNull }, '/coach/%E0%A4')
     expect(result).toBeNull()
   })
 })

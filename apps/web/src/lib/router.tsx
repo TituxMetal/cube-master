@@ -40,7 +40,8 @@ export const matchRoute = (
         try {
           params[expected.slice(1)] = decodeURIComponent(actual)
         } catch {
-          return null
+          matched = false
+          break
         }
       } else if (expected !== actual) {
         matched = false
