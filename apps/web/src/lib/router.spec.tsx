@@ -148,4 +148,9 @@ describe('matchRoute', () => {
     expect(result).not.toBeNull()
     expect(result?.params).toEqual({ id: 'white-cross' })
   })
+
+  it('returns null for a malformed percent-encoded param without throwing', () => {
+    const result = matchRoute({ '/coach/:id': render }, '/coach/%E0%A4')
+    expect(result).toBeNull()
+  })
 })
