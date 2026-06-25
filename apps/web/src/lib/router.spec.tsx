@@ -2,7 +2,7 @@ import { cleanup, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it } from 'bun:test'
 
-import { Link, Router, navigate } from '~/lib/router'
+import { Link, Router, matchRoute, navigate } from '~/lib/router'
 
 const TestHome = () => <div>Home Page</div>
 const TestAbout = () => <div>About Page</div>
@@ -131,5 +131,21 @@ describe('navigate', () => {
   it('should not navigate when already on target path', () => {
     navigate('/')
     expect(window.location.pathname).toBe('/')
+  })
+})
+
+describe('matchRoute', () => {
+  const render = (): null => null
+
+  it('decodes a percent-encoded dynamic param so white%2Dcross matches white-cross', () => {
+    const result = matchRoute({ '/coach/:id': render }, '/coach/white%2Dcross')
+    expect(result).not.toBeNull()
+    expect(result?.params).toEqual({ id: 'white-cross' })
+  })
+
+  it('leaves an already-decoded param unchanged', () => {
+    const result = matchRoute({ '/coach/:id': render }, '/coach/white-cross')
+    expect(result).not.toBeNull()
+    expect(result?.params).toEqual({ id: 'white-cross' })
   })
 })
