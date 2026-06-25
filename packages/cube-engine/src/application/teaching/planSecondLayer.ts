@@ -1,8 +1,7 @@
 import type { ColorCode, CubeState, EdgePositionId, MoveToken } from '~/domain'
 import { Color, getAlgorithm } from '~/domain'
-import { applyMove } from '~/domain/moves/apply'
 
-import { findEdgeByColors, isEdgeHome } from './helpers'
+import { applySeq, findEdgeByColors, isEdgeHome } from './helpers'
 import type { TeachingPlan, TeachingSegment, TeachingStepGroup } from './types'
 
 // planSecondLayer (Ch3) — complete the middle layer. Taught as TWO gestures, the
@@ -73,12 +72,6 @@ const dAlign = (from: EdgePositionId, to: EdgePositionId): MoveToken[] => {
   if (steps === 1) return ['D']
   if (steps === 2) return ['D2']
   return ["D'"]
-}
-
-const applySeq = (state: CubeState, moves: readonly MoveToken[]): CubeState => {
-  let s = state
-  for (const m of moves) s = applyMove(s, m)
-  return s
 }
 
 // One edge's worth of work: optionally evict a wrong middle edge, align on D, insert.

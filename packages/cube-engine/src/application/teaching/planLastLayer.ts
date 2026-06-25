@@ -1,7 +1,7 @@
 import type { CornerPositionId, CubeState, EdgePositionId, MoveToken } from '~/domain'
 import { getAlgorithm } from '~/domain'
-import { applyMove } from '~/domain/moves/apply'
 
+import { applySeq } from './helpers'
 import type { TeachingPlan, TeachingSegment, TeachingStepGroup } from './types'
 
 // Last-layer teaching planners (Ch5 orient corners, Ch6 place corners, Ch7 permute
@@ -14,12 +14,6 @@ import type { TeachingPlan, TeachingSegment, TeachingStepGroup } from './types'
 const D_CORNERS: readonly CornerPositionId[] = ['DFR', 'DRB', 'DBL', 'DLF']
 const D_EDGES: readonly EdgePositionId[] = ['DF', 'DR', 'DB', 'DL']
 const D_ROT: readonly MoveToken[][] = [[], ['D'], ['D2'], ["D'"]]
-
-const applySeq = (state: CubeState, moves: readonly MoveToken[]): CubeState => {
-  let s = state
-  for (const m of moves) s = applyMove(s, m)
-  return s
-}
 
 export const allDEdgesOriented = (s: CubeState): boolean =>
   D_EDGES.every(p => s.edges[p].orientation === 0)
