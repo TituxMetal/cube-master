@@ -77,6 +77,9 @@ export const parseCoachProgress = (data: unknown): CoachProgress | null => {
   }
 }
 
+// Bumping version without a migrate function is a silent destructive reset —
+// all stored progress is lost. Always provide a migrate function or document
+// the intentional reset in a changelog entry.
 const progressStorage = createVersionedStorage<CoachProgress>({
   key: PROGRESS_KEY,
   version: 1,
