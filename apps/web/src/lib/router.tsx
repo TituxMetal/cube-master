@@ -11,7 +11,7 @@ const normalizePath = (pathname: string): string =>
 
 // Resolve a path against the route map: exact static routes win first, then a
 // single-segment `:param` pattern pass. Returns null when nothing matches.
-const matchRoute = (
+export const matchRoute = (
   routes: RouteMap,
   pathname: string
 ): { render: RouteRender; params: RouteParams } | null => {
@@ -37,7 +37,7 @@ const matchRoute = (
           matched = false
           break
         }
-        params[expected.slice(1)] = actual
+        params[expected.slice(1)] = decodeURIComponent(actual)
       } else if (expected !== actual) {
         matched = false
         break
