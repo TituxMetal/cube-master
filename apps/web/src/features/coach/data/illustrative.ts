@@ -124,6 +124,14 @@ const computeMilestones = (): Milestones => {
 
 const milestones = (): Milestones => (cache ??= compute())
 
+// Eagerly fill the memoised cache. The first milestone access runs solveCube on the
+// fixed scramble (~420ms on the main thread); calling this from the Coach route during
+// idle time means the first lesson's first demo hits a warm cache instead of paying
+// that cost mid-click (#17). Idempotent — a second call is a cheap cache hit.
+export const warmMilestones = (): void => {
+  milestones()
+}
+
 // CubeState milestones — the store builds a case demo as applyMoves(milestone,
 // invertMoves(alg)), so it needs the state, not just the stickers.
 export const whiteCrossOnlyState = (): CubeState => milestones().whiteCrossOnly
