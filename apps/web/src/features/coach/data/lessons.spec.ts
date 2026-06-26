@@ -2,7 +2,13 @@ import { getAlgorithm } from '@packages/cube-engine'
 import { describe, expect, it } from 'bun:test'
 
 import { LESSONS } from '~/features/coach/data/lessons'
-import { stepAlgorithmId, stepCatalogIds, stepScenario } from '~/features/coach/data/types'
+import {
+  isTeachingDemo,
+  stepAlgorithmId,
+  stepCatalogIds,
+  stepScenario
+} from '~/features/coach/data/types'
+import { runTeachingPlan } from '~/features/coach/stores/coachStore'
 
 // The named states a teaching scenario may travel — the milestones the store can
 // resolve. A scenario naming anything else would render a blank cube. (PD-4)
@@ -64,6 +70,21 @@ describe('lesson registry', () => {
           expect(KNOWN_TEACHING_PHASES.has(scenario.phase)).toBe(true)
           expect(KNOWN_MILESTONES.has(scenario.from)).toBe(true)
           expect(KNOWN_MILESTONES.has(scenario.to)).toBe(true)
+        }
+      }
+    }
+  })
+
+  // A teaching demo plays group `groupIndex` of its scenario's plan. An out-of-range
+  // index used to silently render a 0-move demo with no way out; resolveRecipe now
+  // throws on it, so this asserts the data never triggers that throw in the first place.
+  it('should keep every teaching demo groupIndex within its plan group count', () => {
+    for (const lesson of LESSONS) {
+      for (const step of lesson.steps) {
+        if (step.kind === 'demo' && isTeachingDemo(step)) {
+          const plan = runTeachingPlan(step.scenario)
+          expect(step.groupIndex).toBeGreaterThanOrEqual(0)
+          expect(step.groupIndex).toBeLessThan(plan.groups.length)
         }
       }
     }
