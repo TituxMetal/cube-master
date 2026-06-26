@@ -88,4 +88,22 @@ describe('LessonPlayer', () => {
     render(<LessonPlayer lessonId='does-not-exist' />)
     expect(screen.getByText('Leçon introuvable')).toBeDefined()
   })
+
+  it('should link the last step of an intermediate chapter to the next chapter in journey order', async () => {
+    const user = userEvent.setup()
+    render(<LessonPlayer lessonId='white-cross' />)
+    await user.click(screen.getByLabelText(/^Étape 5 :/))
+
+    const next = screen.getByRole('link', { name: 'Chapitre suivant' })
+    expect(next.getAttribute('href')).toBe('/coach/white-corners')
+  })
+
+  it('should link the last step of the final chapter back to the Coach index', async () => {
+    const user = userEvent.setup()
+    render(<LessonPlayer lessonId='finish' />)
+    await user.click(screen.getByLabelText(/^Étape 3 :/))
+
+    const back = screen.getByRole('link', { name: 'Retour au Coach' })
+    expect(back.getAttribute('href')).toBe('/coach')
+  })
 })
