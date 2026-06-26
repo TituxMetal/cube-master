@@ -132,7 +132,9 @@ export const $currentStep = computed(
 // Run a teaching scenario's planner on its `from` milestone. The single source of
 // the moves a teaching demo / chapter practice replays — the engine, never inline
 // data (NFR-004). Phase 37 extends the switch with the remaining last-layer phases.
-const runTeachingPlan = (scenario: TeachingScenario) => {
+// Exported so lesson data can be checked against the *actual* plan it produces
+// (every teaching demo's groupIndex must address a real group — see lessons.spec).
+export const runTeachingPlan = (scenario: TeachingScenario) => {
   const start = namedState(scenario.from)
   if (scenario.phase === 'white-corners') return planWhiteCorners(start, createSolvedState())
   if (scenario.phase === 'second-layer') return planSecondLayer(start)
@@ -189,7 +191,16 @@ const resolveRecipe = (step: LessonStep | null): StepRecipe => {
     const plan = runTeachingPlan(step.scenario)
     const before = plan.groups.slice(0, step.groupIndex)
     const group = plan.groups[step.groupIndex]
-    const segments = group?.segments ?? []
+    // Fail loudly rather than render a silent 0-move demo with no way out: an
+    // out-of-range groupIndex is a lesson-data bug (lessons.spec guards against it
+    // shipping). At runtime the Coach ErrorBoundary catches this and offers recovery.
+    if (!group) {
+      throw new Error(
+        `Coach: demo groupIndex ${step.groupIndex} is out of range for teaching phase ` +
+          `"${step.scenario.phase}" (${plan.groups.length} group(s))`
+      )
+    }
+    const segments = group.segments
     return {
       moves: segments.flatMap(segment => [...segment.moves]),
       base: applyMoves(
