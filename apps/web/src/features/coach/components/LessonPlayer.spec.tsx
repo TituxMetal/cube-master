@@ -70,6 +70,20 @@ describe('LessonPlayer', () => {
     expect($progress.get().completedLessons).toContain('white-cross')
   })
 
+  it('should not mark a shorter incoming chapter complete from the previous chapter step index', async () => {
+    const user = userEvent.setup()
+    // white-corners has 8 steps (last index 7); finish has 3 (last index 2).
+    const { rerender } = render(<LessonPlayer lessonId='white-corners' />)
+    await user.click(screen.getByLabelText(/^Étape 8 :/))
+
+    // Navigating to the shorter chapter must not auto-complete it before its first view.
+    rerender(<LessonPlayer lessonId='finish' />)
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: 'La dernière ligne droite' })).toBeDefined()
+    })
+    expect($progress.get().completedLessons).not.toContain('finish')
+  })
+
   it('should render a not-found state for an unknown lesson id', () => {
     render(<LessonPlayer lessonId='does-not-exist' />)
     expect(screen.getByText('Leçon introuvable')).toBeDefined()

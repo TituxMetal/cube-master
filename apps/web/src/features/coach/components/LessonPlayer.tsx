@@ -12,6 +12,8 @@ import type {
   UnderstandStep
 } from '~/features/coach/data/types'
 import {
+  $currentLessonId,
+  $lessonStepIndex,
   applyInteractiveMove,
   applyPracticeMove,
   goToStep,
@@ -263,8 +265,16 @@ export const LessonPlayer = ({ lessonId }: { lessonId: string }) => {
 
   // Reaching the last step *is* finishing the chapter — mark it complete here so
   // the player needs no dedicated "terminer" button (P4 chrome note). Idempotent.
+  //
+  // On a `lessonId` change this effect and the startLesson effect re-run in the same
+  // commit, with the *previous* chapter's step index still captured by `stepIndex`.
+  // Reading the store live — startLesson runs first, resetting both atoms to the new
+  // chapter — stops a shorter incoming chapter from being marked complete on arrival
+  // (e.g. leaving white-corners at step 7 then opening finish, whose last index is 2).
   useEffect(() => {
-    if (lesson && stepIndex >= lesson.steps.length - 1) markLessonComplete(lessonId)
+    if ($currentLessonId.get() !== lessonId) return
+    const liveStep = $lessonStepIndex.get()
+    if (lesson && liveStep >= lesson.steps.length - 1) markLessonComplete(lessonId)
   }, [lesson, lessonId, stepIndex])
 
   if (!lesson) return <LessonNotFound />
