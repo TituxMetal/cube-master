@@ -1,7 +1,7 @@
-import { LessonBrowser, LessonPlayer } from '~/features/coach'
+import { CoachErrorBoundary, LessonBrowser, LessonPlayer } from '~/features/coach'
 
-export const Coach = ({ lessonId }: { lessonId?: string }) => {
-  if (lessonId) return <LessonPlayer lessonId={lessonId} />
-
-  return <LessonBrowser />
-}
+export const Coach = ({ lessonId }: { lessonId?: string }) => (
+  <CoachErrorBoundary resetKey={lessonId}>
+    {lessonId ? <LessonPlayer lessonId={lessonId} /> : <LessonBrowser />}
+  </CoachErrorBoundary>
+)
