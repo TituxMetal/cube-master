@@ -4,6 +4,7 @@ import { describe, expect, it } from 'bun:test'
 
 import {
   secondLayerState,
+  warmMilestones,
   whiteCornersState,
   whiteCrossOnlyState,
   yellowCrossState,
@@ -85,5 +86,15 @@ describe('production milestones are genuine, reachable partial states (SUG-1)', 
     expect(twoLayersComplete(s)).toBe(true)
     expect(edgesOriented(s, D_EDGES)).toBe(true)
     expect(D_CORNERS.every(p => cornerHome(s, p))).toBe(true)
+  })
+})
+
+describe('warmMilestones (#17 idle prewarm)', () => {
+  it('primes the milestone cache without throwing, idempotently', () => {
+    expect(() => warmMilestones()).not.toThrow()
+    // a second call is a cache hit — still safe, no recompute side effects
+    expect(() => warmMilestones()).not.toThrow()
+    // states are genuine and available once warmed
+    expect(twoLayersComplete(secondLayerState())).toBe(true)
   })
 })
