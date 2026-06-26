@@ -59,7 +59,33 @@ let cache: Milestones | null = null
 const advance = (from: CubeState, plan: ReturnType<typeof planSecondLayer>): CubeState =>
   applyMoves(from, [...flattenTeachingPlan(plan)])
 
+// Last-resort milestones if the chained solve/planner computation throws — every
+// chapter falls back to a solved cube. A wrong (but valid) cube degrades the
+// illustrative visuals; it does not crash the Coach route. Each field is its own
+// state so nothing is shared by reference.
+const fallbackMilestones = (): Milestones => ({
+  whiteCrossOnly: createSolvedState(),
+  crossMisaligned: createSolvedState(),
+  whiteCorners: createSolvedState(),
+  secondLayer: createSolvedState(),
+  yellowCross: createSolvedState(),
+  yellowCornersOriented: createSolvedState(),
+  yellowCornersPlaced: createSolvedState()
+})
+
 const compute = (): Milestones => {
+  try {
+    return computeMilestones()
+  } catch (err) {
+    // The fixed scramble is deterministic and tested, so this only fires on a future
+    // solver/planner regression. Degrade to solved cubes (cached, so no rethrow loop)
+    // rather than permanently breaking every lesson open until a page refresh.
+    console.error('illustrative: milestone computation failed; falling back to solved cubes', err)
+    return fallbackMilestones()
+  }
+}
+
+const computeMilestones = (): Milestones => {
   const scrambled = applyMoves(createSolvedState(), FIXED_SCRAMBLE)
   const solution = solveCube(scrambled)
   // Only the white cross comes from the shared solver (Ch1 is untouched legacy). Every
