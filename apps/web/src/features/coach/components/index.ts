@@ -1,3 +1,4 @@
+export { CoachErrorBoundary } from './CoachErrorBoundary'
 export { DemoControls } from './DemoControls'
 export { LessonBrowser } from './LessonBrowser'
 export { LessonPlayer } from './LessonPlayer'

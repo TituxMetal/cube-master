@@ -1,4 +1,4 @@
-export { LessonBrowser, LessonPlayer } from './components'
+export { CoachErrorBoundary, LessonBrowser, LessonPlayer } from './components'
 export { LESSONS, getLesson } from './data/lessons'
 export type { Lesson, LessonStep } from './data/types'
 export { stepAlgorithmId } from './data/types'
