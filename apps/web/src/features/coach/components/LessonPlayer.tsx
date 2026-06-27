@@ -254,6 +254,12 @@ const StepCubePane = ({ step }: { step: LessonStep }) => {
 }
 
 export const LessonPlayer = ({ lessonId }: { lessonId: string }) => {
+  // ORDERING: this effect MUST stay declared before the completion effect below.
+  // That one reads $currentLessonId/$lessonStepIndex live and relies on startLesson
+  // having already reset both atoms this commit. The `$currentLessonId.get() === lessonId`
+  // guard makes a wrong order fail safe (no completion) rather than mis-complete, but
+  // the correct-arrival case still assumes this runs first — don't reorder or extract
+  // either effect to a hook without preserving the order.
   useEffect(() => {
     startLesson(lessonId)
   }, [lessonId])
