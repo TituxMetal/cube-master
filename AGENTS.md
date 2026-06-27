@@ -90,7 +90,8 @@ cube-master/
 **TypeScript strict everywhere.** No semicolons. **Arrow functions only** — the `function` keyword
 is banned. **Named exports only** — no default exports. Test files use **`.spec.ts`** (not
 `.test.ts`). Import alias **`~/`** maps to `apps/web/src/*`. Always **`bun run <script>`** — never
-`npx` / `bunx`.
+`npx` / `bunx`. **Read files with the Read tool, not `cat` / `head`** — Bash is for execution, Read
+for inspection (line-numbered, no Bash permission cost).
 
 **Dependency boundaries** (enforced by `eslint-plugin-boundaries`):
 
