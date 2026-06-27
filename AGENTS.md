@@ -147,6 +147,17 @@ reachable.
 
 ---
 
+## Auto-memory discipline
+
+Project knowledge — decisions, pedagogy, fixes, status, conventions — lives in `docs/` (`adr/`,
+`plans/`, `solutions/`, `stories/`) and in this file. **Never** copy it into Claude Code
+auto-memory. Reserve auto-memory for cross-cutting **user/feedback facts that don't derive from the
+repo** (a stated preference, a workflow correction, an environment gotcha). Before writing a memory,
+ask: "Is this already captured in `docs/` or `AGENTS.md`?" — if yes, don't write it. A memory that
+restates a doc bloats every session's context and gets over-applied; the canonical copy is the doc.
+
+---
+
 ## Maintenance Triggers
 
 Update this file when a new `docs/` file is created (add it to Read First or Task Routing), when the
