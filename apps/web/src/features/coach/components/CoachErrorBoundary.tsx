@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 import type { FallbackProps } from 'react-error-boundary'
 
+import { goToStep } from '~/features/coach/stores/coachStore'
 import { Link } from '~/lib/router'
 
 // Coach's last line of defence. The teaching planners throw deliberately when a plan
@@ -29,6 +30,13 @@ const CoachErrorFallback = ({ resetErrorBoundary }: FallbackProps) => (
 
 // `resetKey` (the current lessonId) resets the boundary on navigation, so opening
 // another chapter clears a stuck error without the learner pressing Réessayer.
+//
+// On the imperative "Réessayer" path, re-home the lesson to step 0 first. The throw
+// comes from the *current* step's recipe ($currentStep), so re-rendering the same
+// step would rethrow immediately and the button would do nothing. Step 0 is always an
+// understand/interactive step that runs no planner, so it gives the retry a renderable
+// target. Guarded to the imperative reason so it never overrides startLesson's resume
+// on a navigation (keys) reset.
 export const CoachErrorBoundary = ({
   resetKey,
   children
@@ -36,7 +44,13 @@ export const CoachErrorBoundary = ({
   resetKey?: string
   children: ReactNode
 }) => (
-  <ErrorBoundary FallbackComponent={CoachErrorFallback} resetKeys={[resetKey]}>
+  <ErrorBoundary
+    FallbackComponent={CoachErrorFallback}
+    resetKeys={[resetKey]}
+    onReset={details => {
+      if (details.reason === 'imperative-api') goToStep(0)
+    }}
+  >
     {children}
   </ErrorBoundary>
 )
