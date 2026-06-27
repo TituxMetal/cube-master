@@ -1,8 +1,9 @@
 import type { CornerPositionId, CubeState, EdgePositionId } from '@packages/cube-engine'
 import { createSolvedState, toStickers } from '@packages/cube-engine'
-import { describe, expect, it } from 'bun:test'
+import { describe, expect, it, spyOn } from 'bun:test'
 
 import {
+  computeMilestonesOrFallback,
   secondLayerState,
   warmMilestones,
   whiteCornersState,
@@ -96,5 +97,28 @@ describe('warmMilestones (#17 idle prewarm)', () => {
     expect(() => warmMilestones()).not.toThrow()
     // states are genuine and available once warmed
     expect(twoLayersComplete(secondLayerState())).toBe(true)
+  })
+})
+
+describe('milestone computation degrades on failure (#15/#18)', () => {
+  it('returns valid solved-cube fallbacks instead of throwing when the computation fails', () => {
+    const errorSpy = spyOn(console, 'error').mockImplementation(() => {})
+    const regression = (): never => {
+      throw new Error('planner regression')
+    }
+
+    // The whole point of #15/#18: a throw in the chained solve must degrade, not crash.
+    // Inject a throwing primary so we exercise the catch without mocking the engine.
+    const result = computeMilestonesOrFallback(regression)
+
+    // Every chapter degrades to a *valid* solved cube — wrong visuals, never a crash.
+    const solved = toStickers(createSolvedState())
+    expect(toStickers(result.whiteCrossOnly)).toEqual(solved)
+    expect(toStickers(result.secondLayer)).toEqual(solved)
+    expect(toStickers(result.yellowCornersPlaced)).toEqual(solved)
+    // The failure is logged, not silently swallowed.
+    expect(errorSpy).toHaveBeenCalled()
+
+    errorSpy.mockRestore()
   })
 })

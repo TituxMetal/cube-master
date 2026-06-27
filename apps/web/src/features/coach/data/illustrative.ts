@@ -73,15 +73,21 @@ const fallbackMilestones = (): Milestones => ({
   yellowCornersPlaced: createSolvedState()
 })
 
-const compute = (): Milestones => {
+// Run the milestone computation; on any throw, log and degrade to solved-cube
+// fallbacks. The fixed scramble is deterministic and tested, so this only fires on a
+// future solver/planner regression — and the caller memoises the result, so a
+// regression shows wrong visuals instead of permanently breaking every lesson open
+// (no rethrow loop). `primary`/`fallback` are injectable so the degrade-on-throw
+// contract is unit-testable (#15/#18) without mocking the engine or the module cache.
+export const computeMilestonesOrFallback = (
+  primary: () => Milestones = computeMilestones,
+  fallback: () => Milestones = fallbackMilestones
+): Milestones => {
   try {
-    return computeMilestones()
+    return primary()
   } catch (err) {
-    // The fixed scramble is deterministic and tested, so this only fires on a future
-    // solver/planner regression. Degrade to solved cubes (cached, so no rethrow loop)
-    // rather than permanently breaking every lesson open until a page refresh.
     console.error('illustrative: milestone computation failed; falling back to solved cubes', err)
-    return fallbackMilestones()
+    return fallback()
   }
 }
 
@@ -122,7 +128,7 @@ const computeMilestones = (): Milestones => {
   }
 }
 
-const milestones = (): Milestones => (cache ??= compute())
+const milestones = (): Milestones => (cache ??= computeMilestonesOrFallback())
 
 // Eagerly fill the memoised cache. The first milestone access runs solveCube on the
 // fixed scramble (~420ms on the main thread); calling this from the Coach route during
